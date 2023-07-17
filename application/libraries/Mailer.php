@@ -1,53 +1,46 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
-require_once(APPPATH . 'third_party/phpmailer/autoload.php');
-
 class Mailer
 {
     private $CI;
     public function __construct()
     {
         $this->CI = &get_instance();
+		$this->CI->load->library('email');
     }
 
-    public function send($data = array(), $err = false)
+    public function send($data = array())
     {
-        $getConfig = $this->CI->db->get_where('email_config', array('branch_id' => $data['branch_id']))->row();
+     
+        $getConfig = $this->CI->db->get_where('email_config', array('branch_id' => $data['branch_id']))->row_array();
 		$school_name = get_global_setting('institute_name');
-        $mail = new PHPMailer();
-        if ($getConfig->protocol == 'smtp') {
-            $smtp_encryption = $getConfig->smtp_encryption;
-            $mail->isSMTP();
-            $mail->SMTPDebug = SMTP::DEBUG_OFF;
-            $mail->Host = trim($getConfig->smtp_host);
-            $mail->Port = trim($getConfig->smtp_port);
-            if (!empty($getConfig->smtp_encryption)) {
-                $mail->SMTPSecure =  $getConfig->smtp_encryption;
-            }
-            $mail->SMTPAuth = $getConfig->smtp_auth;
-            $mail->Username = trim($getConfig->smtp_user);
-            $mail->Password = trim($getConfig->smtp_pass);
+        $config = array();
+        if ($getConfig['protocol'] == 'smtp') {
+            $config['protocol']      = "smtp";
+            $config['validate']      = true;
+            $config['smtp_host']     = trim($getConfig['smtp_host']);
+            $config['smtp_port']     = trim($getConfig['smtp_port']);
+            $config['smtp_user']     = trim($getConfig['smtp_user']);
+            $config['smtp_pass']     = trim($getConfig['smtp_pass']);
+            $config['smtp_crypto']   = $getConfig['smtp_encryption'];
         } else {
-            $mail->isSendmail();
+            $config['protocol'] = $getConfig['protocol'];
         }
-        $mail->setFrom($getConfig->email, $school_name);
-        $mail->addReplyTo($getConfig->email, $school_name);
-        $mail->addAddress($data['recipient']);
-        $mail->Subject = $data['subject'];
-        $mail->AltBody = $data['message'];
-        $mail->Body = $data['message'];
-        if ($mail->send()) {
+        $config['mailtype']     = "html";
+        $config['newline']      = "\r\n";
+        $config['charset']      = "utf-8";
+        $config['wordwrap']     = true;
+        $config['smtp_timeout'] = 30;
+        $this->CI->email->initialize($config);
+        $this->CI->email->from($getConfig['email'], $school_name);
+        $this->CI->email->to($data['recipient']);
+        $this->CI->email->subject($data['subject']);
+        $this->CI->email->message($data['message']);	
+        if ($this->CI->email->send(true)) {
             return true;
         } else {
-            if ($err == false) {
-                return false;
-            } else {
-                return $mail->ErrorInfo;
-            }
-            
+            return false;
         }
     }
 }

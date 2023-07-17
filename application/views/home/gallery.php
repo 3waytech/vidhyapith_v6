@@ -20,9 +20,7 @@
         <?php } ?>
     </ul>
     <ul id="doctors-grid" class="row grid">
-        <?php 
-        $school = $this->uri->segment(1);
-        foreach ($galleryList as $row) { ?>
+        <?php foreach ($galleryList as $row) { ?>
         <li class="doctors-grid col-lg-4 col-md-6" data-groups='["all", "<?php echo $row['category_id']; ?>"]'>
             <div class="bio-box">
                 <div class="gallery-album-item">
@@ -31,7 +29,7 @@
                     </div>
                     <div class="gallery-album-title">
                         <h3><?php echo $row['title'] ?></h3>
-                        <a class="btn" href="<?php echo base_url("$school/gallery_view/" . $row['alias'] ); ?>"><i class="fas fa-photo-video"></i></a>
+                        <a class="btn" href="<?php echo base_url('home/gallery_view/' . $row['alias']); ?>"><i class="fas fa-photo-video"></i></a>
                     </div>
                     <div class="gallery-album-meta">
                         <p>By<a href=""><?php echo $row['staff_name'] ?></a></p>

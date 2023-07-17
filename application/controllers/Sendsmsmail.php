@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -19,9 +19,6 @@ class Sendsmsmail extends Admin_Controller
         parent::__construct();
         $this->load->library('mailer');
         $this->load->model('sendsmsmail_model');
-        if (!moduleIsEnabled('bulk_sms_and_email')) {
-            access_denied();
-        }
     }
 
     public function sms()
@@ -166,7 +163,6 @@ class Sendsmsmail extends Admin_Controller
                 $sendLater = (isset($_POST['send_later']) ? 1 : 2);
                 $emailSubject = $this->input->post('email_subject');
                 $smsGateway = $this->input->post('sms_gateway');
-                $dlt_templateID = $this->input->post('dlt_template_id');
                 
                 if ($recipientType == 1) {
                     $roleGroup = $this->input->post('role_group[]');
@@ -275,7 +271,7 @@ class Sendsmsmail extends Admin_Controller
                 } else {
                     foreach ($user_array as $key => $value) {
                         if ($messageType == 1) {
-                            $response = $this->sendsmsmail_model->sendSMS($value['mobileno'], $message, $value['name'], $value['email'], $smsGateway, $dlt_templateID);
+                            $response = $this->sendsmsmail_model->sendSMS($value['mobileno'], $message, $value['name'], $value['email'], $smsGateway);
                         } else {
                             $response = $this->sendsmsmail_model->sendEmail($value['email'], $message, $value['name'], $value['mobileno'], $emailSubject);
                         }

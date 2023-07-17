@@ -28,7 +28,6 @@
 							<th><?=translate('guardian')?></th>
 							<th><?=translate('reference') ?></th>
 							<th><?=translate('enquiry') . " " . translate('date') ?></th>
-							<th><?=translate('next') . " " .  translate('follow_up') . " " . translate('date')?></th>
 							<th><?=translate('status') ?></th>
 							<th><?=translate('action')?></th>
 						</tr>
@@ -55,12 +54,6 @@
 								<td><?php echo translate('father_name') . " : " . $row['father_name'] . "<br>" . translate('mother_name') . " : " . $row['mother_name']; ?></td>
 								<td><?php echo get_type_name_by_id('enquiry_reference', $row['reference_id']); ?></td>
 								<td><?php echo _d($row['date']); ?></td>
-								<td><?php $followUP = $this->reception_model->follow_up_details($row['id']);
-								if (empty($followUP['next_date'])) {
-									echo "-";
-								} else {
-									echo _d($followUP['next_date']);
-								} ?></td>
 								<td>
 									<?php if ($status == 1) { ?>
 										<span class="label label-success-custom"><i class="far fa-check-square"></i> <?php echo $getStatus[$status]; ?></span>

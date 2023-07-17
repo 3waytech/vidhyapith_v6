@@ -111,7 +111,39 @@ class Subject_model extends MY_Model
             return false;
         }
     }
-
+    
+    public function getSubjectByExamType($classID = '', $sectionID = '',$subject_id = '', $exam_id)
+    {
+        if (loggedin_role_id() == 3) {
+            $restricted = $this->getSingle('branch', get_loggedin_branch_id(), true)->teacher_restricted;
+            if ($restricted == 1) {
+                $getClassTeacher = $this->getClassTeacherByClassSection($classID, $sectionID);
+                if ($getClassTeacher == true) {
+                    $query = $this->getSubjectList($classID, $sectionID);
+                } else {
+                    $this->db->select('timetable_exam.mark_distribution,timetable_exam.id');
+                    $this->db->from('timetable_exam');
+                    $this->db->where('class_id', $classID);
+                    $this->db->where('section_id', $sectionID);
+                    $this->db->where('exam_id', $exam_id);
+                    $this->db->where('subject_id', $subjectID);
+                    $this->db->where('session_id', get_session_id());
+                    $query = $this->db->get();
+                }
+            } else {
+                $query = $this->getSubjectList($classID, $sectionID);
+            }
+        } else {
+            $this->db->select('timetable_exam.mark_distribution');
+            $this->db->where('class_id', $classID);
+            $this->db->where('section_id', $sectionID);
+            $this->db->where('exam_id', $exam_id);
+            $this->db->where('subject_id', $subject_id);
+            $this->db->where('session_id', get_session_id());
+            $query = $this->db->get('timetable_exam')->row_array();
+        }
+        return $query;
+    }
     
 
 }

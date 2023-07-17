@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -31,9 +31,6 @@ class Onlineexam extends Admin_Controller
                 'js/online-exam.js',
             ),
         );
-        if (!moduleIsEnabled('online_exam')) {
-            access_denied();
-        }
     }
 
     /* online exam controller */
@@ -738,162 +735,6 @@ class Onlineexam extends Admin_Controller
                 $data['studentID'] = $studentID;
                 echo $this->load->view('onlineexam/student_result', $data, true);
             }
-        }
-    }
-
-    /* sample csv downloader */
-    public function csv_Sampledownloader()
-    {
-        $this->load->helper('download');
-        $data = file_get_contents('uploads/import_question_sample.csv');
-        force_download("import_question_sample.csv", $data);
-    }
-
-    /* csv file to import question page */
-    public function question_import()
-    {
-        // check access permission
-        if (!get_permission('question_bank', 'is_add')) {
-            access_denied();
-        }
-        $branchID = $this->application_model->get_branch_id();
-        $this->data['title'] = translate('question') . " " . translate('import');
-        $this->data['branch_id'] = $branchID;
-        $this->data['sub_page'] = 'onlineexam/question_import';
-        $this->data['main_menu'] = 'onlineexam';
-        $this->data['headerelements'] = array(
-            'css' => array(
-                'vendor/dropify/css/dropify.min.css',
-            ),
-            'js' => array(
-                'vendor/dropify/js/dropify.min.js',
-            ),
-        );
-        $this->load->view('layout/index', $this->data);
-    }
-
-    /* csv file to import question stored in the database here */
-    public function questionCsvImport()
-    {
-        if ($_POST) {
-            if (!get_permission('question_bank', 'is_add')) {
-                ajax_access_denied();
-            }
-            $branchID = $this->application_model->get_branch_id();
-            // form validation rules
-            if (is_superadmin_loggedin() == true) {
-                $this->form_validation->set_rules('branch_id', 'Branch', 'trim|required');
-            }
-            $this->form_validation->set_rules('class_id', 'Class', 'trim|required');
-            $this->form_validation->set_rules('section_id', 'Section', 'trim|required');
-            $this->form_validation->set_rules('subject_id', 'Subject', 'trim|required');
-            $this->form_validation->set_rules('userfile', 'CSV File', 'callback_csvfileHandleUpload[userfile]');
-
-            if (isset($_FILES["userfile"]) && empty($_FILES['userfile']['name'])) {
-                $this->form_validation->set_rules('userfile', 'CSV File', 'required');
-            }
-            if ($this->form_validation->run() == true) {
-                $classID = $this->input->post('class_id');
-                $sectionID = $this->input->post('section_id');
-                $subjectID = $this->input->post('subject_id');
-                $questionsExam = array();
-                if (isset($_FILES["userfile"]) && !empty($_FILES['userfile']['name']) && $_FILES["userfile"]["size"] > 0) {
-                    $fileName = $_FILES["userfile"]["tmp_name"];
-                    $file = fopen($fileName, "r");
-                    $num = true;
-                    $count = 0;
-                    while (($column = fgetcsv($file, 10000, ",")) !== false) {
-                        if ($num) {
-                            $num = false;
-                            continue;
-                        }
-                        if (!empty($column['0']) && !empty($column['1']) && !empty($column['2']) && !empty($column['3']) && !empty($column['4'])) {
-                            $count++;
-                            $questionLevel = trim($column['2']);
-                            $answer = trim($column['9']);
-
-                            if ($questionLevel == 'easy')
-                                $questionLevel = 1;
-                            if ($questionLevel == 'medium')
-                                $questionLevel = 2;
-                            if ($questionLevel == 'hard')
-                                $questionLevel = 3;
-
-                            $questionType = trim($column['0']);
-                            if ($questionType == 'single_choice')
-                                $questionType = 1;
-                            if ($questionType == 'multi_choice')
-                                $questionType = 2;
-                            if ($questionType == 'true_false') {
-                                $questionType = 3;
-                                if (strtolower($answer) == true) {
-                                    $answer = 1;
-                                } else {
-                                    $answer = 2;
-                                }
-                            }
-                            if ($questionType == 'descriptive')
-                                $questionType = 4;
-
-                            $answer = str_replace("option_", "", $answer);
-                            $questionsExam[] = array(
-                                'class_id' => $classID,
-                                'section_id' => $sectionID,
-                                'subject_id' => $subjectID,
-                                'branch_id' => $branchID,
-                                'type' => $questionType,
-                                'level' => $questionLevel,
-                                'group_id' => trim($column['1']),
-                                'question' => trim($column['3']),
-                                'mark' => trim($column['4']),
-                                'opt_1' => trim($column['5']),
-                                'opt_2' => trim($column['6']),
-                                'opt_3' => trim($column['7']),
-                                'opt_4' => trim($column['8']),
-                                'answer' => $answer,
-                            );
-                        }
-                    }
-                    if (!empty($questionsExam)) {
-                        $this->db->insert_batch('questions', $questionsExam);
-                    }
-                    if ($count == 0) {
-                        $url = base_url('onlineexam/question_import');
-                        set_alert('error', "No questions found.");
-                    } else {
-                        $url = base_url('onlineexam/question');
-                        set_alert('success', $count . ' Questions added successfully');
-                    }
-                } else {
-                    $url = base_url('onlineexam/question_import');
-                    set_alert('error', 'Question import failed.');
-                }
-                $array = array('status' => 'success', 'url' => $url);
-            } else {
-                $error = $this->form_validation->error_array();
-                $array = array('status' => 'fail', 'error' => $error);
-            }
-            echo json_encode($array);
-        }
-    }
-
-    public function csvfileHandleUpload($str, $fields)
-    {
-        $allowedExts = array_map('trim', array_map('strtolower', explode(',', 'csv')));
-        if (isset($_FILES["$fields"]) && !empty($_FILES["$fields"]['name'])) {
-            $file_size = $_FILES["$fields"]["size"];
-            $file_name = $_FILES["$fields"]["name"];
-            $extension = pathinfo($file_name, PATHINFO_EXTENSION);
-            if ($files = filesize($_FILES["$fields"]['tmp_name'])) {
-                if (!in_array(strtolower($extension), $allowedExts)) {
-                    $this->form_validation->set_message('fileHandleUpload', translate('this_file_type_is_not_allowed'));
-                    return false;
-                }
-            } else {
-                $this->form_validation->set_message('fileHandleUpload', translate('error_reading_the_file'));
-                return false;
-            }
-            return true;
         }
     }
 }

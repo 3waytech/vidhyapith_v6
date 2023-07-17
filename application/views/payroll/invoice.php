@@ -6,7 +6,7 @@
 				<div class="row">
 					<div class="col-xs-6">
 						<div class="ib">
-							<img src="<?=$this->application_model->getBranchImage($salary['branch_id'], 'printing-logo')?>" alt="Img" />
+							<img src="<?php echo base_url('uploads/app_image/printing-logo.png'); ?>" alt="Img" />
 						</div>
 					</div>
 					<div class="col-xs-6 text-right">

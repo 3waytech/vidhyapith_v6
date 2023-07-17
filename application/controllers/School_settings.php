@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -46,13 +46,6 @@ class School_settings extends Admin_Controller
                 $this->form_validation->set_rules('grd_username_prefix', translate('username_prefix'), 'trim|required');
                 $this->form_validation->set_rules('grd_default_password', translate('default_password'), 'trim|required');
             }
-
-            if (isset($_POST['reg_prefix_enable'])) {
-                $this->form_validation->set_rules('reg_start_from', translate('register_no') . " " . translate('start_from'), 'trim|required|numeric');
-                $this->form_validation->set_rules('institution_code', translate('institution_code'), 'trim|required');
-                $this->form_validation->set_rules('reg_prefix_digit', translate('register_no') . " " . translate('digit'), 'trim|required');
-            }
-            $this->form_validation->set_rules('weekends[]', translate('weekends'), 'trim|required');
 
             if ($this->form_validation->run() == true) {
 
@@ -410,37 +403,6 @@ class School_settings extends Admin_Controller
         echo json_encode($array);
     }
 
-    public function customSms()
-    {
-        if (!get_permission('sms_settings', 'is_add')) {
-            access_denied();
-        }
-        $branchID = $this->school_model->getBranchID();
-        $this->form_validation->set_rules('api_url', translate('api_url'), 'trim|required');
-        if ($this->form_validation->run() !== false) {
-            $arraycustomSms = array(
-                'field_one' => $this->input->post('api_url'),
-            );
-            $this->db->where('sms_api_id', 8);
-            $this->db->where('branch_id', $branchID);
-            $q = $this->db->get('sms_credential');
-            if ($q->num_rows() == 0) {
-                $arraycustomSms['sms_api_id'] = 8;
-                $arraycustomSms['branch_id'] = $branchID;
-                $this->db->insert('sms_credential', $arraycustomSms);
-            } else {
-                $this->db->where('id', $q->row()->id);
-                $this->db->update('sms_credential', $arraycustomSms);  
-            }
-            $message = translate('information_has_been_saved_successfully');
-            $array = array('status' => 'success', 'message' => $message);
-        } else {
-            $error = $this->form_validation->error_array();
-            $array = array('status' => 'fail', 'error' => $error);
-        }
-        echo json_encode($array);
-    }
-
     public function smstemplate()
     {
         if (!get_permission('sms_settings', 'is_add')) {
@@ -534,6 +496,7 @@ class School_settings extends Admin_Controller
             $this->form_validation->set_rules('smtp_user', 'SMTP Username', 'trim|required');
             $this->form_validation->set_rules('smtp_pass', 'SMTP Password', 'trim|required');
             $this->form_validation->set_rules('smtp_port', 'SMTP Port', 'trim|required');
+            $this->form_validation->set_rules('smtp_encryption', 'Email Encryption', 'trim|required');
         }
         if($this->form_validation->run() !== false) {
             $arrayConfig = array(
@@ -547,7 +510,6 @@ class School_settings extends Admin_Controller
                 $arrayConfig['smtp_pass'] = $this->input->post("smtp_pass"); 
                 $arrayConfig['smtp_port'] = $this->input->post("smtp_port"); 
                 $arrayConfig['smtp_encryption'] = $this->input->post("smtp_encryption"); 
-                $arrayConfig['smtp_auth'] = $this->input->post("smtp_auth"); 
             }
             $this->db->where('branch_id', $branchID);
             $q = $this->db->get('email_config');
@@ -795,7 +757,7 @@ class School_settings extends Admin_Controller
         if($this->form_validation->run() !== false) {
             $arrayConfig = array(
                 'header_title' => $this->input->post('header_title'), 
-                'subtitle' => $this->input->post('subtitle'), 
+                'subtitle' => $this->input->post('header_title'), 
                 'footer_text' => $this->input->post('footer_text'), 
                 'frontend_enable_chat' => isset($_POST['frontend_enable_chat']) ? 1 : 0, 
                 'backend_enable_chat' => isset($_POST['backend_enable_chat']) ? 1 : 0, 
@@ -881,46 +843,6 @@ class School_settings extends Admin_Controller
         if (get_permission('whatsapp_config', 'is_edit') && !empty($id)) {
             $this->data['whatsapp'] = $this->app_lib->getTable('whatsapp_agent', array('t.id' => $id), TRUE);
             $this->load->view('school_settings/whatsapp_editModal', $this->data);
-        }
-    }
-
-
-    public function send_test_email()
-    {
-        if ($_POST) {
-            if (!get_permission('email_settings', 'is_add')) {
-                ajax_access_denied();
-            }
-            $this->form_validation->set_rules('test_email', translate('email'), 'trim|required|valid_email');
-            if($this->form_validation->run() == true) {
-                $branchID = $this->school_model->getBranchID();
-                $getConfig = $this->db->select('id')->get_where('email_config', array('branch_id' => $branchID))->row();
-                if (empty($getConfig)) {
-                    $this->session->set_flashdata('test-email-error', 'Email Configuration not found.');
-                    $array = array('status' => 'success');
-                    echo json_encode($array);
-                    exit;
-                }
-
-                $recipient = $this->input->post('test_email');
-                $this->load->library('mailer');
-                $data = array();
-                $data['branch_id'] = $branchID;
-                $data['recipient'] = $recipient;
-                $data['subject'] = 'Ramom School SMTP Config Testing';
-                $data['message'] = 'This is test SMTP config email. <br />If you received this message that means that your SMTP settings is set correctly.';
-                $r = $this->mailer->send($data, true);
-                if ($r == "true") {
-                    $this->session->set_flashdata('test-email-success', 1);
-                } else {
-                    $this->session->set_flashdata('test-email-error', 'Mailer Error: ' . $r);
-                }
-                $array = array('status' => 'success');
-            } else {
-                $error = $this->form_validation->error_array();
-                $array = array('status' => 'fail', 'error' => $error);
-            }
-            echo json_encode($array);
         }
     }
 }

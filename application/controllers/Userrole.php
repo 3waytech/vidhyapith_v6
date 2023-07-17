@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -29,7 +29,7 @@ class Userrole extends User_Controller
     }
 
     /* getting all teachers list */
-    public function teacher()
+    public function teachers()
     {
         $this->data['title'] = translate('teachers');
         $this->data['sub_page'] = 'userrole/teachers';
@@ -69,7 +69,7 @@ class Userrole extends User_Controller
         if (isset($_POST['save'])) {
             $this->form_validation->set_rules('leave_category', translate('leave_category'), 'required|callback_leave_check');
             $this->form_validation->set_rules('daterange', translate('leave_date'), 'trim|required|callback_date_check');
-            $this->form_validation->set_rules('attachment_file', translate('attachment'), 'callback_fileHandleUpload[attachment_file]');
+            $this->form_validation->set_rules('attachment_file', translate('attachment'), 'callback_handle_upload');
             if ($this->form_validation->run() !== false) {
                 $leave_type_id = $this->input->post('leave_category');
                 $branch_id = $this->application_model->get_branch_id();
@@ -215,6 +215,34 @@ class Userrole extends User_Controller
         return $dates;
     }
 
+    public function handle_upload()
+    {
+        if (isset($_FILES["attachment_file"]) && !empty($_FILES['attachment_file']['name'])) {
+            $file_type = $_FILES["attachment_file"]['type'];
+            $file_size = $_FILES["attachment_file"]["size"];
+            $file_name = $_FILES["attachment_file"]["name"];
+            $allowedExts = array('pdf', 'doc', 'xls', 'docx', 'xlsx', 'jpg', 'jpeg', 'png', 'gif', 'bmp');
+            $upload_size = 2097152;
+            $extension = pathinfo($file_name, PATHINFO_EXTENSION);
+            if ($files = filesize($_FILES['attachment_file']['tmp_name'])) {
+                if (!in_array(strtolower($extension), $allowedExts)) {
+                    $this->form_validation->set_message('handle_upload', translate('this_file_type_is_not_allowed'));
+                    return false;
+                }
+                if ($file_size > $upload_size) {
+                    $this->form_validation->set_message('handle_upload', translate('file_size_shoud_be_less_than') . " " . ($upload_size / 1024) . " KB");
+                    return false;
+                }
+            } else {
+                $this->form_validation->set_message('handle_upload', translate('error_reading_the_file'));
+                return false;
+            }
+            return true;
+        } else {
+            return true;
+        }
+    }
+
     public function attachments()
     {
         $this->data['title'] = translate('attachments');
@@ -236,14 +264,10 @@ class Userrole extends User_Controller
     // file downloader
     public function download()
     {
-        $encrypt_name = urldecode($this->input->get('file'));
-        if (preg_match('/^[^.][-a-z0-9_.]+[a-z]$/i', $encrypt_name)) {
-            $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get('attachments')->row()->file_name;
-            if (!empty($file_name)) {
-                $this->load->helper('download');
-                force_download($file_name, file_get_contents('uploads/attachments/' . $encrypt_name));
-            }
-        }
+        $encrypt_name = $this->input->get('file');
+        $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get('attachments')->row()->file_name;
+        $this->load->helper('download');
+        force_download($file_name, file_get_contents('uploads/attachments/' . $encrypt_name));
     }
 
     /* exam timetable preview page */
@@ -251,15 +275,11 @@ class Userrole extends User_Controller
     {
         $stu = $this->userrole_model->getStudentDetails();
         $this->data['student'] = $stu;
-        $this->db->select('*');
-        $this->db->from('timetable_exam');
-        $this->db->where('class_id', $stu['class_id']);
-        $this->db->where('section_id', $stu['section_id']);
-        $this->db->where('session_id', get_session_id());
-        $this->db->group_by('exam_id');
-        $this->db->order_by('exam_id', 'asc');
-        $results = $this->db->get()->result_array();
-        $this->data['exams'] = $results;
+        $this->data['exams'] = $this->db->get_where('timetable_exam', array(
+            'class_id' => $stu['class_id'],
+            'section_id' => $stu['section_id'],
+            'session_id' => get_session_id(),
+        ))->result_array();
         $this->data['title'] = translate('exam') . " " . translate('schedule');
         $this->data['sub_page'] = 'userrole/exam_schedule';
         $this->data['main_menu'] = 'exam';
@@ -290,7 +310,6 @@ class Userrole extends User_Controller
     /* after login students or parents produced reports here */
     public function attendance()
     {
-        $this->load->model('attendance_model');
         if ($this->input->post('submit') == 'search') {
             $this->data['month'] = date('m', strtotime($this->input->post('timestamp')));
             $this->data['year'] = date('Y', strtotime($this->input->post('timestamp')));
@@ -392,18 +411,9 @@ class Userrole extends User_Controller
     /* invoice user interface with information are controlled here */
     public function invoice()
     {
-        $this->data['headerelements'] = array(
-            'css' => array(
-                'vendor/dropify/css/dropify.min.css',
-            ),
-            'js' => array(
-                'vendor/dropify/js/dropify.min.js',
-            ),
-        );
         $stu = $this->userrole_model->getStudentDetails();
         $this->data['config'] = $this->get_payment_config();
         $this->data['getUser'] = $this->userrole_model->getUserDetails();
-        $this->data['getOfflinePaymentsConfig'] = $this->userrole_model->getOfflinePaymentsConfig();
         $this->data['invoice'] = $this->fees_model->getInvoiceStatus($stu['student_id']);
         $this->data['basic'] = $this->fees_model->getInvoiceBasic($stu['student_id']);
         $this->data['title'] = translate('fees_history');
@@ -466,23 +476,23 @@ class Userrole extends User_Controller
     public function assignment_handle_upload()
     {
         if (isset($_FILES["attachment_file"]) && !empty($_FILES['attachment_file']['name'])) {
-            $allowedExts = array_map('trim', array_map('strtolower', explode(',', $this->data['global_config']['file_extension'])));
-            $allowedSizeKB = $this->data['global_config']['file_size'];
-            $allowedSize = floatval(1024 * $allowedSizeKB);
+            $file_type = $_FILES["attachment_file"]['type'];
             $file_size = $_FILES["attachment_file"]["size"];
             $file_name = $_FILES["attachment_file"]["name"];
+            $allowedExts = array('txt', 'pdf', 'doc', 'xls', 'docx', 'xlsx', 'jpg', 'jpeg', 'png', 'gif', 'bmp');
+            $upload_size = 2097152;
             $extension = pathinfo($file_name, PATHINFO_EXTENSION);
-            if ($files = filesize($_FILES["attachment_file"]['tmp_name'])) {
+            if ($files = filesize($_FILES['attachment_file']['tmp_name'])) {
                 if (!in_array(strtolower($extension), $allowedExts)) {
-                    $this->form_validation->set_message('handle_upload', translate('this_file_type_is_not_allowed'));
+                    $this->form_validation->set_message('assignment_handle_upload', translate('this_file_type_is_not_allowed'));
                     return false;
                 }
-                if ($file_size > $allowedSize) {
-                    $this->form_validation->set_message('handle_upload', translate('file_size_shoud_be_less_than') . " $allowedSizeKB KB.");
+                if ($file_size > $upload_size) {
+                    $this->form_validation->set_message('assignment_handle_upload', translate('file_size_shoud_be_less_than') . " " . ($upload_size / 1024) . " KB");
                     return false;
                 }
             } else {
-                $this->form_validation->set_message('handle_upload', translate('error_reading_the_file'));
+                $this->form_validation->set_message('assignment_handle_upload', translate('error_reading_the_file'));
                 return false;
             }
             return true;
@@ -504,6 +514,7 @@ class Userrole extends User_Controller
                 $message = $this->input->post('message');
                 $homeworkID = $this->input->post('homework_id');
                 $assigmentID = $this->input->post('assigment_id');
+
                 $arrayDB = array(
                     'homework_id' => $homeworkID,
                     'student_id' => get_loggedin_user_id(),
@@ -759,8 +770,8 @@ class Userrole extends User_Controller
                 $status = 1;
                 $page_data = $this->load->view('userrole/getExamPaymentForm', $data, true);
             } else {
-                $status = 0;
-                $message = 'The fee has already been paid.';
+               $status = 0; 
+               $message = 'The fee has already been paid.';
             }
             echo json_encode(array('status' => $status, 'message' => $message, 'data' => $page_data));
         }
@@ -821,83 +832,5 @@ class Userrole extends User_Controller
             set_alert('success', translate('your_exam_has_been_successfully_submitted'));
             redirect(base_url('userrole/online_exam'));
         }
-    }
-
-    public function offline_payments()
-    {
-        if ($_POST) {
-            $this->form_validation->set_rules('fees_type', translate('fees_type'), 'trim|required');
-            $this->form_validation->set_rules('date_of_payment', translate('date_of_payment'), 'trim|required');
-            $this->form_validation->set_rules('fee_amount', translate('amount'), array('trim', 'required', 'numeric', 'greater_than[0]', array('deposit_verify', array($this->fees_model, 'depositAmountVerify'))));
-            $this->form_validation->set_rules('payment_method', translate('payment_method'), 'trim|required');
-            $this->form_validation->set_rules('note', translate('note'), 'trim|required');
-            $this->form_validation->set_rules('proof_of_payment', translate('proof_of_payment'), 'callback_fileHandleUpload[proof_of_payment]');
-            if ($this->form_validation->run() !== false) {
-                $feesType = explode("|", $this->input->post('fees_type'));
-                $date_of_payment = $this->input->post('date_of_payment');
-                $payment_method = $this->input->post('payment_method');
-                $invoice_no = $this->input->post('invoice_no');
-
-                $enc_name = null;
-                $orig_name = null;
-                $config = array();
-                $config['upload_path'] = 'uploads/attachments/offline_payments/';
-                $config['encrypt_name'] = true;
-                $config['allowed_types'] = '*';
-                $this->upload->initialize($config);
-                if ($this->upload->do_upload("proof_of_payment")) {
-                    $orig_name = $this->upload->data('orig_name');
-                    $enc_name = $this->upload->data('file_name');
-                }
-
-                $arrayFees = array(
-                    'fees_allocation_id' => $feesType[0],
-                    'fees_type_id' => $feesType[1],
-                    'invoice_no' => $invoice_no,
-                    'student_enroll_id' => get_loggedin_user_id(),
-                    'amount' => $this->input->post('fee_amount'),
-                    'payment_method' => $payment_method,
-                    'reference' => $this->input->post('reference'),
-                    'note' => $this->input->post('note'),
-                    'payment_date' => date('Y-m-d', strtotime($date_of_payment)),
-                    'submit_date' => date('Y-m-d H:i:s'),
-                    'enc_file_name' => $enc_name,
-                    'orig_file_name' => $orig_name,
-                    'status' => 1,
-                );
-                $this->db->insert('offline_fees_payments', $arrayFees);
-                set_alert('success', "We will review and notify your of your payment.");
-                $array = array('status' => 'success');
-            } else {
-                $error = $this->form_validation->error_array();
-                $array = array('status' => 'fail', 'url' => '', 'error' => $error);
-            }
-            echo json_encode($array);
-        }
-    }
-
-    // get payments details modal
-    public function getOfflinePaymentslDetails()
-    {
-        if ($_POST) {
-            $this->data['payments_id'] = $this->input->post('id');
-            $this->load->view('userrole/getOfflinePaymentslDetails', $this->data);
-        }
-    }
-
-    public function getBalanceByType()
-    {
-        $input = $this->input->post('typeID');
-        if (empty($input)) {
-            $balance = 0;
-            $fine = 0;
-        } else {
-            $feesType = explode("|", $input);
-            $fine = $this->fees_model->feeFineCalculation($feesType[0], $feesType[1]);
-            $b = $this->fees_model->getBalance($feesType[0], $feesType[1]);
-            $balance = $b['balance'];
-            $fine = abs($fine - $b['fine']);
-        }
-        echo json_encode(array('balance' => $balance, 'fine' => $fine));
     }
 }

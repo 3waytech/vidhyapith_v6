@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -19,9 +19,6 @@ class Payroll extends Admin_Controller
         parent::__construct();
         $this->load->model('payroll_model');
         $this->load->model('email_model');
-        if (!moduleIsEnabled('human_resource')) {
-            access_denied();
-        }
     }
 
     public function index()

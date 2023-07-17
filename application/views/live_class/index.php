@@ -59,14 +59,7 @@ endif;
 <?php if (is_superadmin_loggedin()): ?>
 							<td><?php echo $row['branchname'];?></td>
 <?php endif; ?>
-							<td><?php 
-							if ($row['live_class_method'] == 1) {
-								echo 'Zoom';
-							} elseif ($row['live_class_method'] == 2) {
-								echo 'BigBlueButton';
-							} elseif ($row['live_class_method'] == 3) {
-								echo 'Google Meet';
-							} ?></td>
+							<td><?php echo $row['live_class_method'] == 1 ? 'Zoom' : 'BigBlueButton'; ?></td>
 							<td><?php echo $row['title']; ?></td>
 							<td><?php echo $row['meeting_id']; ?></td>
 							<td><?php echo $row['class_name'];?></td>
@@ -83,7 +76,7 @@ endif;
 									$status = '<i class="fas fa-video"></i> ' . translate('live');
 									$labelmode = 'label-success-custom';
 								}
-								if (strtotime($row['date']) < strtotime(date("Y-m-d")) && strtotime($row['end_time']) <= time()) {
+								if (strtotime($row['date']) < strtotime(date("Y-m-d")) || strtotime($row['end_time']) <= time()) {
 									$status = '<i class="far fa-check-square"></i> ' . translate('expired');
 									$labelmode = 'label-danger-custom';
 								}
@@ -167,8 +160,7 @@ endif;
 								$arrayMethod = array(
 									'' => translate('select'),
 									1 => "Zoom",
-									2 => "BigBlueButton",
-									3 => "Google Meet"
+									2 => "BigBlueButton"
 								);
 								echo form_dropdown("live_class_method", $arrayMethod, set_value('live_class_method'), "class='form-control' id='live_class_method'
 								data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity' ");
@@ -176,6 +168,7 @@ endif;
 							<span class="error"></span>
 						</div>
 					</div>
+
 					<div class="form-group hidden-div" id="zoom_config">
                         <div class="col-md-offset-3 col-md-6">
                             <div class="checkbox-replace">
@@ -232,16 +225,6 @@ endif;
 										<input type="checkbox" name="set_mute_on_start" checked> <i></i> <?=translate('set_mute_on_start')?>
 									</label>
 								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="form-group hidden-div" id="gmeet">
-						<div class="form-group">
-							<label class="col-md-3 control-label">Gmeet URL <span class="required">*</span></label>
-							<div class="col-md-6">
-								<input type="text" class="form-control" name="gmeet_url" value="" />
-								<span class="error"></span>
 							</div>
 						</div>
 					</div>

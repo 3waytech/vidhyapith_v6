@@ -104,6 +104,99 @@
 				}
 			});
 		}
+		
+		function confirm_lc_move(move_url) {
+            swal({
+                title: "<?php echo translate('are_you_sure')?>",
+                text: "<?php echo translate('move_this_information')?>",
+                html: `
+                        <input type="text" id="lc_number" class="swal2-input" placeholder="<?php echo translate('enter_lc_number')?>" required>
+                        <input type="date" id="lc_date" class="swal2-input" value="<?=set_value('admission_date', date('Y-m-d'))?>" data-plugin-datepicker	data-plugin-options='{ "todayHighlight" : true }' required>
+                        <select name="schoolleavereason" class="swal2-input" id="schoolleavereason" required>
+                            <option value="">Select reason</option>
+                            <option value="transferanotherschoool">Transfer to another school</option>
+                            <option value="completeprimary">Completed primary education</option>
+                            <option value="completesecondary">Complete secondary education</option>
+                            <option value="completehighersecondary">Complete higher secondary education</option>
+                        </select>
+                        <div style="display: flex;">
+                        <input type="text" id="present_days" class="swal2-input" style="width: 50%!important; margin-right: 10px;" placeholder="<?php echo translate('present_days')?>" required>
+                        <input type="text" id="total_days" class="swal2-input" style="width: 50%!important;" placeholder="<?php echo translate('total_days')?>" required>
+                        </div>
+                        <input type="text" id="reason" class="swal2-input" placeholder="<?php echo translate('enter_reason')?>" required>
+                    `,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-default swal2-btn-default",
+                cancelButtonClass: "btn btn-default swal2-btn-default",
+                confirmButtonText: "<?php echo translate('yes_continue')?>",
+                cancelButtonText: "<?php echo translate('cancel')?>",
+                buttonsStyling: false,
+                footer: "<?php echo translate('move')?>"
+            }).then((result) => {
+                if (result.value) {
+                    // Manually validate the form
+                    var lcNumberInput = document.getElementById('lc_number');
+                    var lcDateInput = document.getElementById('lc_date');
+                    var schoolleavereasonInput = document.getElementById('schoolleavereason');
+                    var present_days = document.getElementById('present_days');
+                    var total_days = document.getElementById('total_days');
+                    var reasonInput = document.getElementById('reason');
+
+                    if (lcNumberInput.checkValidity() && lcDateInput.checkValidity() && schoolleavereasonInput
+                        .checkValidity() && reasonInput.checkValidity()) {
+                        var lcNumber = lcNumberInput.value;
+                        var lcDate = lcDateInput.value;
+                        var schoolleavereason = schoolleavereasonInput.value;
+                        var present_days = present_days.value;
+                        var total_days = total_days.value;
+                        var reason = reasonInput.value;
+
+                        // Add the LC number, LC date, and reason to the data to be sent to the server
+                        var data = {
+                            lcNumber: lcNumber,
+                            lcDate: lcDate,
+                            schoolleavereason: schoolleavereason,
+                            present_days: present_days,
+                            total_days: total_days,
+                            reason: reason
+                        };
+
+                        $.ajax({
+                            url: move_url,
+                            type: "POST",
+                            data: data,
+                            success: function(data) {
+                                swal({
+                                    title: "<?php echo translate('move')?>",
+                                    text: "<?php echo translate('move_this_information');?>",
+                                    buttonsStyling: false,
+                                    showCloseButton: true,
+                                    focusConfirm: false,
+                                    confirmButtonClass: "btn btn-default swal2-btn-default",
+                                    type: "success"
+                                }).then((result) => {
+                                    if (result.value) {
+                                        location.reload();
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        // Form validation failed, display an error message
+                        swal({
+                            title: "Validation Error",
+                            text: "Please fill in all the required fields.",
+                            buttonsStyling: false,
+                            closeOnClickOutside: false,
+                            closeOnEsc: false,
+                            confirmButtonClass: "btn btn-default swal2-btn-default",
+                            type: "error"
+                        });
+                    }
+                }
+            });
+        }
 	</script>
     <?php 
     $config = $this->application_model->whatsappChat();
@@ -154,5 +247,15 @@
         </div>
     </div>
     <?php } ?>
+    <script>
+		(function () {
+		if (window.history && window.history.pushState) {
+			$(window).on('popstate', function () {
+			window.history.forward();
+			});
+		}
+		window.history.pushState('nohb', null, '');
+		})();
+	</script>
 </body>
 </html>

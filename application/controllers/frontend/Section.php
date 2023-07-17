@@ -12,14 +12,11 @@ class Section extends Admin_Controller
             'css' => array(
                 'vendor/summernote/summernote.css',
                 'vendor/dropify/css/dropify.min.css',
-                'vendor/jquery-asColorPicker-master/css/asColorPicker.css',
             ),
             'js' => array(
+                'js/frontend.js',
                 'vendor/summernote/summernote.js',
                 'vendor/dropify/js/dropify.min.js',
-                'vendor/jquery-asColorPicker-master/libs/jquery-asColor.js',
-                'vendor/jquery-asColorPicker-master/libs/jquery-asGradient.js',
-                'vendor/jquery-asColorPicker-master/dist/jquery-asColorPicker.min.js',
             ),
         );
         if (!get_permission('frontend_section', 'is_view')) {
@@ -61,10 +58,7 @@ class Section extends Admin_Controller
             $this->form_validation->set_rules('wel_title', 'Title', 'trim|required');
             $this->form_validation->set_rules('subtitle', 'Subtitle', 'trim|required');
             $this->form_validation->set_rules('description', 'Description', 'trim|required');
-            $this->form_validation->set_rules('photo', translate('photo'), 'callback_photoHandleUpload[photo]');
-            if (isset($_FILES["photo"]) && empty($_FILES["photo"]['name']) && empty($_POST['old_photo'])) {
-                $this->form_validation->set_rules('photo', translate('photo'), 'required');
-            }
+            $this->form_validation->set_rules('photo', 'Photo', 'trim|callback_check_image');
             if ($this->form_validation->run() == true) {
                 // save information in the database
                 $arrayWellcome = array(
@@ -73,7 +67,6 @@ class Section extends Admin_Controller
                     'subtitle' => $this->input->post('subtitle'),
                     'active' => (isset($_POST['isvisible']) ? 1 : 0),
                     'description' => $this->input->post('description'),
-                    'color1' => $this->input->post('title_text_color'),
                     'elements' => json_encode(array('image' => $this->uploadImage('wellcome' . $branchID, 'home_page'))),
                 );
                 // save information in the database
@@ -99,10 +92,7 @@ class Section extends Admin_Controller
             $branchID = $this->frontend_model->getBranchID();
             $this->form_validation->set_rules('tea_title', 'Title', 'trim|required');
             $this->form_validation->set_rules('tea_description', 'Description', 'trim|required');
-            $this->form_validation->set_rules('photo', translate('photo'), 'callback_photoHandleUpload[photo]');
-            if (isset($_FILES["photo"]) && empty($_FILES["photo"]['name']) && empty($_POST['old_photo'])) {
-                $this->form_validation->set_rules('photo', translate('photo'), 'required');
-            }
+            $this->form_validation->set_rules('photo', 'Photo', 'trim|callback_check_image');
             if ($this->form_validation->run() == true) {
                 // save information in the database
                 $arrayTeacher = array(
@@ -114,8 +104,6 @@ class Section extends Admin_Controller
                         'teacher_start' => $this->input->post('teacher_start'),
                         'image' => $this->uploadImage('featured-parallax' . $branchID, 'home_page')
                     )),
-                    'color1' => $this->input->post('title_text_color'),
-                    'color2' => $this->input->post('description_text_color'),
                 );
 
                 // save information in the database
@@ -178,8 +166,6 @@ class Section extends Admin_Controller
                 $arrayServices = array(
                     'branch_id' => $branchID,
                     'title' => $this->input->post('ser_title'),
-                    'color1' => $this->input->post('title_text_color'),
-                    'color2' => $this->input->post('background_color'),
                     'active' => (isset($_POST['isvisible']) ? 1 : 0),
                     'description' => $this->input->post('ser_description'),
                 );
@@ -223,8 +209,6 @@ class Section extends Admin_Controller
                 $arrayServices = array(
                     'branch_id' => $branchID,
                     'title' => $this->input->post('sta_title'),
-                    'color1' => $this->input->post('title_text_color'),
-                    'color2' => $this->input->post('description_text_color'),
                     'active' => (isset($_POST['isvisible']) ? 1 : 0),
                     'description' => $this->input->post('sta_description'),
                     'elements' => json_encode($elements),
@@ -263,8 +247,6 @@ class Section extends Admin_Controller
                 $array_cta = array(
                     'branch_id' => $branchID,
                     'title' => $this->input->post('cta_title'),
-                    'color1' => $this->input->post('background_color'),
-                    'color2' => $this->input->post('text_color'),
                     'active' => (isset($_POST['isvisible']) ? 1 : 0),
                     'elements' => json_encode($elements_data),
                 );
@@ -323,10 +305,7 @@ class Section extends Admin_Controller
                 ajax_access_denied();
             }
             $this->form_validation->set_rules('page_title', 'Page Title', 'trim|required');
-            $this->form_validation->set_rules('photo', translate('photo'), 'callback_photoHandleUpload[photo]');
-            if (isset($_FILES["photo"]) && empty($_FILES["photo"]['name']) && empty($_POST['old_photo'])) {
-                $this->form_validation->set_rules('photo', translate('photo'), 'required');
-            }
+            $this->form_validation->set_rules('photo', 'Photo', 'trim|callback_check_image');
             if ($this->form_validation->run() == true) {
                 // save information in the database
                 $arrayData = array(
@@ -416,17 +395,14 @@ class Section extends Admin_Controller
             }
             $branchID = $this->frontend_model->getBranchID();
             $this->form_validation->set_rules('page_title', 'Page Title', 'trim|required');
-            $this->form_validation->set_rules('photo', translate('photo'), 'callback_photoHandleUpload[photo]');
-            if (isset($_FILES["photo"]) && empty($_FILES["photo"]['name']) && empty($_POST['old_photo'])) {
-                $this->form_validation->set_rules('photo', translate('photo'), 'required');
-            }
+            $this->form_validation->set_rules('photo', 'Photo', 'trim|callback_check_image');
             if ($this->form_validation->run() == true) {
                 // save information in the database
                 $arrayData = array(
                     'page_title' => $this->input->post('page_title'),
                     'meta_description' => $this->input->post('meta_description'),
                     'meta_keyword' => $this->input->post('meta_keyword'),
-                    'banner_image' => $this->uploadImage('event' . $branchID, 'banners'),
+                    'banner_image' => $this->uploadImage('faq' . $branchID, 'banners'),
                 );
 
                 $this->db->where('branch_id', $branchID);
@@ -661,10 +637,7 @@ class Section extends Admin_Controller
             }
             $branchID = $this->frontend_model->getBranchID();
             $this->form_validation->set_rules('page_title', 'Page Title', 'trim|required');
-            $this->form_validation->set_rules('photo', translate('photo'), 'callback_photoHandleUpload[photo]');
-            if (isset($_FILES["photo"]) && empty($_FILES["photo"]['name']) && empty($_POST['old_photo'])) {
-                $this->form_validation->set_rules('photo', translate('photo'), 'required');
-            }
+            $this->form_validation->set_rules('photo', 'Photo', 'trim|callback_check_image');
             if ($this->form_validation->run() == true) {
                 // save information in the database
                 $arrayData = array(
@@ -955,6 +928,29 @@ class Section extends Admin_Controller
         }
     }
 
+    public function check_image()
+    {
+        $prev_image = $this->input->post('old_photo');
+        if ($prev_image == "") {
+            if (isset($_FILES['photo']['name']) && !empty($_FILES['photo']['name'])) {
+                $name = $_FILES['photo']['name'];
+                $arr = explode('.', $name);
+                $ext = end($arr);
+                if ($ext == 'jpg' || $ext == 'jpeg' || $ext == 'png') {
+                    return true;
+                } else {
+                    $this->form_validation->set_message('check_image', translate('select_valid_file_format'));
+                    return false;
+                }
+            } else {
+                $this->form_validation->set_message('check_image', 'The Photo is required.');
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+
     // upload image
     public function uploadImage($img_name, $path)
     {
@@ -966,6 +962,7 @@ class Section extends Admin_Controller
             $extension = pathinfo($image, PATHINFO_EXTENSION);
             $image_path = $img_name . '.' . $extension;
             move_uploaded_file($_FILES['photo']['tmp_name'], $destination . $image_path);
+
             // need to unlink previous slider
             if ($prev_image != $image_path) {
                 if (file_exists($destination . $prev_image)) {
@@ -1001,10 +998,7 @@ class Section extends Admin_Controller
             }
             $this->form_validation->set_rules('page_title', 'Page Title', 'trim|required');
             $this->form_validation->set_rules('description', 'Description', 'required');
-            $this->form_validation->set_rules('photo', translate('photo'), 'callback_photoHandleUpload[photo]');
-            if (isset($_FILES["photo"]) && empty($_FILES["photo"]['name']) && empty($_POST['old_photo'])) {
-                $this->form_validation->set_rules('photo', translate('photo'), 'required');
-            }
+            $this->form_validation->set_rules('photo', 'Photo', 'trim|callback_check_image');
             $this->form_validation->set_rules('templete_id', 'Default Template', 'trim|required');
             if ($this->form_validation->run() == true) {
                 // save information in the database
@@ -1051,10 +1045,7 @@ class Section extends Admin_Controller
             }
             $this->form_validation->set_rules('page_title', 'Page Title', 'trim|required');
             $this->form_validation->set_rules('description', 'Description', 'required');
-            $this->form_validation->set_rules('photo', translate('photo'), 'callback_photoHandleUpload[photo]');
-            if (isset($_FILES["photo"]) && empty($_FILES["photo"]['name']) && empty($_POST['old_photo'])) {
-                $this->form_validation->set_rules('photo', translate('photo'), 'required');
-            }
+            $this->form_validation->set_rules('photo', 'Photo', 'trim|callback_check_image');
             if ($this->form_validation->run() == true) {
                 // save information in the database
                 $arrayData = array(
@@ -1101,10 +1092,7 @@ class Section extends Admin_Controller
             }
             $this->form_validation->set_rules('page_title', 'Page Title', 'trim|required');
             $this->form_validation->set_rules('description', 'Description', 'required');
-            $this->form_validation->set_rules('photo', translate('photo'), 'callback_photoHandleUpload[photo]');
-            if (isset($_FILES["photo"]) && empty($_FILES["photo"]['name']) && empty($_POST['old_photo'])) {
-                $this->form_validation->set_rules('photo', translate('photo'), 'required');
-            }
+            $this->form_validation->set_rules('photo', 'Photo', 'trim|callback_check_image');
             if ($this->form_validation->run() == true) {
                 // save information in the database
                 $arrayData = array(
@@ -1148,10 +1136,7 @@ class Section extends Admin_Controller
                 ajax_access_denied();
             }
             $this->form_validation->set_rules('page_title', 'Page Title', 'trim|required');
-            $this->form_validation->set_rules('photo', translate('photo'), 'callback_photoHandleUpload[photo]');
-            if (isset($_FILES["photo"]) && empty($_FILES["photo"]['name']) && empty($_POST['old_photo'])) {
-                $this->form_validation->set_rules('photo', translate('photo'), 'required');
-            }
+            $this->form_validation->set_rules('photo', 'Photo', 'trim|callback_check_image');
             if ($this->form_validation->run() == true) {
                 // save information in the database
                 $arrayData = array(

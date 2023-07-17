@@ -77,6 +77,7 @@
 							<th><?=translate('name')?></th>
 							<th><?=translate('class')?></th>
 							<th><?=translate('section')?></th>
+							<th><?=translate('student_id')?></th>
 							<th><?=translate('register_no')?></th>
 							<th width="80"><?=translate('roll')?></th>
 							<th><?=translate('age')?></th>
@@ -109,6 +110,7 @@
 							<td class="<?=($row['active'] == 0 ? 'text-danger' : '')?>"><?php echo $row['fullname'];?></td>
 							<td><?php echo $row['class_name'];?></td>
 							<td><?php echo $row['section_name'];?></td>
+							<td><?php echo $row['stu_id'];?></td>
 							<td><?php echo $row['register_no'];?></td>
 							<td><?php echo $row['roll'];?></td>
 							<td>
@@ -151,6 +153,12 @@
 								<!-- delete link -->
 								<?php echo btn_delete('student/delete_data/' . $row['id'] . '/' . $row['student_id']);?>
 							<?php endif; ?>
+							<?php echo btn_movelc('student/studentlc/' . $row['student_id']);?>
+								<!-- move lc deatail link -->
+								<!-- <a href="<?php echo base_url('student/studentlc/' . $row['student_id']);?>" class="btn btn-default btn-circle icon" data-toggle="tooltip"
+								data-original-title="<?=translate('move Lc ')?>">
+									<i class="fa-solid fa-file-import"></i>
+								</a> -->
 							</td>
 						</tr>
 						<?php endforeach;?>
@@ -180,6 +188,10 @@
 			<div class="table-responsive mt-md mb-md">
 				<table class="table table-striped table-bordered table-condensed mb-none">
 					<tbody>
+					    <tr>
+							<th><?=translate('student_id')?></th>
+							<td colspan="3"><span id="quick_stud_id"></span></td>
+						</tr>
 						<tr>
 							<th><?=translate('register_no')?></th>
 							<td><span id="quick_register_no"></span></td>

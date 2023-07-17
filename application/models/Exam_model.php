@@ -158,7 +158,7 @@ class Exam_model extends CI_Model
     public function getStudentReportCard($studentID, $examID, $sessionID)
     {
         $result = array();
-        $this->db->select('enroll.roll,enroll.id as enrollID,student.*,c.name as class_name,se.name as section_name,IFNULL(parent.father_name,"N/A") as father_name,IFNULL(parent.mother_name,"N/A") as mother_name');
+        $this->db->select('enroll.roll,student.*,c.name as class_name,se.name as section_name,IFNULL(parent.father_name,"N/A") as father_name,IFNULL(parent.mother_name,"N/A") as mother_name');
         $this->db->from('enroll');
         $this->db->join('student', 'student.id = enroll.student_id', 'inner');
         $this->db->join('class as c', 'c.id = enroll.class_id', 'left');

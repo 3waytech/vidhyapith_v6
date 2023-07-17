@@ -1,4 +1,3 @@
-
 <section class="panel">
 	<div class="tabs-custom">
 		<ul class="nav nav-tabs">
@@ -42,7 +41,7 @@
 						if (!is_superadmin_loggedin()) {
 							$this->db->where('branch_id', get_loggedin_branch_id());
 						}
-						$this->db->order_by('id', 'asc');
+						$this->db->order_by('id', 'desc');
 						$events = $this->db->get('event')->result();
 						foreach ($events as $event):
 						?>
@@ -71,18 +70,9 @@
 								$audition = $auditions[$event->audition];
 								echo translate($audition);
 								if($event->audition != 1){
-									if ($event->audition == 2) {
-										$selecteds = json_decode($event->selected_list); 
-										foreach ($selecteds as $selected) {
-											echo "<br> <small> - " . get_type_name_by_id('class', $selected) . '</small>' ;
-										}
-									} 
-									if ($event->audition == 3) {
-										$selecteds = json_decode($event->selected_list); 
-										foreach ($selecteds as $selected) {
-											$selected = explode('-', $selected);
-											echo "<br> <small> - " . get_type_name_by_id('class', $selected[0]) . " (" . get_type_name_by_id('section', $selected[1])  . ')</small>' ;
-										}
+									$selecteds = json_decode($event->selected_list); 
+									foreach ($selecteds as $selected) {
+										echo "<br> <small> - " . $this->db->get_where($audition , array('id' => $selected))->row()->name . '</small>' ;
 									}
 								}
 							?></td>
@@ -110,10 +100,6 @@
 								<a href="javascript:void(0);" class="btn btn-circle btn-default icon" onclick="viewEvent('<?=$event->id?>');">
 									<i class="far fa-eye"></i>
 								</a>
-							<?php if (get_permission('event', 'is_edit')) { ?>
-								<!-- edit link -->
-								<a href="<?php echo base_url('event/edit/'.$event->id); ?>" class="btn btn-circle btn-default icon"><i class="fas fa-pen-nib"></i></a>
-							<?php } ?>
 							<?php if (get_permission('event', 'is_delete')) { ?>
 								<!-- deletion link -->
 								<?php echo btn_delete('event/delete/'.$event->id);?>
@@ -167,7 +153,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="form-group" id='auditionDiv'>
+					<div class="form-group">
 						<label class="col-md-3 control-label"><?=translate('audience')?> <span class="required">*</span></label>
 						<div class="col-md-6">
 							<?php

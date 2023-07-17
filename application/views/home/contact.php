@@ -17,7 +17,7 @@
     <div class="contact-info-box">
         <!-- Nested Row Starts -->
         <div class="row">
-            <div class="col-md-5 col-sm-12 d-none d-md-block position-relative">
+            <div class="col-md-5 col-sm-12 d-none d-md-block">
                 <div class="box-img">
                     <img src="<?php echo base_url('uploads/frontend/images/' . $page_data['box_image']); ?>" alt="Image" />
                 </div>

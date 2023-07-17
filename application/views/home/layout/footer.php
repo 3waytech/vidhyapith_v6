@@ -1,24 +1,22 @@
 <!-- Footer Starts -->
 <footer class="main-footer">
-    <div class="footer-area" style="background: <?php echo $cms_setting['footer_background_color'] ?> url(<?=base_url('assets/frontend/images/07.png')?>);">
+    <div class="footer-area" style="background: #383838 url(<?=base_url('assets/frontend/images/07.png')?>);">
         <div class="container px-md-0">
             <div class="row">
                 <div class="col-lg-4 col-md-4 col-sm-12">
                     <div class="footer-logo">
                         <img src="<?php echo base_url('uploads/frontend/images/' . $cms_setting['logo']); ?>" alt="Logo">
                     </div>
-                    <?php if ($global_config['footer_branch_switcher']) {  ?>
-                    <div class="footer-select mb-3 mt-4">
+                    <div class="footer-select">
                         <div class="form-group">
                             <?php
                                 $branch_list = $this->home_model->branch_list();
                                 $default_branch = $this->home_model->getDefaultBranch();
                                 echo form_dropdown("branch_id", $branch_list, $default_branch, "class='form-control' id='activateSchool'
-                                data-plugin-selectTwo");
+                                data-plugin-selectTwo data-minimum-results-for-search='Infinity'");
                             ?>
                         </div>
                     </div>
-                    <?php } ?>
                     <p class="footer-dec"><?php echo $cms_setting['footer_about_text']; ?></p>
                     <ul class="social">
                     <?php if (!empty($cms_setting['facebook_url'])) { ?>
@@ -59,11 +57,17 @@
                     <h4>Quick Links</h4>
                     <ul class="list-unstyled quick-links">
                         <?php
-                            $school = $this->uri->segment(1);
-                            if (empty($school)) {
-                                $branchID = $this->home_model->getDefaultBranch();
-                                $r = $this->db->select('url_alias')->get_where('front_cms_setting', array('branch_id' => $branchID))->row();
-                                $school = $r->url_alias;
+                            $school = '';
+                            $last   = $this->uri->total_segments();
+                            $page   = $this->uri->segment(2);
+                            if ($page == 'page') {
+                                if ($last > 3) {
+                                    $school = $this->uri->segment($last);
+                                }
+                            } else {
+                                if ($last > 2) {
+                                    $school = $this->uri->segment($last);
+                                }
                             }
 							$result = web_menu_list(1);
 							foreach ($result as $row) {
@@ -79,7 +83,7 @@
             </div>
         </div>
     </div>
-    <div class="copyright" style="background-color: <?php echo $cms_setting['copyright_bg_color'] ?>; color: <?php echo $cms_setting['copyright_text_color'] ?>;">
+    <div class="copyright">
         <div class="container px-md-0 clearfix text-center">
             <?php echo $cms_setting['copyright_text']; ?>
         </div>

@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 5.8
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -47,23 +47,6 @@ class Authentication extends Authentication_Controller
                 $login_credential = $this->authentication_model->login_credential($email, $password);
                 if ($login_credential) {
                     if ($login_credential->active) {
-                        $getUser = $this->application_model->getUserNameByRoleID($login_credential->role, $login_credential->user_id);
-                        $getConfig = $this->db->select('translation,session_id')->get_where('global_settings', array('id' => 1))->row();
-                        $language = $getConfig->translation;
-                        if($this->app_lib->isExistingAddon('saas')) {
-                            if ($login_credential->role != 1) {
-                                $schoolSettings = $this->db->select('timezone,translation')->where(array('id' => $getUser['branch_id'], 'status' => 1))->get('branch')->row();
-                                if (empty($schoolSettings)) {
-                                    set_alert('error', translate('inactive_school'));
-                                    redirect(base_url('authentication'));
-                                    exit();
-                                }
-                            }
-                            if ($login_credential->role != 1) {
-                                $language = $schoolSettings->translation;
-                            }
-                        }
-                        // login user type
                         if ($login_credential->role == 6) {
                             $userType = 'parent';
                         } elseif($login_credential->role == 7) {
@@ -71,6 +54,8 @@ class Authentication extends Authentication_Controller
                         } else {
                             $userType = 'staff';
                         }
+                        $getUser = $this->application_model->getUserNameByRoleID($login_credential->role, $login_credential->user_id);
+                        $getConfig = $this->db->get_where('global_settings', array('id' => 1))->row_array();
                         // get logger name
                         $sessionData = array(
                             'name' => $getUser['name'],
@@ -80,8 +65,8 @@ class Authentication extends Authentication_Controller
                             'loggedin_userid' => $login_credential->user_id,
                             'loggedin_role_id' => $login_credential->role,
                             'loggedin_type' => $userType,
-                            'set_lang' =>  $language,
-                            'set_session_id' => $getConfig->session_id,
+                            'set_lang' => $getConfig['translation'],
+                            'set_session_id' => $getConfig['session_id'],
                             'loggedin' => true,
                         );
                         $this->session->set_userdata($sessionData);
@@ -92,6 +77,7 @@ class Authentication extends Authentication_Controller
                         } else {
                             redirect(base_url('dashboard'));
                         }
+
                     } else {
                         set_alert('error', translate('inactive_account'));
                         redirect(base_url('authentication'));
@@ -100,6 +86,7 @@ class Authentication extends Authentication_Controller
                     set_alert('error', translate('username_password_incorrect'));
                     redirect(base_url('authentication'));
                 }
+
             }
         }
         $this->data['branch_id'] = $this->authentication_model->urlaliasToBranch($url_alias);
@@ -176,16 +163,6 @@ class Authentication extends Authentication_Controller
     /* session logout */
     public function logout()
     {
-        $webURL = base_url();
-        if (!is_superadmin_loggedin()) {
-            $cmsRow = $this->db->select('cms_active,url_alias')
-            ->where('branch_id', get_loggedin_branch_id())
-            ->get('front_cms_setting')->row_array();
-            if (isset($cmsRow['cms_active']) && $cmsRow['cms_active'] == 1) {
-                $webURL = base_url((isset($cmsRow['url_alias']) ? $cmsRow['url_alias'] : '') );
-            }
-        }
-
         $this->session->unset_userdata('name');
         $this->session->unset_userdata('logger_photo');
         $this->session->unset_userdata('loggedin_id');
@@ -196,6 +173,6 @@ class Authentication extends Authentication_Controller
         $this->session->unset_userdata('loggedin_branch');
         $this->session->unset_userdata('loggedin');
         $this->session->sess_destroy();
-        redirect($webURL, 'refresh');
+        redirect(base_url(), 'refresh');
     }
 }

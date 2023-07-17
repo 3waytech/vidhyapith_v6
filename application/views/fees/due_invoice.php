@@ -103,8 +103,16 @@ $currency_symbol = $global_config['currency_symbol'];
 						<tbody>
 							<?php
 								foreach($invoicelist as $row):
+								    if ($row['payment']) {
+										$paid = $row['payment']['total_paid'] + $row['payment']['total_discount'];
+										$row['full_amount'] = $row['total_fees'];
+										$row['total_amount'] += $row['payment']['total_paid'];
+										$row['total_discount'] += $row['payment']['total_discount'];	
+									}else{
+										$paid = $row['total_amount'] + $row['total_discount'];
+									}
 									$paid = $row['total_amount'] + $row['total_discount'];
-									if ((float)($row['full_amount'] + $row['prev_due']) <= (float)$paid) {
+									if ((float)$row['full_amount'] <= (float)$paid) {
 
 									} else {
 									?>

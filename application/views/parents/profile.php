@@ -141,7 +141,7 @@
 								<input type="text" class="form-control" name="state" value="<?=set_value('state', $parent['state'])?>" />
 							</div>
 						</div>
-						<div class="col-md-3 mb-sm">
+						<!-- <div class="col-md-3 mb-sm">
 							<div class="form-group">
 								<label class="control-label"><?=translate('mobile_no')?> <span class="required">*</span></label>
 								<div class="input-group">
@@ -150,7 +150,17 @@
 								</div>
 								<span class="error"><?php echo form_error('mobileno'); ?></span>
 							</div>
+						</div> -->
+						<!-- <div class="col-md-3 mb-sm">
+						<div class="form-group">
+							<label class="control-label"><?=translate('mobile_no')?> <span class="required">*</span></label>
+							<div class="input-group">
+								<span class="input-group-addon"><i class="fas fa-phone-volume"></i></span> -->
+								<input type="hidden" class="form-control" name="mobileno" value="<?=set_value('mobileno', $parent['mobileno'])?>" autocomplete="off" />
+							<!-- </div>
+							<span class="error"><?php // echo form_error('mobileno'); ?></span>
 						</div>
+					</div> -->
 						<div class="col-md-3 mb-sm">
 							<div class="form-group">
 								<label class="control-label"><?=translate('email')?></label>
@@ -193,7 +203,7 @@
 					</div>
 
 					<div class="row mb-lg">
-						<div class="col-md-12 mb-sm">
+						<div class="col-md-6 mb-sm">
 							<div class="form-group">
 								<label class="control-label"><?=translate('username')?> <span class="required">*</span></label>
 								<div class="input-group">
@@ -201,6 +211,16 @@
 									<input type="text" class="form-control" name="username" value="<?=set_value('username', $parent['username'])?>" autocomplete="off" />
 								</div>
 								<span class="error"><?php echo form_error('username'); ?></span>
+							</div>
+						</div>
+						<div class="col-md-6 mb-sm">
+							<div class="form-group">
+								<label class="control-label"><?=translate('mobile_no')?> <span class="required">*</span></label>
+								<div class="input-group">
+									<span class="input-group-addon"><i class="far fa-user"></i></span>
+									<input type="text" class="form-control" name="mobile_no" value="<?=set_value('mobileno', $parent['mobileno'])?>" autocomplete="off" />
+								</div>
+								<span class="error"><?php echo form_error('mobile_no'); ?></span>
 							</div>
 						</div>
 					</div>

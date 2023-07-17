@@ -40,7 +40,7 @@
 						<tr>
 							<td><?php echo $count++; ?></td>
 							<td><?php echo $row['title']; ?></td>
-							<td><?php echo empty($row['meeting_id']) ? "-" : $row['meeting_id']; ?></td>
+							<td><?php echo $row['meeting_id']; ?></td>
 							<td><?php echo _d($row['date']);?></td>
                             <td><?php echo date("h:i A", strtotime($row['start_time'])); ?></td>
                             <td><?php echo date("h:i A", strtotime($row['end_time'])); ?></td>

@@ -17,9 +17,6 @@ class Reception extends Admin_Controller
     {
         parent::__construct();
         $this->load->model('reception_model');
-        if (!moduleIsEnabled('reception')) {
-            access_denied();
-        }
     }
 
     public function index()
@@ -137,11 +134,9 @@ class Reception extends Admin_Controller
     // file downloader
     public function download($type = '')
     {
-        $encrypt_name = urldecode($this->input->get('file'));
-        if(preg_match('/^[^.][-a-z0-9_.]+[a-z]$/i', $encrypt_name)) {
-            $this->load->helper('download');
-            force_download($encrypt_name, file_get_contents("uploads/reception/$type/" . $encrypt_name));
-        }
+        $encrypt_name = $this->input->get('file');
+        $this->load->helper('download');
+        force_download($encrypt_name, file_get_contents("uploads/reception/$type/" . $encrypt_name));
     }
 
     /* call log form validation rules */

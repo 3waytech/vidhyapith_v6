@@ -109,6 +109,17 @@
 								<td class="text-left"><?php echo get_type_name_by_id('staff', $row['assigned_id']); ?></td>
 							</tr>
 							<tr>
+                                <td colspan="2"><?=translate('admission')?> :</td>
+                                <span
+                                    class="<?php if ($sub_page == 'student/student_add_enquiry') echo 'nav-active';?>"></span>
+                                <a href="<?=base_url('student/student_add_enquiry/' . $row['id'])?>"
+                                    class="btn btn-success">
+                                    <span><i class="fas fa-caret-right"
+                                            aria-hidden="true"></i><?=translate('create_admission')?></span>
+                                </a>
+
+                            </tr>
+							<tr>
 								<td colspan="2"><?=translate('created_by')?> :</td>
 								<td class="text-left"><?php echo get_type_name_by_id('staff', $row['created_by']); ?></td>
 							</tr>

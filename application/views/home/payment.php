@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="<?php echo base_url('assets/vendor/font-awesome/css/all.min.css'); ?>">
     <link rel="stylesheet" href="<?php echo base_url('assets/vendor/select2/css/select2.min.css'); ?>">
 	<link rel="stylesheet" href="<?php echo base_url('assets/vendor/sweetalert/sweetalert-custom.css');?>">
-    <link rel="stylesheet" href="<?php echo base_url('assets/frontend/css/style.css'); ?>">
+    <link rel="stylesheet" href="<?php echo base_url('assets/frontend/css/style_red.css'); ?>">
     <script src="<?php echo base_url('assets/vendor/jquery/jquery.min.js'); ?>"></script>
 </head>
 
@@ -31,38 +31,38 @@
                         <h1>Payer Details</h1>
                         <?php echo form_open('admissionpayment/checkout/', array('class' => 'form-horizontal frm-submit' )); ?>
                         <input type="hidden" name="student_id" value="<?php echo $get_student['id'] ?>">
-                        <div class="form-group mb-2">
+                        <div class="form-group">
                             <label class="control-label"> <?=translate('name')?> <span class="required">*</span></label>
                             <input type="text" class="form-control" name="name" value="<?=set_value('name')?>" autocomplete="off" />
                             <span class="error"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group">
                             <label class="control-label"> <?=translate('email')?> <span class="required">*</span></label>
                             <input type="text" class="form-control" name="email" value="<?=set_value('email')?>" autocomplete="off" />
                             <span class="error"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group">
                             <label class="control-label"> <?=translate('post_code')?> <span class="required">*</span></label>
                             <input type="text" class="form-control" name="post_code" value="<?=set_value('post_code')?>" autocomplete="off" />
                             <span class="error"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group">
                             <label class="control-label"> <?=translate('mobile_no')?> <span class="required">*</span></label>
                             <input type="text" class="form-control" name="mobile_no" value="<?=set_value('mobile_no')?>" autocomplete="off" />
                             <span class="error"></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group">
                             <label class="control-label"> <?=translate('state')?> <span class="required">*</span></label>
                             <input type="text" class="form-control" name="state" value="<?=set_value('state')?>" autocomplete="off" />
                             <span class="error"></span>
                         </div>
 
-                        <div class="form-group mb-2">
+                        <div class="form-group">
                             <label class="control-label"><?=translate('address')?> <span class="required">*</span></label>
                             <textarea class="form-control" id="address" name="address" rows="2" placeholder="Enter Address"><?php echo set_value('address'); ?></textarea>
                             <span class="error"><?=form_error('class_id')?></span>
                         </div>
-                        <div class="form-group mb-2">
+                        <div class="form-group">
                             <label class="control-label"> <?=translate('payment_method')?> <span class="required">*</span></label>
                             <?php
                                 $config = $this->home_model->getPaymentConfig($get_student['branch_id']);
@@ -85,14 +85,6 @@
                                         $payvia_list['midtrans'] = 'Midtrans';
                                     if ($config['flutterwave_status'] == 1)
                                         $payvia_list['flutterwave'] = 'Flutter Wave';
-                                    if ($config['paytm_status'] == 1)
-                                        $payvia_list['paytm'] = 'Paytm';
-                                    if ($config['toyyibpay_status'] == 1)
-                                        $payvia_list['toyyibpay'] = 'toyyibPay';
-                                    if ($config['payhere_status'] == 1)
-                                        $payvia_list['payhere'] = 'Payhere';
-                                    if ($config['nepalste_status'] == 1)
-                                        $payvia_list['nepalste'] = 'Nepalste';
                                     echo form_dropdown("payment_method", $payvia_list, set_value('payment_method'), "class='form-control'  data-plugin-selectTwo id='pay_via'
                                     data-minimum-results-for-search='Infinity' ");
                                 ?>

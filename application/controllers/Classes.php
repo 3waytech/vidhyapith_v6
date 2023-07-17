@@ -206,6 +206,8 @@ class Classes extends Admin_Controller
             $this->db->where('teacher_id', $teacher_id);
             $this->db->where('class_id', $classID);
             $this->db->where('section_id', $sectionID);
+            $this->db->where('session_id', get_session_id());
+
             $query = $this->db->get('teacher_allocation');
             if ($query->num_rows() > 0) {
                 $this->form_validation->set_message("unique_teacherID", translate('class_teachers_are_already_allocated_for_this_class'));
@@ -227,6 +229,7 @@ class Classes extends Admin_Controller
             }
             $this->db->where('class_id', $classID);
             $this->db->where('section_id', $sectionID);
+            $this->db->where('session_id', get_session_id());
             $query = $this->db->get('teacher_allocation');
             if ($query->num_rows() > 0) {
                 $this->form_validation->set_message("unique_sectionID", translate('this_class_teacher_already_assigned'));

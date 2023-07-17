@@ -33,19 +33,6 @@
 					<li>
 						<a href="#flutterwave" data-toggle="tab">Flutter Wave</a>
 					</li>
-
-					<li>
-						<a href="#paytm" data-toggle="tab">Paytm</a>
-					</li>
-					<li>
-						<a href="#toyyibpay" data-toggle="tab">toyyibPay</a>
-					</li>
-					<li>
-						<a href="#payhere" data-toggle="tab">Payhere</a>
-					</li>
-					<li>
-						<a href="#nepalste" data-toggle="tab">Nepalste</a>
-					</li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane box active" id="paypal">
@@ -384,133 +371,6 @@
 							</footer>
 						<?php echo form_close();?>
 					</div>
-
-					<div class="tab-pane box" id="paytm">
-						<?php echo form_open('settings/paytm_save', array('class' => 'form-horizontal frm-submit-msg'));?>
-							<input type="hidden" name="branch_id" value="<?=$branch_id?>">
-							<div class="form-group">
-							  <label  class="col-sm-3 control-label">Merchant MID</label>
-								<div class="col-md-6">
-									<input type="text" class="form-control" name="paytm_merchantmid" value="<?=$config['paytm_merchantmid']?>">
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-3 control-label">Merchant Key</label>
-								<div class="col-md-6">
-									<input type="text" class="form-control" name="paytm_merchantkey" value="<?=$config['paytm_merchantkey']?>">
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-3 control-label">Website</label>
-								<div class="col-md-6">
-									<input type="text" class="form-control" name="paytm_merchant_website" value="<?=$config['paytm_merchant_website']?>">
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-3 control-label">Industry Type</label>
-								<div class="col-md-6  mb-md">
-									<input type="text" class="form-control" name="paytm_industry_type" value="<?=$config['paytm_industry_type']?>">
-									<span class="error"></span>
-								</div>
-							</div>
-							<footer class="panel-footer">
-								<div class="row">
-									<div class="col-md-3 col-sm-offset-3">
-										<button type="submit" class="btn btn btn-default btn-block" data-loading-text="<i class='fas fa-spinner fa-spin'></i> Processing">
-											<i class="fas fa-plus-circle"></i> <?=translate('save');?>
-										</button>
-									</div>
-								</div>
-							</footer>
-						<?php echo form_close();?>
-					</div>
-					<div class="tab-pane box" id="toyyibpay">
-						<?php echo form_open('settings/toyyibPay_save', array('class' => 'form-horizontal frm-submit-msg'));?>
-							<input type="hidden" name="branch_id" value="<?=$branch_id?>">
-							<div class="form-group">
-							  <label  class="col-sm-3 control-label">Secret key</label>
-								<div class="col-md-6">
-									<input type="text" class="form-control" name="toyyibpay_secretkey" value="<?=$config['toyyibpay_secretkey']?>">
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-3 control-label">Category Code</label>
-								<div class="col-md-6  mb-md">
-									<input type="text" class="form-control" name="toyyibpay_categorycode" value="<?=$config['toyyibpay_categorycode']?>">
-									<span class="error"></span>
-								</div>
-							</div>
-							<footer class="panel-footer">
-								<div class="row">
-									<div class="col-md-3 col-sm-offset-3">
-										<button type="submit" class="btn btn btn-default btn-block" data-loading-text="<i class='fas fa-spinner fa-spin'></i> Processing">
-											<i class="fas fa-plus-circle"></i> <?=translate('save');?>
-										</button>
-									</div>
-								</div>
-							</footer>
-						<?php echo form_close();?>
-					</div>
-					<div class="tab-pane box" id="payhere">
-						<?php echo form_open('settings/payhere_save', array('class' => 'form-horizontal frm-submit-msg'));?>
-							<input type="hidden" name="branch_id" value="<?=$branch_id?>">
-							<div class="form-group">
-							  <label  class="col-sm-3 control-label">Merchant ID</label>
-								<div class="col-md-6">
-									<input type="text" class="form-control" name="payhere_merchant_id" value="<?=$config['payhere_merchant_id']?>">
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-3 control-label">Merchant Secret</label>
-								<div class="col-md-6  mb-md">
-									<input type="text" class="form-control" name="payhere_merchant_secret" value="<?=$config['payhere_merchant_secret']?>">
-									<span class="error"></span>
-								</div>
-							</div>
-							<footer class="panel-footer">
-								<div class="row">
-									<div class="col-md-3 col-sm-offset-3">
-										<button type="submit" class="btn btn btn-default btn-block" data-loading-text="<i class='fas fa-spinner fa-spin'></i> Processing">
-											<i class="fas fa-plus-circle"></i> <?=translate('save');?>
-										</button>
-									</div>
-								</div>
-							</footer>
-						<?php echo form_close();?>
-					</div>
-					<div class="tab-pane box" id="nepalste">
-						<?php echo form_open('settings/nepalste_save', array('class' => 'form-horizontal frm-submit-msg'));?>
-							<input type="hidden" name="branch_id" value="<?=$branch_id?>">
-							<div class="form-group">
-							  <label  class="col-sm-3 control-label">Public Key</label>
-								<div class="col-md-6">
-									<input type="text" class="form-control" name="nepalste_public_key" value="<?=$config['nepalste_public_key']?>">
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label  class="col-sm-3 control-label">Secret Key</label>
-								<div class="col-md-6  mb-md">
-									<input type="text" class="form-control" name="nepalste_secret_key" value="<?=$config['nepalste_secret_key']?>">
-									<span class="error"></span>
-								</div>
-							</div>
-							<footer class="panel-footer">
-								<div class="row">
-									<div class="col-md-3 col-sm-offset-3">
-										<button type="submit" class="btn btn btn-default btn-block" data-loading-text="<i class='fas fa-spinner fa-spin'></i> Processing">
-											<i class="fas fa-plus-circle"></i> <?=translate('save');?>
-										</button>
-									</div>
-								</div>
-							</footer>
-						<?php echo form_close();?>
-					</div>
 				</div>
 			</div>
 		</section>
@@ -612,46 +472,6 @@
 							<label class="i-checks">
 								<input type="checkbox" name="flutterwave" id="flutterwave" <?=($config['flutterwave_status'] == 1 ? 'checked' : ''); ?>>
 								<i></i> Flutter Wave
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-md-12">
-						<div class="checkbox-replace">
-							<label class="i-checks">
-								<input type="checkbox" name="paytm_status" id="paytm" <?=($config['paytm_status'] == 1 ? 'checked' : ''); ?>>
-								<i></i> Paytm
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-md-12">
-						<div class="checkbox-replace">
-							<label class="i-checks">
-								<input type="checkbox" name="toyyibpay_status" id="toyyibpay" <?=($config['toyyibpay_status'] == 1 ? 'checked' : ''); ?>>
-								<i></i> toyyibPay
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-md-12">
-						<div class="checkbox-replace">
-							<label class="i-checks">
-								<input type="checkbox" name="payhere_status" id="flutterwave" <?=($config['payhere_status'] == 1 ? 'checked' : ''); ?>>
-								<i></i> Payhere
-							</label>
-						</div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-md-12">
-						<div class="checkbox-replace">
-							<label class="i-checks">
-								<input type="checkbox" name="nepalste_status" id="nepalste" <?=($config['nepalste_status'] == 1 ? 'checked' : ''); ?>>
-								<i></i> Nepalste
 							</label>
 						</div>
 					</div>

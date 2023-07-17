@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -13,6 +13,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Home extends Frontend_Controller
 {
+
     public function __construct()
     {
         parent::__construct();
@@ -78,9 +79,6 @@ class Home extends Frontend_Controller
         $branchID = $this->home_model->getDefaultBranch();
         $this->data['branchID'] = $branchID;
         $this->data['event'] = $this->home_model->get('event', array('id' => $id, 'branch_id' => $branchID, 'status' => 1, 'show_web' => 1), true);
-        if (empty($this->data['event']['id'])) {
-            redirect($_SERVER['HTTP_REFERER']);
-        }
         $this->data['page_data'] = $this->home_model->get('front_cms_events', array('branch_id' => $branchID), true);
         $this->data['main_contents'] = $this->load->view('home/event_view', $this->data, true);
         $this->load->view('home/layout/index', $this->data);
@@ -356,11 +354,10 @@ class Home extends Frontend_Controller
                         'subject' => 'Contact Form Email',
                         'message' => $msg,
                     );
-                    $send = $this->mailer->send($data, true);
-                    if ($send == true) {
+                    if ($this->mailer->send($data)) {
                         $this->session->set_flashdata('msg_success', 'Message Successfully Sent. We will contact you shortly.');
                     } else {
-                        $this->session->set_flashdata('msg_error',  'Message Not Successfully Sent. Error - ' . $send);
+                        $this->session->set_flashdata('msg_error', $this->email->print_debugger());
                     }
                 } else {
                     $error = 'Captcha is invalid';
@@ -556,7 +553,9 @@ class Home extends Frontend_Controller
         $this->db->where('front_cms_menu.alias', $url);
         $this->db->where('front_cms_menu.publish', 1);
         $getData = $this->db->get()->row_array();
-      
+        if (empty($getData)) {
+            redirect('404_override');
+        }
         $this->data['page_data'] = $getData;
         $this->data['active_menu'] = 'page';
         $this->data['main_contents'] = $this->load->view('home/page', $this->data, true);
@@ -590,13 +589,14 @@ class Home extends Frontend_Controller
     public function get_branch_url()
     {
         $branch_id = $this->input->post("branch_id");
-        $url = $this->db->select('url_alias')->where('branch_id', $branch_id)->get('front_cms_setting')->row_array();
+        $url = $this->db->where('branch_id', $branch_id)->get('front_cms_setting')->row_array();
         $school = "";
         if ($this->uri->segment(4)) {
             $school = $this->uri->segment(4);
         } else {
             $school = $this->uri->segment(3);
         }
-        echo json_encode(array('url_alias' => base_url($url['url_alias'])));
+        echo json_encode(array('url_alias' => base_url("home/index/" . $url['url_alias'])));
     }
+
 }

@@ -67,28 +67,16 @@
 		// initiate Datatable
 		initDatatable('.exam-list', 'userrole/getExamListDT', {}, 25);
 
-
 		$(document).on('change', '#payVia', function(){
 			var method = $(this).val();
 			if (method =="payumoney") {
 				$('.payu').show(400);
 				$('.sslcommerz').hide(400);
-				$('.toyyibpay').hide(400);
 			} else if (method =="sslcommerz") {
 				$('.sslcommerz').show(400);
 				$('.payu').hide(400);
-				$('.toyyibpay').hide(400);
-			} else if (method == "toyyibpay" || method == "payhere") {
-				$('.toyyibpay').show(400);
-				$('.sslcommerz').hide(400);
-				$('.payu').hide(400);
-			} else if (method =="toyyibpay") {
-				$('.toyyibpay').show(400);
-				$('.sslcommerz').hide(400);
-				$('.payu').hide(400);
 			} else{
 				$('.sslcommerz').hide(400);
-				$('.toyyibpay').hide(400);
 				$('.payu').hide(400);
 			}
 		});

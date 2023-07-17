@@ -11,7 +11,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @copyright : Reserved RamomCoder Team
  */
 
-class Dashboard extends Dashboard_Controller
+class Dashboard extends Admin_Controller
 {
 
     public function __construct()

@@ -28,6 +28,8 @@ class MY_Model extends CI_Model {
 	                }
 	            }
 				$return_photo = $this->upload->data('file_name');
+				// $return_photo = $reg_no . '.' . pathinfo($_FILES["$fields"]['name'], PATHINFO_EXTENSION);
+
 			}
 		}else{
 			if (!empty($old_user_photo)){
@@ -56,7 +58,7 @@ class MY_Model extends CI_Model {
         }
         $result = $this->db->get($table)->$method();
 
-		if (empty($result) && $single == true) {
+		if (empty($result ) && $single == true) {
 		    $config = array();
 		    $r = $this->db->list_fields($table);
 		    foreach ($r as $key => $value) {
@@ -78,28 +80,4 @@ class MY_Model extends CI_Model {
         $q = $this->db->query("SELECT * FROM " . $table . " WHERE id = " . $this->db->escape($id));
 		return $q->$method();
     }
-
-    public function fileupload($media_name, $upload_path = "", $old_file = '', $enc = true)
-    {
-        if (file_exists($_FILES[$media_name]['tmp_name']) && !$_FILES[$media_name]['error'] == UPLOAD_ERR_NO_FILE) {
-            $config['upload_path'] = $upload_path;
-            $config['allowed_types'] = '*';
-            if ($enc == true) {
-                $config['encrypt_name'] = true;
-            } else {
-                $config['overwrite'] = FALSE;
-            }
-            $this->upload->initialize($config);
-            if ($this->upload->do_upload($media_name)) {
-                if (!empty($old_file)) {
-                    $file_name = $config['upload_path'] . $old_file;
-                    if (file_exists($file_name)) {
-                        unlink($file_name);
-                    }
-                }
-                return $this->upload->data('file_name');
-            }
-        }
-        return null;
-    } 
 }

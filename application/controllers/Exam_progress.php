@@ -77,6 +77,15 @@ class Exam_progress extends Admin_Controller
             if (!get_permission('progress_reports', 'is_view')) {
                 ajax_access_denied();
             }
+            $this->data['exam_name'] = $this->input->post('exam_name');
+            $this->data['landscape'] = $this->input->post('landscape');
+            $this->data['header'] = $this->input->post('header');
+            $this->data['footer'] = $this->input->post('footer');
+            $this->data['gpa'] = $this->input->post('gpa');
+            $this->data['date'] = $this->input->post('date');
+            $this->data['subje_id'] = $this->input->post('subject_id');
+
+            $this->data['parentsign'] = $this->input->post('parentsign');
             $this->data['examArray'] = $this->input->post('exam_id[]');
             $this->data['student_array'] = $this->input->post('student_id');
             $this->data['remarks_array'] = $this->input->post('remarks');

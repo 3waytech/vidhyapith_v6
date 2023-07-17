@@ -12,7 +12,7 @@
 					<label class="control-label"><?=translate('branch')?> <span class="required">*</span></label>
 					<?php
 						$arrayBranch = $this->app_lib->getSelectList('branch');
-						echo form_dropdown("branch_id", $arrayBranch, set_value('branch_id'), "class='form-control' onchange='getClassByBranch(this.value)' id='branchID'
+						echo form_dropdown("branch_id", $arrayBranch, set_value('branch_id'), "class='form-control' onchange='getClassByBranch(this.value)'
 						data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity'");
 					?>
 				</div>
@@ -45,7 +45,7 @@
 				<div class="form-group <?php if (form_error('date')) echo 'has-error'; ?>">
 					<label class="control-label"><?=translate('date')?> <span class="required">*</span></label>
 					<div class="input-group">
-						<input type="text" class="form-control" name="date" id="attDate" value="<?=set_value('date', date("Y-m-d"))?>" autocomplete="off"/>
+						<input type="text" class="form-control" data-plugin-datepicker name="date" value="<?=set_value('date', date("Y-m-d"))?>"/>
 						<span class="input-group-addon"><i class="icon-event icons"></i></span>
 					</div>
 					<span class="error"><?=form_error('date')?></span>
@@ -74,9 +74,6 @@
 			<h4 class="panel-title"><i class="fas fa-users"></i> <?=translate('students_list')?></h4>
 		</header>
 		<div class="panel-body">
-			<?php if (!empty($attendencelist[0]['att_status'])) { ?>
-			 <div class="alert alert-success">Today's attendance has already been submitted, would you like to edit it?</div>
-			<?php } ?>
 			<div class="row">
 				<div class="col-md-offset-9 col-md-3">
 					<div class="form-group mb-sm">
@@ -86,8 +83,8 @@
 								"" => translate('not_selected'),
 								"P" 	=> translate('present'),
 								"A" 	=> translate('absent'),
-								"L" 	=> translate('late'),
-								"HD" 	=> translate('half_day'),
+								"H" 	=> translate('holiday'),
+								"L" 	=> translate('late')
 							);
 							echo form_dropdown("mark_all_everyone", $array, set_value('mark_all_everyone'), "class='form-control' 
 							onchange='selAtten_all(this.value)' data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity' ");
@@ -117,7 +114,6 @@
 										?>
 								<tr>
 									<input type="hidden" name="attendance[<?=$key?>][attendance_id]" value="<?=$row['att_id']?>" >
-									<input type="hidden" name="attendance[<?=$key?>][enroll_id]" value="<?=$row['enroll_id']?>" >
 									<input type="hidden" name="attendance[<?=$key?>][student_id]" value="<?=$row['student_id']?>" >
 									<td><?php echo $count++; ?></td>
 									<td><?php echo $row['first_name'] . ' ' . $row['last_name']; ?></td>
@@ -125,24 +121,27 @@
 									<td><?php echo $row['register_no']; ?></td>
 									<td>
 										<div class="radio-custom radio-success radio-inline mt-xs">
-											<input type="radio" value="P" <?=(empty($row['att_status']) ? 'checked' : '')?> <?=($row['att_status'] == 'P' ? 'checked' : '')?> name="attendance[<?=$key?>][status]" id="pstatus_<?=$key?>">
+											<input type="radio" value="P" <?=($row['att_status'] == 'P' ? 'checked' : '')?> name="attendance[<?=$key?>][status]" id="pstatus_<?=$key?>">
 											<label for="pstatus_<?=$key?>"><?=translate('present')?></label>
 										</div>
+
 										<div class="radio-custom radio-danger radio-inline mt-xs">
 											<input type="radio" value="A" <?=($row['att_status'] == 'A' ? 'checked' : '')?> name="attendance[<?=$key?>][status]" id="astatus_<?=$key?>">
 											<label for="astatus_<?=$key?>"><?=translate('absent')?></label>
 										</div>
+
+										<div class="radio-custom radio-info radio-inline mt-xs">
+											<input type="radio" value="H" <?=($row['att_status'] == 'H' ? 'checked' : '')?> name="attendance[<?=$key?>][status]" id="hstatus_<?=$key?>">
+											<label for="hstatus_<?=$key?>"><?=translate('holiday')?></label>
+										</div>
+
 										<div class="radio-custom radio-inline mt-xs">
 											<input type="radio" value="L" <?=($row['att_status'] == 'L' ? 'checked' : '')?> name="attendance[<?=$key?>][status]" id="lstatus_<?=$key?>">
 											<label for="lstatus_<?=$key?>"><?=translate('late')?></label>
 										</div>
-										<div class="radio-custom radio-inline mt-xs">
-											<input type="radio" value="HD" <?=($row['att_status'] == 'HD' ? 'checked' : '')?> name="attendance[<?=$key?>][status]" id="hdstatus_<?=$key?>">
-											<label for="hdstatus_<?=$key?>"><?=translate('half_day')?></label>
-										</div>
 									</td>
 									<td>
-										<input class="form-control" style="min-width: 110px;" name="attendance[<?=$key?>][remark]" type="text" placeholder="<?=translate('remarks')?>" value="<?=$row['att_remark']?>" >
+										<input class="form-control" name="attendance[<?=$key?>][remark]" type="text" placeholder="<?=translate('remarks')?>" value="<?=$row['att_remark']?>" >
 									</td>
 								</tr>
 									<?php 
@@ -168,35 +167,3 @@
 		<?php echo form_close();?>
 	</section>
 <?php endif; ?>
-
-<script type="text/javascript">
-	var dayOfWeekDisabled = "<?php echo $getWeekends ?>";
-
-	$(document).ready(function () {
-		var datePicker = $("#attDate").datepicker({
-		    orientation: 'bottom',
-		    todayHighlight: true,
-		    autoclose: true,
-		    format: 'yyyy-mm-dd',
-		    daysOfWeekDisabled: dayOfWeekDisabled,
-		    datesDisabled: ["<?php echo $getHolidays ?>"],
-		});   
-    });
-    
-	$('select#branchID').change(function() {
-		var branchID = $(this).val();
-		$.ajax({
-			url: base_url + "attendance/getWeekendsHolidays",
-			type: 'POST',
-			dataType: "json",
-			data: {
-				branch_id: branchID,
-			},
-			success: function (data) {
-				$('#attDate').val("");
-				$('#attDate').datepicker('setDaysOfWeekDisabled', data.getWeekends);
-				$('#attDate').datepicker('setDatesDisabled', JSON.parse(data.getHolidays));
-			}
-		});
-	});
-</script>

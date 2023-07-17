@@ -39,6 +39,7 @@ class Employee_model extends MY_Model
 
         $inser_data2 = array(
             'username' => $data["username"],
+            'mobile_no' => $data["mobile_no"],
             'role' => $data["user_role"],
         );
 

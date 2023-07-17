@@ -29,14 +29,8 @@
 											<li><span class="text-weight-semibold"><?=translate('created_by')?></span> : <?=$row['created_by'] != null ? get_type_name_by_id('staff',$row['created_by']) : "N/A";?></li>
 											<li><span class="text-weight-semibold"><?=translate('status')?></span> : <?php 
 											if ($row['ev_status'] == 'u' || $row['ev_status'] == '') {
-												$submitStatus = $this->db->select('id')->where(['student_id' => $row['student_id'], 'homework_id' => $row['id']])->get('homework_submit')->row();
-												if (empty($submitStatus) || $row['ev_status'] == 'u') {
-													$labelmode = 'label-danger-custom';
-													$status = translate('incomplete');
-												} else {
-													$labelmode = 'label-info-custom';
-													$status = translate('submitted');
-												}
+												$labelmode = 'label-danger-custom';
+												$status = translate('incomplete');
 											} else {
 												$status = translate('complete');
 												$labelmode = 'label-success-custom';

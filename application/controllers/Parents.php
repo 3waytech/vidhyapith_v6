@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -45,6 +45,8 @@ class Parents extends Admin_Controller
         $this->form_validation->set_rules('linkedin', 'Linkedin', 'valid_url');
         if ($getBranch['grd_generate'] == 0 || isset($_POST['parent_id'])) {
             $this->form_validation->set_rules('username', translate('username'), 'trim|required|callback_unique_username');
+            $this->form_validation->set_rules('mobile_no', translate('mobileno'), 'trim|required|regex_match[/^[0-9]{10}$/]');
+
             if (!isset($_POST['parent_id'])) {
                 $this->form_validation->set_rules('password', translate('password'), 'trim|required|min_length[4]');
                 $this->form_validation->set_rules('retype_password', translate('retype_password'), 'trim|required|matches[password]');
@@ -82,16 +84,8 @@ class Parents extends Admin_Controller
         if (!get_permission('parent', 'is_add')) {
             access_denied();
         }
-
         $getBranch = $this->getBranchDetails();
         if ($this->input->post('submit') == 'save') {
-
-            // check saas parents add limit
-            if (!checkSaasLimit('parent')) {
-                set_alert('error', translate('update_your_package'));
-                redirect(site_url('dashboard'));
-            }
-            
             $this->parent_validation();
             if ($this->form_validation->run() == true) {
                 $post = $this->input->post();

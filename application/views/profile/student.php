@@ -14,6 +14,7 @@ if (empty($student['previous_details'])) {
 }
 $currency_symbol = $global_config['currency_symbol'];
 
+$first_name = $this->student_fields_model->getStatusProfile('first_name', $branchID);
 $last_name = $this->student_fields_model->getStatusProfile('last_name', $branchID);
 $gender = $this->student_fields_model->getStatusProfile('gender', $branchID);
 $blood_group = $this->student_fields_model->getStatusProfile('blood_group', $branchID);
@@ -31,7 +32,7 @@ $student_photo = $this->student_fields_model->getStatusProfile('student_photo', 
 $previous_school_details = $this->student_fields_model->getStatusProfile('previous_school_details', $branchID);
 
 $personal = false;
-if ($last_name['status'] == 1 || $gender['status'] == 1 || $blood_group['status'] == 1 || $birthday['status'] == 1 || $religion['status'] == 1 || $mother_tongue['status'] == 1 || $caste['status'] == 1 || $present_address['status'] == 1 || $permanent_address['status'] == 1 || $student_mobile_no['status'] == 1 || $student_email['status'] == 1 || $city['status'] == 1 || $state['status'] == 1 || $student_photo['status'] == 1) {
+if ($first_name['status'] == 1 || $last_name['status'] == 1 || $gender['status'] == 1 || $blood_group['status'] == 1 || $birthday['status'] == 1 || $religion['status'] == 1 || $mother_tongue['status'] == 1 || $caste['status'] == 1 || $present_address['status'] == 1 || $permanent_address['status'] == 1 || $student_mobile_no['status'] == 1 || $student_email['status'] == 1 || $city['status'] == 1 || $state['status'] == 1 || $student_photo['status'] == 1) {
 	$personal = true;
 }
 ?>
@@ -609,13 +610,14 @@ if ($last_name['status'] == 1 || $gender['status'] == 1 || $blood_group['status'
 						</div>
 
 						<?php
-						$v = (1 + floatval($last_name['status']) + floatval($gender['status']));
+						$v = (floatval($first_name['status']) + floatval($last_name['status']) + floatval($gender['status']));
 						$div = ($v == 0) ? 12 : floatval(12 / $v);
 						?>
 						<div class="row">
+							<?php if ($first_name['status'] == 1) { ?>
 							<div class="col-md-<?php echo $div ?> mb-sm">
 								<div class="form-group">
-									<label class="control-label"><?=translate('first_name')?> <span class="required">*</span></label>
+									<label class="control-label"><?=translate('first_name')?><?php echo $first_name['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
 									<div class="input-group">
 										<span class="input-group-addon"><i class="fas fa-user-graduate"></i></span>
 										<input type="text" class="form-control" name="first_name" value="<?=set_value('first_name', $student['first_name'])?>"/>
@@ -623,7 +625,7 @@ if ($last_name['status'] == 1 || $gender['status'] == 1 || $blood_group['status'
 									<span class="error"></span>
 								</div>
 							</div>
-							<?php if ($last_name['status'] == 1) { ?>
+							<?php } if ($last_name['status'] == 1) { ?>
 							<div class="col-md-<?php echo $div ?> mb-sm">
 								<div class="form-group">
 									<label class="control-label"><?=translate('last_name')?><?php echo $last_name['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>

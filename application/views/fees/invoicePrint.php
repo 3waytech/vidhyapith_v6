@@ -22,7 +22,7 @@ if (count($student_array)) {
 		<div class="row">
 			<div class="col-xs-6">
 				<div class="ib">
-					<img src="<?=$this->application_model->getBranchImage($basic['branch_id'], 'printing-logo')?>" alt="RamomCoder Img" />
+					<img src="<?=base_url('uploads/app_image/printing-logo.png')?>" alt="RamomCoder Img" />
 				</div>
 			</div>
 			<div class="col-md-6 text-right">
@@ -59,12 +59,9 @@ if (count($student_array)) {
 					<address>
 						<?php 
 						echo $basic['first_name'] . ' ' . $basic['last_name'] . '<br>';
-						echo translate('register_no') . ' : ' . $basic['register_no'] . '<br>';
-						echo (empty($basic['student_address']) ? "" : nl2br($basic['student_address']) . '<br>');
-						echo translate('class') . ' : ' . $basic['class_name'] . " (" . $basic['section_name'] . ')<br>';
-						if (!empty($basic['father_name'])) {
-							echo translate('father_name') . ' : ' . $basic['father_name'];
-						}
+						echo $basic['student_address'] . '<br>';
+						echo translate('class') . ' : ' . $basic['class_name'] . '<br>';
+						echo translate('email') . ' : ' . $basic['student_email']; 
 						?>
 					</address>
 				</div>

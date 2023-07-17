@@ -111,7 +111,7 @@ foreach ($distribution as $id) {
 							</td>
 							<td class="min-w-sm">
 								<div class="form-group mb-none">
-									<input type="text" class="form-control" data-plugin-datepicker data-plugin-options='{ "todayHighlight" : true }' autocomplete="off"
+									<input type="text" class="form-control" 
 									name="timetable[<?=$key?>][date]" value="<?=$row['exam_date']?>" />
 									<span class="error"></span>
 								</div>

@@ -24,7 +24,7 @@ class Parents_model extends MY_Model
             'income' => $data['income'],
             'education' => $data['education'],
             'email' => $data['email'],
-            'mobileno' => $data['mobileno'],
+            'mobileno' => $data['mobile_no'],
             'address' => $data['address'],
             'city' => $data['city'],
             'state' => $data['state'],
@@ -44,11 +44,13 @@ class Parents_model extends MY_Model
                 $password = $getBranch['grd_default_password'];
             } else {
                 $username = $data['username'];
+                $mobile_no = $data['mobile_no'];
                 $password = $data['password'];
             }
 
             $inser_data2 = array(
                 'username' => $username,
+                'mobile_no'=> $mobile_no,
                 'role' => 6,
                 'active' => 1,
                 'user_id' => $parent_id,
@@ -71,7 +73,7 @@ class Parents_model extends MY_Model
             $this->db->update('parent', $inser_data1);
             // update login credential information in the database
             $this->db->where(array('role' => 6, 'user_id' => $data['parent_id']));
-            $this->db->update('login_credential', array('username' => $data['username']));
+            $this->db->update('login_credential', array('username' => $data['username'], 'mobile_no' => $data['mobile_no']));
         }
 
         if ($this->db->affected_rows() > 0) {
@@ -88,13 +90,13 @@ class Parents_model extends MY_Model
         $this->db->join('login_credential', 'login_credential.user_id = parent.id and login_credential.role = "6"', 'inner');
         $this->db->join('roles', 'roles.id = login_credential.role', 'left');
         $this->db->where('parent.id', $id);
-        if (!is_superadmin_loggedin()) {
-            $this->db->where('parent.branch_id', get_loggedin_branch_id());
-        }
+        // if (!is_superadmin_loggedin()) {
+        //     $this->db->where('parent.branch_id', get_loggedin_branch_id());
+        // }
         $query = $this->db->get();
-        if ($query->num_rows() == 0) {
-            show_404();
-        }
+        // if ($query->num_rows() == 0) {
+        //     show_404();
+        // }
         return $query->row_array();
     }
 

@@ -27,7 +27,6 @@ class Gallery_model extends MY_Model
         );
 
         if (isset($data['gallery_id']) && !empty($data['gallery_id'])) {
-            unset($insertGallery['elements']);
             $this->db->where('id', $data['gallery_id']);
             $this->db->update('front_cms_gallery_content', $insertGallery);
         } else {

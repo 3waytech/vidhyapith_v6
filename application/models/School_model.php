@@ -39,22 +39,11 @@ class School_model extends MY_Model
             'grd_username_prefix' => $data['grd_username_prefix'],
             'grd_default_password' => $data['grd_default_password'],
             'due_days' => $data['due_days'],
-            'translation' => $data['translation'],
-            'timezone' => $data['timezone'],
-            'weekends' => (isset($data['weekends']) ? implode(',', $data['weekends']) : "") ,
-            'reg_prefix_enable' => (isset($data['reg_prefix_enable']) ? 1 : 0) ,
-            'reg_start_from' => $this->input->post('reg_start_from'),
-            'institution_code' => $this->input->post('institution_code'),
-            'reg_prefix_digit' => $this->input->post('reg_prefix_digit'),
             'due_with_fine' => $calWithFine,
-            'offline_payments' => $data['offline_payments'],
             'unique_roll' => $data['unique_roll'],
         );
         $this->db->where('id', $data['brance_id']);
         $this->db->update('branch', $arrayBranch);
-        if (!empty($data['translation'])) {
-            $this->session->set_userdata(['set_lang' => $data['translation']]);
-        }
     }
 
     function getSmsConfig()

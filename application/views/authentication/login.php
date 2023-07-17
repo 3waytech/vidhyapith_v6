@@ -21,6 +21,24 @@
 	<script src="<?php echo base_url('assets/vendor/sweetalert/sweetalert.min.js');?>"></script>
 	<!-- login page style css -->
 	<link rel="stylesheet" href="<?php echo base_url('assets/login_page/css/style.css');?>">
+
+    <style>
+        .logozoom{
+            animation: zoom-in-zoom-out 1s ease infinite;
+        }
+        @keyframes zoom-in-zoom-out {
+    0% {
+      transform: scale(1, 1);
+    }
+    50% {
+      transform: scale(1.1, 1.1);
+    }
+    100% {
+      transform: scale(1, 1);
+    }
+  }
+    </style>
+
 	<script type="text/javascript">
 		var base_url = '<?php echo base_url() ?>';
 	</script>
@@ -37,7 +55,7 @@
                                 <h2><?php echo translate('welcome_to');?></h2>
                             </div>
                             <div class="center img-hol-p">
-                                <img src="<?=$this->application_model->getBranchImage($branch_id, 'logo')?>" height="60" alt="School">
+                                <img class="logozoom" src="<?=$this->application_model->getBranchImage($branch_id, 'logo')?>" height="100" alt="School">
                             </div>
                             <div class="address">
                                 <p><?php echo $global_config['address'];?></p>

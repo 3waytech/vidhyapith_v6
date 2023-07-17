@@ -45,10 +45,8 @@ if ($row['live_class_method'] == 1) {
 ?>
 		<a href="<?=base_url('live_class/zoom_meeting_start?meeting_id=' . $row['meeting_id'] . "&live_id=" . $row['id'])?>" class="btn btn-default mt-md mb-md"><i class="fas fa-video"></i> <?=translate('host_live_class')?></a>
 		<a href="<?=$startURL?>" class="btn btn-default mb-md">Host By Zoom APP</a>
-<?php } elseif($row['live_class_method'] == 2) { ?>
+<?php } else { ?>
 	<a href="<?=base_url('live_class/bbb_meeting_start?meeting_id=' . $row['meeting_id'] . "&live_id=" . $row['id'])?>" class="btn btn-default mt-md mb-md"><i class="fas fa-video"></i> <?=translate('host_live_class')?></a>
-<?php } elseif($row['live_class_method'] == 3) { ?>
-	<a href="<?=json_decode($row['bbb'])->join_url?>" class="btn btn-default mt-md mb-md"><i class="fas fa-video"></i> <?=translate('host_live_class')?></a>
 <?php } ?>
 	</div>
 </div>

@@ -14,7 +14,6 @@
         </ul>
     </div>
 </div>
-
 <!-- Breadcrumb Ends -->
 <!-- Main Container Starts -->
 <div class="container px-md-0 main-container">
@@ -31,8 +30,8 @@
         <div class="card">
             <!-- Card Header Starts -->
             <div class="card-header" id="faq<?php echo $key; ?>">
-                <h5 class="card-title" data-bs-toggle="collapse" data-bs-target="#collapse<?php echo $key; ?>" aria-expanded="false" aria-controls="collapse<?php echo $key; ?>">
-                    <a><?php echo $value['title'] ?></a>
+                <h5 class="card-title">
+                    <a data-toggle="collapse" data-target="#collapse<?php echo $key; ?>" aria-expanded="false" aria-controls="collapse<?php echo $key; ?>"><?php echo $value['title'] ?></a>
                 </h5>
             </div>
             <div id="collapse<?php echo $key; ?>" class="collapse" aria-labelledby="faq<?php echo $key; ?>" data-parent="#accordion-faqs">

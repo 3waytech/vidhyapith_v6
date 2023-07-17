@@ -25,9 +25,10 @@
 							3. The date you are trying to enter the "Birthday" and "AdmissionDate" column make sure the date format is Y-m-d (<?=date('Y-m-d')?>). <br/>
 							4. Do not import the duplicate "Roll Number" And "Register No". <br/>
 							5. For student "Gender" use Male, Female value. <br/>
-							6. If enable Automatically Generate login details, leave the "username" and "password" columns blank. <br/>
-							7. The Category name comes from another table, so for the "Category", enter Category ID (can be found on the Category page). <br/>
-							8. If a parent is existing / if you want to use the same parent information for multiple students only enter the "GuardianUsername" and leave other columns blank.
+							6. For student "RTE_student" use Yes, No value. <br/>
+							7. If enable Automatically Generate login details, leave the "username" and "password" columns blank. <br/>
+							8. The Category name comes from another table, so for the "Category", enter Category ID (can be found on the Category page). <br/>
+							9. If a parent is existing / if you want to use the same parent information for multiple students only enter the "GuardianUsername" and leave other columns blank.
 						</div>
 					</div>
 				</div>

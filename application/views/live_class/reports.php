@@ -47,8 +47,7 @@
 								$arrayMethod = array(
 									'' => translate('select'),
 									1 => "Zoom",
-									2 => "BigBlueButton",
-									3 => "Google Meet"
+									2 => "BigBlueButton"
 								);
 								echo form_dropdown("live_class_method", $arrayMethod, set_value('live_class_method'), "class='form-control' id='live_class_method'
 								data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity' ");
@@ -110,7 +109,7 @@
 							<td><?php echo $row['live_class_method'] == 1 ? 'Zoom' : 'BBB'; ?></td>
 							<td><?php echo $row['own_api_key'] == 0 ? 'Global' : 'Own'; ?></td>
 							<td><?php echo $row['title']; ?></td>
-							<td><?php echo empty($row['meeting_id']) ? '-' : $row['meeting_id']; ?></td>
+							<td><?php echo $row['meeting_id']; ?></td>
 							<td><?php echo $row['class_name'];?></td>
 							<td><?php echo $row['section_details'];?></td>
 							<td><?php echo _d($row['date']);?></td>

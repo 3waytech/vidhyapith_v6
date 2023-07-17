@@ -1,7 +1,5 @@
 <?php
-if (!defined('BASEPATH')) {
-    exit('No direct script access allowed');
-}
+if ( !defined( 'BASEPATH' ) )exit( 'No direct script access allowed' );
 
 // return translation
 function translate($word = '')
@@ -32,96 +30,6 @@ function translate($word = '')
         );
         $CI->db->insert('languages', $arrayData);
         return ucwords(str_replace('_', ' ', $word));
-    }
-}
-
-function moduleIsEnabled($prefix)
-{
-    $ci = &get_instance();
-    $role_id = $ci->session->userdata('loggedin_role_id');
-    $branchID = $ci->session->userdata('loggedin_branch');
-    if ($role_id == 1) {
-        return 1;
-    }
-    $sql = "SELECT IF(`oaf`.`isEnabled` is NULL, 1, `oaf`.`isEnabled`) as `status` FROM `permission_modules` LEFT JOIN `modules_manage` as `oaf` ON `oaf`.`modules_id` = `permission_modules`.`id` AND `oaf`.`branch_id` = " . $ci->db->escape($branchID) . " WHERE `permission_modules`.`prefix` = " . $ci->db->escape($prefix);
-    $result = $ci->db->query($sql)->row();
-    if (empty($result)) {
-        return 1;
-    } else {
-        return $result->status;
-    }
-}
-
-function checkSaasLimit($prefix)
-{
-    $ci = &get_instance();
-    $role_id = $ci->session->userdata('loggedin_role_id');
-    $branchID = $ci->session->userdata('loggedin_branch');
-    if ($role_id == 1) {
-        return 1;
-    }
-
-    $ci = &get_instance();
-    $sql = "SELECT `sb`.`expire_date`, `sb`.`school_id`, `student_limit`, `staff_limit`, `teacher_limit`, `parents_limit` FROM `branch` as `b` LEFT JOIN `saas_subscriptions` AS `sb` ON `sb`.`school_id` = `b`.`id` LEFT JOIN `saas_package` as `sp` ON `sp`.`id` = `sb`.`package_id` WHERE `sb`.`school_id` = " . $ci->db->escape($branchID);
-    $row = $ci->db->query($sql)->row();
-    if (empty($row)) {
-        return 1;
-    }
-
-    if ($prefix == 'student') {
-        $ci->db->where('branch_id', $branchID);
-        $ci->db->group_by('student_id');
-        $total_student = $ci->db->count_all_results('enroll');
-        if ($total_student > $row->student_limit) {
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-
-    if ($prefix == 'staff' || $prefix == 'teacher') {
-        $ci->db->select('IFNULL(COUNT(staff.id), 0) as snumber');
-        $ci->db->from('staff');
-        $ci->db->join('login_credential', 'login_credential.user_id = staff.id', 'inner');
-        if ($prefix == 'teacher') {
-            $ci->db->where('login_credential.role', 3);
-        } else {
-            $ci->db->where_not_in('login_credential.role', array(1, 3, 6, 7));
-        }
-        $ci->db->where('staff.branch_id', $branchID);
-        $total_staff = $ci->db->get()->row()->snumber;
-
-        if ($prefix == 'teacher') {
-            $limit = $row->teacher_limit;
-        } else {
-            $limit = $row->staff_limit;
-        }
-        if ($total_staff > $limit) {
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-
-    if ($prefix == 'parent') {
-        $ci->db->where('branch_id', $branchID);
-        $total_parents = $ci->db->count_all_results('parent');
-        if ($total_parents > $row->parents_limit) {
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-}
-
-function isEnabledSubscription($schoolID ='')
-{
-    $ci = &get_instance();
-    $row = $ci->db->select('id')->where('school_id', $schoolID)->get('saas_subscriptions')->row();
-    if (empty($row)) {
-        return false;
-    } else {
-        return true;
     }
 }
 
@@ -481,8 +389,7 @@ function ajax_access_denied()
     exit();
 }
 
-function slugify($text)
-{
+function slugify($text){
     // replace non letter or digits by -
     $text = preg_replace('~[^\pL\d]+~u', '_', $text);
 
@@ -552,4 +459,11 @@ function delete_dir($dirPath)
         return true;
     }
     return false;
+}
+
+// lc url
+function btn_movelc($uri)
+{
+    // echo base_url($uri);
+    return "<button class='btn btn-success icon btn-circle' onclick=confirm_lc_move('" . base_url($uri) . "') ><i class='fa-solid fa-file-import'></i></button>";
 }

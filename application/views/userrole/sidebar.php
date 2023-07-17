@@ -51,7 +51,7 @@ if ((is_parent_loggedin() && !empty(get_activeChildren_id())) || is_student_logg
     ?>
                     <!-- teachers -->
                     <li class="<?php if ($main_menu == 'teachers') echo 'nav-active'; ?>">
-                        <a href="<?=base_url('userrole/teacher')?>">
+                        <a href="<?=base_url('userrole/teachers')?>">
                             <i class="icon-people icons"></i><span><?=translate('teachers')?></span>
                         </a>
                     </li>

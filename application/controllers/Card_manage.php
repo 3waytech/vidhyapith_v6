@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 5.8
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -21,9 +21,6 @@ class Card_manage extends Admin_Controller
         $this->load->library('ciqrcode', array('cacheable' => false));
         $this->load->model('employee_model');
         $this->load->model('timetable_model');
-        if (!moduleIsEnabled('card_management')) {
-            access_denied();
-        }
     }
 
     /* id card templete form validation rules */
@@ -490,4 +487,5 @@ class Card_manage extends Admin_Controller
         }
         echo $html;
     }
+
 }

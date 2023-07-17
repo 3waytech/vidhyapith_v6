@@ -78,7 +78,9 @@
 			<div class="row">
 				<div class="col-md-12">
 					<div class="pull-right">
-						<a href="<?php echo base_url('communication/mailbox/compose') ?>" class="btn btn-default mr-xs"><i class="fas fa-times"></i><span> <?=translate('discard')?></a>
+						<button type="reset" class="btn btn-default">
+							<i class="fas fa-times"></i><span> <?=translate('discard')?></span>
+						</button>
 						<button type="submit" name="submit" value="send" class="btn btn-default" data-loading-text="<i class='fas fa-spinner fa-spin'></i> Processing">
 							<i class="fas fa-paper-plane"></i><span> <?=translate('send')?></span>
 						</button>

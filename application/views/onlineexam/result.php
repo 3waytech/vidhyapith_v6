@@ -119,6 +119,7 @@
 							<th></th>
 							<th><?php echo ($currency_symbol . number_format($totalamount, 2, '.', '')); ?></th>
 							<th></th>
+							<th></th>
 						</tr>
 					</tfoot>
 					<?php } ?>

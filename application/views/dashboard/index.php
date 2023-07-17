@@ -25,10 +25,10 @@ if (get_permission('admission_count_widget', 'is_view')) {
 if (get_permission('voucher_count_widget', 'is_view')) {
 	$div2++;	
 }
-if (get_permission('transport_count_widget', 'is_view') && moduleIsEnabled('transport')) {
+if (get_permission('transport_count_widget', 'is_view')) {
 	$div2++;	
 }
-if (get_permission('hostel_count_widget', 'is_view') && moduleIsEnabled('hostel')) {
+if (get_permission('hostel_count_widget', 'is_view')) {
 	$div2++;	
 }
 if ($div2 == 0) {
@@ -47,17 +47,199 @@ if (get_permission('student_birthday_widget', 'is_view') || get_permission('staf
         <i class="fas fa-exclamation-triangle"></i> This School management system may not work properly because "ONLY_FULL_GROUP_BY" is enabled, <strong>Strongly recommended</strong> - consult with your hosting provider to disable "ONLY_FULL_GROUP_BY" in sql_mode configuration.
     </div>
 <?php } ?>
-
-<?php 
-if (!is_superadmin_loggedin()) {
-	if (!empty($this->saas_model->getSubscriptionsExpiredNotification())) { ?>
-    <div class="alert alert-danger">
-        <?php echo $this->saas_model->getSubscriptionsExpiredNotification(); ?>
-    </div>
-<?php } } ?>
-
 <div class="dashboard-page">
+<!-- count start -->
+<?php if ($widget1 > 0) { ?>
 	<div class="row">
+		<div class="col-md-12 col-lg-12 col-sm-12">
+			<div class="">
+				<div class="row widget-row-in">
+				<?php if (get_permission('employee_count_widget', 'is_view')) { ?>
+					<div class="col-lg-<?php echo $widget1; ?> col-sm-6 ">
+						<div class="panel-body panel">
+							<div class="widget-col-in row">
+								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-users"></i>
+									<h5 class="text-muted"><?php echo translate('employee'); ?></h5>
+								</div>
+								<div class="col-md-6 col-sm-6 col-xs-6">
+									<h3 class="counter text-right mt-md text-primary"><?php
+									$staff = $this->dashboard_model->getstaffcounter('', $school_id);
+									echo $staff['snumber'];
+									?></h3>
+								</div>
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="box-top-line line-color-primary">
+										<span class="text-muted text-uppercase"><?php echo translate('total_strength'); ?></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+				<?php if (get_permission('student_count_widget', 'is_view')) { ?>
+					<div class="col-lg-<?php echo $widget1; ?> col-sm-6">
+						<div class="panel-body panel">
+							<div class="widget-col-in row">
+								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-user-graduate"></i>
+									<h5 class="text-muted"><?php echo translate('students'); ?></h5> </div>
+								<div class="col-md-6 col-sm-6 col-xs-6">
+									<h3 class="counter text-right mt-md text-primary"><?=$get_total_student?></h3>
+								</div>
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="box-top-line line-color-primary">
+											<span class="text-muted text-uppercase"><?php echo translate('total_strength'); ?></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+				<?php if (get_permission('parent_count_widget', 'is_view')) { ?>
+					<div class="col-lg-<?php echo $widget1; ?> col-sm-6 ">
+						<div class="panel-body panel">
+							<div class="widget-col-in row">
+								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-user-tie" ></i>
+									<h5 class="text-muted"><?php echo translate('parents'); ?></h5></div>
+								<div class="col-md-6 col-sm-6 col-xs-6">
+									<h3 class="counter text-right mt-md text-primary"><?php
+										if (!empty($school_id))
+											$this->db->where('branch_id', $school_id);
+										echo $this->db->select('id')->get('parent')->num_rows();
+									?></h3>
+								</div>
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="box-top-line line-color-primary">
+										<span class="text-muted text-uppercase"><?php echo translate('total_strength'); ?></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+				<?php if (get_permission('teacher_count_widget', 'is_view')) { ?>
+					<div class="col-lg-<?php echo $widget1; ?> col-sm-6 ">
+						<div class="panel-body panel">
+							<div class="widget-col-in row">
+								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-chalkboard-teacher" ></i>
+									<h5 class="text-muted"><?php echo translate('teachers'); ?></h5></div>
+								<div class="col-md-6 col-sm-6 col-xs-6">
+									<h3 class="counter text-right mt-md text-primary"><?php
+									$staff = $this->dashboard_model->getstaffcounter(3, $school_id);
+									echo $staff['snumber'];
+									?></h3>
+								</div>
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="box-top-line line-color-primary">
+										<span class="text-muted text-uppercase"><?=translate('total_strength')?></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+				</div>
+			</div>
+		</div>
+	</div>
+<?php } ?>
+
+
+<?php if ($widget2 > 0) { ?>
+	<div class="row">
+		<div class="col-md-12 col-lg-12 col-sm-12">
+			<div class="">
+				<div class="row widget-row-in">
+				<?php if (get_permission('admission_count_widget', 'is_view')) { ?>
+					<div class="col-lg-<?php echo $widget2; ?> col-sm-6 ">
+						<div class="panel-body panel">
+							<div class="widget-col-in row">
+								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="far fa-address-card"></i>
+									<h5 class="text-muted"><?php echo translate('admission'); ?></h5>
+								</div>
+								<div class="col-md-6 col-sm-6 col-xs-6">
+									<h3 class="counter text-right mt-md text-primary"><?=$get_monthly_admission;?></h3>
+								</div>
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="box-top-line line-color-primary">
+										<span class="text-muted text-uppercase"><?php echo translate('interval_month'); ?></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+				<?php if (get_permission('voucher_count_widget', 'is_view')) { ?>
+					<div class="col-lg-<?php echo $widget2; ?> col-sm-6">
+						<div class="panel-body panel">
+							<div class="widget-col-in row">
+								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-money-check-alt"></i>
+									<h5 class="text-muted"><?php echo translate('voucher'); ?></h5> </div>
+								<div class="col-md-6 col-sm-6 col-xs-6">
+									<h3 class="counter text-right mt-md text-primary"><?=$get_voucher?></h3>
+								</div>
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="box-top-line line-color-primary">
+											<span class="text-muted text-uppercase"><?php echo translate('total_number'); ?></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+				<?php if (get_permission('transport_count_widget', 'is_view')) { ?>
+					<div class="col-lg-<?php echo $widget2; ?> col-sm-6 ">
+						<div class="panel-body panel">
+							<div class="widget-col-in row">
+								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-road" ></i>
+									<h5 class="text-muted"><?php echo translate('transport'); ?></h5></div>
+								<div class="col-md-6 col-sm-6 col-xs-6">
+									<h3 class="counter text-right mt-md text-primary"><?=$get_transport_route?></h3>
+								</div>
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="box-top-line line-color-primary">
+										<span class="text-muted text-uppercase"><?php echo translate('total_route'); ?></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+				<?php if (get_permission('hostel_count_widget', 'is_view')) { ?>
+					<div class="col-lg-<?php echo $widget2; ?> col-sm-6 ">
+						<div class="panel-body panel">
+							<div class="widget-col-in row">
+								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-warehouse" ></i>
+									<h5 class="text-muted"><?php echo translate('hostel'); ?></h5></div>
+								<div class="col-md-6 col-sm-6 col-xs-6">
+									<h3 class="counter text-right mt-md text-primary"><?php
+										if (!empty($school_id))
+											$this->db->where('branch_id', $school_id);
+										$hostel_room = $this->db->select('id')->get('hostel_room')->num_rows();
+										echo $hostel_room;
+										?></h3>
+								</div>
+								<div class="col-md-12 col-sm-12 col-xs-12">
+									<div class="box-top-line line-color-primary">
+										<span class="text-muted text-uppercase"><?=translate('total_room')?></span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				<?php } ?>
+				</div>
+			</div>
+		</div>
+	</div>
+<?php } ?>
+	
+</div>
+
+
+<!-- count end  -->
+
+
+<div class="row">	
 <?php if (get_permission('monthly_income_vs_expense_chart', 'is_view')) { ?>
 		<!-- monthly cash book transaction -->
 		<div class="<?php echo get_permission('annual_student_fees_summary_chart', 'is_view') ? 'col-md-12 col-lg-4 col-xl-3' : 'col-md-12'; ?>">
@@ -94,101 +276,9 @@ if (!is_superadmin_loggedin()) {
 		</div>
 <?php } ?>
 	</div>
-<?php if ($widget1 > 0) { ?>
-	<div class="row">
-		<div class="col-md-12 col-lg-12 col-sm-12">
-			<div class="panel">
-				<div class="row widget-row-in">
-				<?php if (get_permission('employee_count_widget', 'is_view')) { ?>
-					<div class="col-lg-<?php echo $widget1; ?> col-sm-6 ">
-						<div class="panel-body">
-							<div class="widget-col-in row">
-								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-users"></i>
-									<h5 class="text-muted"><?php echo translate('employee'); ?></h5>
-								</div>
-								<div class="col-md-6 col-sm-6 col-xs-6">
-									<h3 class="counter text-right mt-md text-primary"><?php
-									$staff = $this->dashboard_model->getstaffcounter('', $school_id);
-									echo $staff['snumber'];
-									?></h3>
-								</div>
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="box-top-line line-color-primary">
-										<span class="text-muted text-uppercase"><?php echo translate('total_strength'); ?></span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				<?php } ?>
-				<?php if (get_permission('student_count_widget', 'is_view')) { ?>
-					<div class="col-lg-<?php echo $widget1; ?> col-sm-6">
-						<div class="panel-body">
-							<div class="widget-col-in row">
-								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-user-graduate"></i>
-									<h5 class="text-muted"><?php echo translate('students'); ?></h5> </div>
-								<div class="col-md-6 col-sm-6 col-xs-6">
-									<h3 class="counter text-right mt-md text-primary"><?=$get_total_student?></h3>
-								</div>
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="box-top-line line-color-primary">
-											<span class="text-muted text-uppercase"><?php echo translate('total_strength'); ?></span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				<?php } ?>
-				<?php if (get_permission('parent_count_widget', 'is_view')) { ?>
-					<div class="col-lg-<?php echo $widget1; ?> col-sm-6 ">
-						<div class="panel-body">
-							<div class="widget-col-in row">
-								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-user-tie" ></i>
-									<h5 class="text-muted"><?php echo translate('parents'); ?></h5></div>
-								<div class="col-md-6 col-sm-6 col-xs-6">
-									<h3 class="counter text-right mt-md text-primary"><?php
-										if (!empty($school_id))
-											$this->db->where('branch_id', $school_id);
-										echo $this->db->select('id')->get('parent')->num_rows();
-									?></h3>
-								</div>
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="box-top-line line-color-primary">
-										<span class="text-muted text-uppercase"><?php echo translate('total_strength'); ?></span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				<?php } ?>
-				<?php if (get_permission('teacher_count_widget', 'is_view')) { ?>
-					<div class="col-lg-<?php echo $widget1; ?> col-sm-6 ">
-						<div class="panel-body">
-							<div class="widget-col-in row">
-								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-chalkboard-teacher" ></i>
-									<h5 class="text-muted"><?php echo translate('teachers'); ?></h5></div>
-								<div class="col-md-6 col-sm-6 col-xs-6">
-									<h3 class="counter text-right mt-md text-primary"><?php
-									$staff = $this->dashboard_model->getstaffcounter(3, $school_id);
-									echo $staff['snumber'];
-									?></h3>
-								</div>
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="box-top-line line-color-primary">
-										<span class="text-muted text-uppercase"><?=translate('total_strength')?></span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				<?php } ?>
-				</div>
-			</div>
-		</div>
-	</div>
-<?php } ?>
+
 	<!-- student quantity chart -->
-	<div class="row">
+<div class="row">
 <?php if (get_permission('student_quantity_pie_chart', 'is_view')) { ?>
 		<div class="<?php echo get_permission('weekend_attendance_inspection_chart', 'is_view') ? 'col-md-12 col-lg-4 col-xl-3' : 'col-md-12'; ?>">
 			<section class="panel pg-fw">
@@ -212,96 +302,9 @@ if (!is_superadmin_loggedin()) {
 			</section>
 		</div>
 <?php } ?>
-	</div>
-<?php if ($widget2 > 0) { ?>
-	<div class="row">
-		<div class="col-md-12 col-lg-12 col-sm-12">
-			<div class="panel">
-				<div class="row widget-row-in">
-				<?php if (get_permission('admission_count_widget', 'is_view')) { ?>
-					<div class="col-lg-<?php echo $widget2; ?> col-sm-6 ">
-						<div class="panel-body">
-							<div class="widget-col-in row">
-								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="far fa-address-card"></i>
-									<h5 class="text-muted"><?php echo translate('admission'); ?></h5>
-								</div>
-								<div class="col-md-6 col-sm-6 col-xs-6">
-									<h3 class="counter text-right mt-md text-primary"><?=$get_monthly_admission;?></h3>
-								</div>
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="box-top-line line-color-primary">
-										<span class="text-muted text-uppercase"><?php echo translate('interval_month'); ?></span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				<?php } ?>
-				<?php if (get_permission('voucher_count_widget', 'is_view')) { ?>
-					<div class="col-lg-<?php echo $widget2; ?> col-sm-6">
-						<div class="panel-body">
-							<div class="widget-col-in row">
-								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-money-check-alt"></i>
-									<h5 class="text-muted"><?php echo translate('voucher'); ?></h5> </div>
-								<div class="col-md-6 col-sm-6 col-xs-6">
-									<h3 class="counter text-right mt-md text-primary"><?=$get_voucher?></h3>
-								</div>
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="box-top-line line-color-primary">
-											<span class="text-muted text-uppercase"><?php echo translate('total_number'); ?></span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				<?php } ?>
-				<?php if (get_permission('transport_count_widget', 'is_view') && moduleIsEnabled('transport')) { ?>
-					<div class="col-lg-<?php echo $widget2; ?> col-sm-6 ">
-						<div class="panel-body">
-							<div class="widget-col-in row">
-								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-road" ></i>
-									<h5 class="text-muted"><?php echo translate('transport'); ?></h5></div>
-								<div class="col-md-6 col-sm-6 col-xs-6">
-									<h3 class="counter text-right mt-md text-primary"><?=$get_transport_route?></h3>
-								</div>
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="box-top-line line-color-primary">
-										<span class="text-muted text-uppercase"><?php echo translate('total_route'); ?></span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				<?php } ?>
-				<?php if (get_permission('hostel_count_widget', 'is_view') && moduleIsEnabled('hostel')) { ?>
-					<div class="col-lg-<?php echo $widget2; ?> col-sm-6 ">
-						<div class="panel-body">
-							<div class="widget-col-in row">
-								<div class="col-md-6 col-sm-6 col-xs-6"> <i class="fas fa-warehouse" ></i>
-									<h5 class="text-muted"><?php echo translate('hostel'); ?></h5></div>
-								<div class="col-md-6 col-sm-6 col-xs-6">
-									<h3 class="counter text-right mt-md text-primary"><?php
-										if (!empty($school_id))
-											$this->db->where('branch_id', $school_id);
-										$hostel_room = $this->db->select('id')->get('hostel_room')->num_rows();
-										echo $hostel_room;
-										?></h3>
-								</div>
-								<div class="col-md-12 col-sm-12 col-xs-12">
-									<div class="box-top-line line-color-primary">
-										<span class="text-muted text-uppercase"><?=translate('total_room')?></span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				<?php } ?>
-				</div>
-			</div>
-		</div>
-	</div>
-<?php } ?>
-	<div class="row">
+</div>
+
+<div class="row">
 	    <!-- event calendar -->
 		<div class="col-md-<?php echo $div3 ?>">
 			<section class="panel">
@@ -374,7 +377,7 @@ if (!is_superadmin_loggedin()) {
 		</div>
 	<?php } ?>
 	</div>
-</div>
+
 
 <div class="zoom-anim-dialog modal-block modal-block-primary mfp-hide" id="modal">
 	<section class="panel">

@@ -109,29 +109,4 @@ class Live_class_model extends MY_Model
         );
         $this->save($arrayLive); 
     }
-
-    function gmeet_save($post = array())
-    {
-        $branchID = $this->application_model->get_branch_id();
-        $arrayBBB = json_encode(array('join_url' => $post['gmeet_url']));
-        $arrayLive = array(
-            'live_class_method' => $post['live_class_method'], 
-            'title' => $post['title'], 
-            'meeting_id' => "", 
-            'meeting_password' => "", 
-            'own_api_key' => "", 
-            'duration' => $post['duration'], 
-            'bbb' => $arrayBBB, 
-            'class_id' => $post['class_id'], 
-            'section_id' => json_encode($this->input->post('section')), 
-            'remarks' => $post['remarks'], 
-            'date' => date("Y-m-d", strtotime($post['date'])), 
-            'start_time' => date("H:i", strtotime($post['time_start'])), 
-            'end_time' => date("H:i", strtotime($post['time_end'])), 
-            'created_by' => get_loggedin_user_id(), 
-            'branch_id' => $branchID,
-        );
-        $this->save($arrayLive); 
-    }
-
 }

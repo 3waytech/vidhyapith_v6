@@ -144,6 +144,7 @@ function studentQuickView(id) {
             $("#quick_image").attr("src", res.photo);
             $('#quick_full_name').html(res.full_name);
             $('#quick_category').html(res.student_category);
+            $('#quick_stud_id').html(res.stu_id);
             $('#quick_register_no').html(res.register_no);
             $('#quick_roll').html(res.roll);
             $('#quick_admission_date').html(res.admission_date);

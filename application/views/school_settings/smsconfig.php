@@ -50,7 +50,6 @@ function smsIsarray($array)
 													"5" 		=> "Textlocal",
 													"6" 		=> "SMS country",
 													"7" 		=> "Bulksmsbd.net",
-													"8" 		=> "Custom Gateway",
 												);
 												echo form_dropdown("sms_service_provider", $arraySMS, set_value('sms_service', $sms_service_provider), "class='form-control'
 												data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity' ");
@@ -355,42 +354,6 @@ function smsIsarray($array)
 												<span class="error"></span>
 											</div>
 										</div>
-									</div>
-									<div class="panel-footer">
-										<div class="row">
-											<div class="col-md-offset-3 col-md-2">
-												<button type="submit" class="btn btn-default btn-block" data-loading-text="<i class='fas fa-spinner fa-spin'></i> Processing">
-													<i class="fas fa-plus-circle"></i> <?=translate('save')?>
-												</button>
-											</div>
-										</div>
-									</div>
-									<?php echo form_close();?>
-								</div>
-							</div>
-
-							<div class="panel panel-accordion">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#customsms">Custom GET & POST Gateway</a>
-									</h4>
-								</div>
-								<div id="customsms" class="accordion-body collapse">
-									<?php echo form_open('school_settings/customSms' . $url, array('class' => 'form-horizontal form-bordered frm-submit-msg')); 
-									$bulksmsbd = smsIsarray($api['customsms']);
-									?>
-									<div class="panel-body">
-										<div class="form-group mt-md">
-										  <label  class="col-md-3 control-label">Api Url <span class="required">*</span></label>
-											<div class="col-md-6">
-												<input type="text" class="form-control" placeholder="" name="api_url" value="<?=$bulksmsbd['field_one']?>">
-												<span class="error"></span>
-											</div>
-											<div class="col-md-offset-3 col-md-6 mb-md mt-sm text-dark">
-												<span>* Change the recipient number parameter to use <b>[app_number]</b> and Change messageg parameter to use <b>[app_message]</b> And if your sms gateways required the template id then Change template_id parameter to use <b>[dlt_template_id]</b> </span>
-											</div>
-										</div>
-										
 									</div>
 									<div class="panel-footer">
 										<div class="row">

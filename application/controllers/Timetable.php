@@ -245,7 +245,7 @@ class Timetable extends Admin_Controller
 			// form validation rules
             $items = $this->input->post('timetable');
             foreach ($items as $key => $value) {
-                $this->form_validation->set_rules('timetable[' . $key . '][date]', translate('date'), 'required');
+                $this->form_validation->set_rules('timetable[' . $key . '][date]', translate('date'), 'required|callback_convert_date_format');
                 $this->form_validation->set_rules('timetable[' . $key . '][time_start]', translate('starting_time'), 'required');
                 $this->form_validation->set_rules('timetable[' . $key . '][time_end]', translate('ending_time'), 'required');
                 $this->form_validation->set_rules('timetable[' . $key . '][hall_id]', translate('hall_room'), 'required|callback_check_hallseat_capacity');
@@ -306,6 +306,11 @@ class Timetable extends Admin_Controller
             }
             echo json_encode($array);
         }
+    }
+    
+    function convert_date_format($dateString) {
+        $newDateString = date('d-m-Y', strtotime($dateString));
+        return $newDateString;
     }
 
     public function exam_delete($examID, $classID, $sectionID)

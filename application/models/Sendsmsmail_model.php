@@ -111,7 +111,7 @@ class Sendsmsmail_model extends CI_Model
         }
     }
 
-    public function sendSMS($sendTo, $message, $name, $eMail, $smsGateway, $dlt_templateID)
+    public function sendSMS($sendTo, $message, $name, $eMail, $smsGateway)
     {
 
         $message = str_replace('{name}', $name, $message);
@@ -134,7 +134,7 @@ class Sendsmsmail_model extends CI_Model
         }
         if ($smsGateway == 'msg91') {
             $this->load->library("msg91");
-            return $this->msg91->send($sendTo, $message, $dlt_templateID);
+            return $this->msg91->send($sendTo, $message);
         }
         if ($smsGateway == 'bulksms') {
             $this->load->library("bulk");
@@ -144,17 +144,6 @@ class Sendsmsmail_model extends CI_Model
             $this->load->library("textlocal");
             return $this->textlocal->sendSms($sendTo, $message);
         }
-        if ($smsGateway == 'smscountry') {
-            $this->load->library("smscountry");
-            return $this->smscountry->send($sendTo, $message);
-        }
-        if ($smsGateway == 'bulksmsbd') {
-            $this->load->library("bulksmsbd");
-            return $this->bulksmsbd->send($sendTo, $message);
-        }
-        if ($smsGateway == 'customsms') {
-            $this->load->library("custom_sms");
-            $res = $this->custom_sms->send($sendTo, $message, $dlt_templateID);
-        }
     }
+
 }

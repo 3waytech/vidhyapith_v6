@@ -32,7 +32,6 @@ class Accounting_model extends MY_Model
             if ($obal > 0) {
                 $insertTransaction = array(
                     'account_id' => $insertID,
-                    'branch_id' => $branchID,
                     'voucher_head_id' => 0,
                     'type' => 'deposit',
                     'amount' => $obal,

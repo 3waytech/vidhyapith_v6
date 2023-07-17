@@ -112,10 +112,10 @@
 							<tr>
 								<th width="40">#</th>
 								<th><?=translate('name')?></th>
-								<th><?=translate('register_no')?></th>
 								<th><?=translate('roll')?></th>
+								<th><?=translate('register_no')?></th>
 								<th><?=translate('subject')?></th>
-								<th class="no-sort"><?=translate('remarks')?></th>
+								<th><?=translate('remarks')?></th>
 								<th width="180"><?=translate('status')?></th>
 							</tr>
 						</thead>
@@ -127,8 +127,8 @@
 							<tr>
 								<td><?php echo $count++ ;?></td>
 								<td><?php echo html_escape($row['first_name'] . " " . $row['last_name']);?></td>
-								<td><?php echo html_escape($row['register_no']);?></td>
 								<td><?php echo html_escape($row['roll']);?></td>
+								<td><?php echo html_escape($row['register_no']);?></td>
 								<td><?php echo html_escape($row['subject_name']);?></td>
 								<td><?php echo html_escape(!empty($row['remark']) ? $row['remark']: 'N/A');?></td>
 								<td>

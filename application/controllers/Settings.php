@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -336,10 +336,6 @@ class Settings extends Admin_Controller
         $sslcommerz_status = isset($_POST['sslcommerz_status']) ? 1 : 0;
         $jazzcash_status = isset($_POST['jazzcash_status']) ? 1 : 0;
         $flutterwave_status = isset($_POST['flutterwave']) ? 1 : 0;
-        $paytm_status = isset($_POST['paytm_status']) ? 1 : 0;
-        $toyyibpay_status = isset($_POST['toyyibpay_status']) ? 1 : 0;
-        $payhere_status = isset($_POST['payhere_status']) ? 1 : 0;
-        $nepalste_status = isset($_POST['nepalste_status']) ? 1 : 0;
         $arrayData = array(
             'paypal_status' => $paypal_status,
             'stripe_status' => $stripe_status,
@@ -350,10 +346,6 @@ class Settings extends Admin_Controller
             'sslcommerz_status' => $sslcommerz_status,
             'jazzcash_status' => $jazzcash_status,
             'flutterwave_status' => $flutterwave_status,
-            'paytm_status' => $paytm_status,
-            'toyyibpay_status' => $toyyibpay_status,
-            'payhere_status' => $payhere_status,
-            'nepalste_status' => $nepalste_status,
         );
 
         $this->db->where('branch_id', $branchID);
@@ -494,134 +486,6 @@ class Settings extends Admin_Controller
             } else {
                 $this->db->where('id', $q->row()->id);
                 $this->db->update('payment_config', $arrayFlutterwave);
-            }
-            $message = translate('the_configuration_has_been_updated');
-            $array = array('status' => 'success', 'message' => $message);
-        } else {
-            $error = $this->form_validation->error_array();
-            $array = array('status' => 'fail', 'error' => $error);
-        }
-        echo json_encode($array);
-    }
-
-    public function paytm_save()
-    {
-        if (!get_permission('payment_settings', 'is_add')) {
-            ajax_access_denied();
-        }
-        $branchID = $this->application_model->get_branch_id();
-        $this->form_validation->set_rules('paytm_merchantmid', 'Merchant MID', 'trim|required');
-        $this->form_validation->set_rules('paytm_merchantkey', 'Merchant Key', 'trim|required');
-        $this->form_validation->set_rules('paytm_merchant_website', 'Website', 'trim|required');
-        $this->form_validation->set_rules('paytm_industry_type', 'Industry Type', 'trim|required');
-        if ($this->form_validation->run() !== false) {
-            $arrayPaytm = array(
-                'paytm_merchantmid' => $this->input->post('paytm_merchantmid'),
-                'paytm_merchantkey' => $this->input->post('paytm_merchantkey'),
-                'paytm_merchant_website' => $this->input->post('paytm_merchant_website'),
-                'paytm_industry_type' => $this->input->post('paytm_industry_type'),
-            );
-            $this->db->where('branch_id', $branchID);
-            $q = $this->db->get('payment_config');
-            if ($q->num_rows() == 0) {
-                $arrayPaytm['branch_id'] = $branchID;
-                $this->db->insert('payment_config', $arrayPaytm);
-            } else {
-                $this->db->where('id', $q->row()->id);
-                $this->db->update('payment_config', $arrayPaytm);
-            }
-            $message = translate('the_configuration_has_been_updated');
-            $array = array('status' => 'success', 'message' => $message);
-        } else {
-            $error = $this->form_validation->error_array();
-            $array = array('status' => 'fail', 'error' => $error);
-        }
-        echo json_encode($array);
-    }
-
-    public function toyyibPay_save()
-    {
-        if (!get_permission('payment_settings', 'is_add')) {
-            ajax_access_denied();
-        }
-        $branchID = $this->application_model->get_branch_id();
-        $this->form_validation->set_rules('toyyibpay_secretkey', 'Secret key', 'trim|required');
-        $this->form_validation->set_rules('toyyibpay_categorycode', 'Category Code', 'trim|required');
-        if ($this->form_validation->run() !== false) {
-            $arrayPaytm = array(
-                'toyyibpay_secretkey' => $this->input->post('toyyibpay_secretkey'),
-                'toyyibpay_categorycode' => $this->input->post('toyyibpay_categorycode'),
-            );
-            $this->db->where('branch_id', $branchID);
-            $q = $this->db->get('payment_config');
-            if ($q->num_rows() == 0) {
-                $arrayPaytm['branch_id'] = $branchID;
-                $this->db->insert('payment_config', $arrayPaytm);
-            } else {
-                $this->db->where('id', $q->row()->id);
-                $this->db->update('payment_config', $arrayPaytm);
-            }
-            $message = translate('the_configuration_has_been_updated');
-            $array = array('status' => 'success', 'message' => $message);
-        } else {
-            $error = $this->form_validation->error_array();
-            $array = array('status' => 'fail', 'error' => $error);
-        }
-        echo json_encode($array);
-    }
-
-    public function payhere_save()
-    {
-        if (!get_permission('payment_settings', 'is_add')) {
-            ajax_access_denied();
-        }
-        $branchID = $this->application_model->get_branch_id();
-        $this->form_validation->set_rules('payhere_merchant_id', 'Merchant ID', 'trim|required');
-        $this->form_validation->set_rules('payhere_merchant_secret', 'Merchant Secret', 'trim|required');
-        if ($this->form_validation->run() !== false) {
-            $arrayPaytm = array(
-                'payhere_merchant_id' => $this->input->post('payhere_merchant_id'),
-                'payhere_merchant_secret' => $this->input->post('payhere_merchant_secret'),
-            );
-            $this->db->where('branch_id', $branchID);
-            $q = $this->db->get('payment_config');
-            if ($q->num_rows() == 0) {
-                $arrayPaytm['branch_id'] = $branchID;
-                $this->db->insert('payment_config', $arrayPaytm);
-            } else {
-                $this->db->where('id', $q->row()->id);
-                $this->db->update('payment_config', $arrayPaytm);
-            }
-            $message = translate('the_configuration_has_been_updated');
-            $array = array('status' => 'success', 'message' => $message);
-        } else {
-            $error = $this->form_validation->error_array();
-            $array = array('status' => 'fail', 'error' => $error);
-        }
-        echo json_encode($array);
-    }
-
-    public function nepalste_save()
-    {
-        if (!get_permission('payment_settings', 'is_add')) {
-            ajax_access_denied();
-        }
-        $branchID = $this->application_model->get_branch_id();
-        $this->form_validation->set_rules('nepalste_public_key', 'Public Key', 'trim|required');
-        $this->form_validation->set_rules('nepalste_secret_key', 'Secret Key', 'trim|required');
-        if ($this->form_validation->run() !== false) {
-            $arrayPaytm = array(
-                'nepalste_public_key' => $this->input->post('nepalste_public_key'),
-                'nepalste_secret_key' => $this->input->post('nepalste_secret_key'),
-            );
-            $this->db->where('branch_id', $branchID);
-            $q = $this->db->get('payment_config');
-            if ($q->num_rows() == 0) {
-                $arrayPaytm['branch_id'] = $branchID;
-                $this->db->insert('payment_config', $arrayPaytm);
-            } else {
-                $this->db->where('id', $q->row()->id);
-                $this->db->update('payment_config', $arrayPaytm);
             }
             $message = translate('the_configuration_has_been_updated');
             $array = array('status' => 'success', 'message' => $message);

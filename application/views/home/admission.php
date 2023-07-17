@@ -536,11 +536,13 @@
                         </div>
                         <?php endif; ?>
                         <?php if (!empty($page_data['terms_conditions_title'])) {?>
-                        <div class="accordion mb-3" id="accordion-faqs">
+                        <div class="accordion mb-md" id="accordion-faqs">
                             <div class="card">
                                 <div class="card-header" id="faq1">
-                                    <h5 class="card-title" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                                        <a><?php echo $page_data['terms_conditions_title']; ?></a>
+                                    <h5 class="card-title">
+                                        <a data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                            <?php echo $page_data['terms_conditions_title']; ?> 
+                                        </a>
                                     </h5>
                                 </div>
                                 <div id="collapseOne" class="collapse" aria-labelledby="faq1" data-parent="#accordion-faqs">

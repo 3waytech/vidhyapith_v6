@@ -19,37 +19,98 @@ class Exam_progress_model extends CI_Model
         }
     }
 
+    // public function getExamTotalMark($studentID, $sessionID, $subjectID = '', $examID = '')
+    // {
+    //     $this->db->select('m.mark as get_mark,IFNULL(m.absent, 0) as get_abs,te.mark_distribution');
+    //     $this->db->from('mark as m');
+    //     $this->db->join('timetable_exam as te', 'te.exam_id = m.exam_id and te.class_id = m.class_id and te.section_id = m.section_id and te.subject_id = m.subject_id', 'left');
+    //     $this->db->join('exam as e', 'e.id = m.exam_id', 'inner');
+    //     $this->db->where('m.exam_id', $examID);
+    //     $this->db->where('m.student_id', $studentID);
+    //     $this->db->where('m.session_id', $sessionID);
+    //     $this->db->where('m.subject_id', $subjectID);
+    //     $getMarksList = $this->db->get()->row_array();
+    //     $grand_obtain_marks = 0;
+    //     $grand_full_marks = 0;
+    //     if (!empty($getMarksList)) {
+    //         $fullMarkDistribution = json_decode($getMarksList['mark_distribution'], true);
+    //         $obtainedMark = json_decode($getMarksList['get_mark'], true);
+    //         $total_obtain_marks = 0;
+    //         $total_full_marks = 0;
+    //         foreach ($fullMarkDistribution as $i => $val) {
+    //             $obtained_mark = floatval($obtainedMark[$i]);
+    //             $fullMark = floatval($val['full_mark']);
+    //             if ($getMarksList['get_abs'] != 'on') {
+    //                 $total_full_marks += $fullMark;
+    //                 $total_obtain_marks += $obtained_mark;
+    //             }
+    //         }
+    //         $grand_obtain_marks += $total_obtain_marks;
+    //         $grand_full_marks += $total_full_marks;
+    //     }
+    //     if (!empty($grand_obtain_marks) || !empty($grand_full_marks)) {
+    //         return ['grand_obtain_marks' => $grand_obtain_marks, 'grand_full_marks' => $grand_full_marks];
+    //     } else {
+    //         return ['grand_obtain_marks' => 0, 'grand_full_marks' => 0];
+    //     }
+    // }
     public function getExamTotalMark($studentID, $sessionID, $subjectID = '', $examID = '')
     {
-        $this->db->select('m.mark as get_mark,IFNULL(m.absent, 0) as get_abs,te.mark_distribution');
-        $this->db->from('mark as m');
-        $this->db->join('timetable_exam as te', 'te.exam_id = m.exam_id and te.class_id = m.class_id and te.section_id = m.section_id and te.subject_id = m.subject_id', 'left');
-        $this->db->join('exam as e', 'e.id = m.exam_id', 'inner');
-        $this->db->where('m.exam_id', $examID);
-        $this->db->where('m.student_id', $studentID);
-        $this->db->where('m.session_id', $sessionID);
-        $this->db->where('m.subject_id', $subjectID);
-        $getMarksList = $this->db->get()->row_array();
+            $this->db->select('m.mark as get_mark,IFNULL(m.absent, 0) as get_abs,te.mark_distribution');
+            $this->db->from('mark as m');
+            $this->db->join('timetable_exam as te', 'te.exam_id = m.exam_id and te.class_id = m.class_id and te.section_id = m.section_id and te.subject_id = m.subject_id AND te.session_id = m.session_id', 'left');
+            $this->db->join('exam as e', 'e.id = m.exam_id', 'inner');
+            $this->db->where('m.exam_id', $examID);
+            $this->db->where('m.student_id', $studentID);
+            $this->db->where('m.session_id', $sessionID);
+            $this->db->where('m.subject_id', $subjectID);
+            $getMarksList = $this->db->get()->row_array();
+
         $grand_obtain_marks = 0;
         $grand_full_marks = 0;
         if (!empty($getMarksList)) {
             $fullMarkDistribution = json_decode($getMarksList['mark_distribution'], true);
             $obtainedMark = json_decode($getMarksList['get_mark'], true);
+            $exam_mark_distribution = json_decode($getMarksList[0], true);
             $total_obtain_marks = 0;
             $total_full_marks = 0;
+            // initialize an array to hold the column data
+            $columnData = array();
+
             foreach ($fullMarkDistribution as $i => $val) {
+                // echo "---",json_encode($fullMarkDistribution)
                 $obtained_mark = floatval($obtainedMark[$i]);
                 $fullMark = floatval($val['full_mark']);
                 if ($getMarksList['get_abs'] != 'on') {
                     $total_full_marks += $fullMark;
                     $total_obtain_marks += $obtained_mark;
                 }
+                // append the obtained and full marks to the appropriate column array
+                $columnData[$i]['obtained'][] = $obtained_mark;
+                $columnData[$i]['full'][] = $fullMark;
             }
+
+            // loop through the column data and create the table HTML
+            $tableData = '';
+            foreach ($columnData as $col) {
+                $obtainedMarks = implode(' ', $col['obtained']);
+                $fullMarks = implode(' ', $col['full']);
+            
+                $tableData .= '<td class="text-center">' . ($obtainedMarks == 0 || 00 || 000 && $fullMark == 00 ? '-' : implode(' ', $col['obtained'])) . ($fullMarks == 00 ? '--' : '/') . ($fullMarks == 00 ? '' : $fullMarks) . '</td>';
+                // $tableData .= '<td class="text-center">' . ($obtainedMarks == 00 && $fullMark == 00 ? '-' : implode(' ', $col['obtained'])) . ($fullMark == 00 ? '--' : '/') . ($fullMark == 00 ? '' : $fullMark) . '</td>';
+
+
+                
+            }
+            
+            echo '' . $tableData . '';
+        
+            
             $grand_obtain_marks += $total_obtain_marks;
             $grand_full_marks += $total_full_marks;
         }
         if (!empty($grand_obtain_marks) || !empty($grand_full_marks)) {
-            return ['grand_obtain_marks' => $grand_obtain_marks, 'grand_full_marks' => $grand_full_marks];
+            return ['grand_obtain_marks' => $grand_obtain_marks, 'grand_full_marks' => $total_full_marks];
         } else {
             return ['grand_obtain_marks' => 0, 'grand_full_marks' => 0];
         }
@@ -143,7 +204,7 @@ class Exam_progress_model extends CI_Model
     public function getStudentReportCard($studentID, $sessionID)
     {
         $result = array();
-        $this->db->select('enroll.roll,enroll.id as enrollID,enroll.class_id,enroll.section_id,enroll.branch_id,student.*,c.name as class_name,se.name as section_name,IFNULL(parent.father_name,"N/A") as father_name,IFNULL(parent.mother_name,"N/A") as mother_name');
+        $this->db->select('enroll.roll,enroll.class_id,enroll.section_id,enroll.branch_id,student.*,c.name as class_name,se.name as section_name,IFNULL(parent.name,"N/A") as father_name,IFNULL(parent.mother_name,"N/A") as mother_name');
         $this->db->from('enroll');
         $this->db->join('student', 'student.id = enroll.student_id', 'inner');
         $this->db->join('class as c', 'c.id = enroll.class_id', 'left');
@@ -153,5 +214,267 @@ class Exam_progress_model extends CI_Model
         $this->db->where('enroll.session_id', $sessionID);
         $result['student'] = $this->db->get()->row_array();
         return $result;
+    }
+
+    public function getExamTotalMarkFooter($studentID, $sessionID, $subjectID = '', $examID = '')
+    {
+            $this->db->select('m.mark as get_mark,IFNULL(m.absent, 0) as get_abs,te.mark_distribution');
+            $this->db->from('mark as m');
+            $this->db->join('timetable_exam as te', 'te.exam_id = m.exam_id and te.class_id = m.class_id and te.section_id = m.section_id and te.subject_id = m.subject_id AND te.session_id = m.session_id', 'left');
+            $this->db->join('exam as e', 'e.id = m.exam_id', 'inner');
+            $this->db->where('m.exam_id', $examID);
+            $this->db->where('m.student_id', $studentID);
+            $this->db->where('m.session_id', $sessionID);
+            $this->db->where('m.subject_id', $subjectID);
+            $getMarksList = $this->db->get()->row_array();
+            $grand_obtain_marks = 0;
+            $grand_full_marks = 0;
+            if (!empty($getMarksList)) {
+                $fullMarkDistribution = json_decode($getMarksList['mark_distribution'], true);
+            $obtainedMark = json_decode($getMarksList['get_mark'], true);
+            $exam_mark_distribution = json_decode($getMarksList[0], true);
+            $total_obtain_marks = 0;
+            $total_full_marks = 0;
+            // initialize an array to hold the column data
+            $columnData = array();
+
+            foreach ($fullMarkDistribution as $i => $val) {
+                // echo "---",json_encode($fullMarkDistribution)
+                $obtained_mark = floatval($obtainedMark[$i]);
+                $fullMark = floatval($val['full_mark']);
+                if ($getMarksList['get_abs'] != 'on') {
+                    $total_full_marks += $fullMark;
+                    $total_obtain_marks += $obtained_mark;
+                }
+                // append the obtained and full marks to the appropriate column array
+                $columnData[$i]['obtained'][] = $obtained_mark;
+                $columnData[$i]['full'][] = $fullMark;
+            }
+
+            // loop through the column data and create the table HTML
+            $tableData = '';
+          
+            $counter = 1;
+            foreach ($columnData as $key=>$col) {
+                $tableData .= '<td id="sum' . $key . '">' . $key. '</td>';
+                $counter++;
+                // echo "hello";
+                
+            }
+
+            // echo '' . $tableData . '';
+
+        
+           
+            $grand_obtain_marks += $total_obtain_marks;
+            $grand_full_marks += $total_full_marks;
+        }
+        return $columnData;
+        if (!empty($grand_obtain_marks) || !empty($grand_full_marks)) {
+            return ['grand_obtain_marks' => $grand_obtain_marks, 'grand_full_marks' => $total_full_marks];
+        } else {
+            return ['grand_obtain_marks' => 0, 'grand_full_marks' => 0];
+        }
+    }
+    public function getExamTotalMarkRenk($studentID, $sessionID, $subjectID = '', $examID = '')
+    {
+        $this->db->select('m.mark as get_mark,IFNULL(m.absent, 0) as get_abs,te.mark_distribution');
+        $this->db->from('mark as m');
+        $this->db->join('timetable_exam as te', 'te.exam_id = m.exam_id and te.class_id = m.class_id and te.section_id = m.section_id and te.subject_id = m.subject_id AND te.session_id = m.session_id', 'left');
+        $this->db->join('exam as e', 'e.id = m.exam_id', 'inner');
+        $this->db->where('m.exam_id', $examID);
+        $this->db->where('m.student_id', $studentID);
+        $this->db->where('m.session_id', $sessionID);
+        $this->db->where('m.subject_id', $subjectID);
+        $getMarksList = $this->db->get()->row_array();
+
+        $grand_obtain_marks = 0;
+        $grand_full_marks = 0;
+        if (!empty($getMarksList)) {
+            $fullMarkDistribution = json_decode($getMarksList['mark_distribution'], true);
+            $obtainedMark = json_decode($getMarksList['get_mark'], true);
+            $exam_mark_distribution = json_decode($getMarksList[0], true);
+            $total_obtain_marks = 0;
+            $total_full_marks = 0;
+            // initialize an array to hold the column data
+            $columnData = array();
+
+            foreach ($fullMarkDistribution as $i => $val) {
+                // echo "---",json_encode($fullMarkDistribution)
+                $obtained_mark = floatval($obtainedMark[$i]);
+                $fullMark = floatval($val['full_mark']);
+                if ($getMarksList['get_abs'] != 'on') {
+                    $total_full_marks += $fullMark;
+                    $total_obtain_marks += $obtained_mark;
+                }
+                // append the obtained and full marks to the appropriate column array
+                $columnData[$i]['obtained'][] = $obtained_mark;
+                $columnData[$i]['full'][] = $fullMark;
+            }
+
+            // loop through the column data and create the table HTML
+            $tableData = '';
+            foreach ($columnData as $col) {
+                $obtainedMarks = implode(' ', $col['obtained']);
+                $fullMarks = implode(' ', $col['full']);
+            
+                $tableData .= '<td>' . ($obtainedMarks == 00 && $fullMark == 00 ? '-' : implode(' ', $col['obtained'])) . ' / ' . $fullMarks . '</td>';
+
+                
+            }
+            
+            // echo '' . $tableData . '';
+        
+            
+            $grand_obtain_marks += $total_obtain_marks;
+            $grand_full_marks += $total_full_marks;
+        }
+        if (!empty($grand_obtain_marks) || !empty($grand_full_marks)) {
+            return ['grand_obtain_marks' => $grand_obtain_marks, 'grand_full_marks' => $total_full_marks];
+        } else {
+            return ['grand_obtain_marks' => 0, 'grand_full_marks' => 0];
+        }
+
+    }
+
+
+
+    // public function getExamTotalMarkExclude($studentID, $sessionID, $subjectarray)
+    // {
+    //    echo "----------------",json_encode($subjectarray);
+    //     $sql = ("SELECT m.mark AS get_mark, IFNULL(m.absent, 0) AS get_abs,te.mark_distribution
+    //             FROM mark AS m 
+    //             inner JOIN timetable_exam AS te ON te.exam_id = m.exam_id AND te.class_id = m.class_id AND te.section_id = m.section_id AND te.subject_id = m.subject_id AND te.session_id = m.session_id 
+    //             INNER JOIN exam AS e ON e.id = m.exam_id 
+    //             WHERE m.student_id = $studentID AND m.session_id = $sessionID AND m.subject_id = $subjectid");
+
+    //     $totalObtainMarks = 0;
+    //     $queryResult = $this->db->query($sql);
+    //     $results = $queryResult->result_array();
+    //     $totalMarks = 0;
+
+    //     foreach ($results as $row) {
+    //         $marks = json_decode($row['get_mark'], true);
+    //         $marksTotal = json_decode($row['mark_distribution'], true);
+    //         foreach ($marksTotal as $value) {
+    //             $marksfulltotal = json_decode($value['full_mark'], true);
+    //             $TotalFullMarks += $marksfulltotal;
+    //         }
+    //         $totalMarks += array_sum($marks);
+    //     }
+    //     $resultfinal = array(
+    //         'TotalFullMarks' => $TotalFullMarks,
+    //         'totalMarks' => $totalMarks
+    //     );
+    //     return $resultfinal;
+
+    // }
+    public function getExamTotalMarkExclude($studentID, $sessionID, $subjectarray)
+    {
+        $results = array();
+        $TotalFullMarks = 0;
+        $totalMarks = 0;
+        
+        foreach ($subjectarray as $subjectid) {
+            $sql = ("SELECT m.mark AS get_mark, IFNULL(m.absent, 0) AS get_abs,te.mark_distribution
+                    FROM mark AS m 
+                    INNER JOIN timetable_exam AS te ON te.exam_id = m.exam_id AND te.class_id = m.class_id AND te.section_id = m.section_id AND te.subject_id = m.subject_id AND te.session_id = m.session_id 
+                    INNER JOIN exam AS e ON e.id = m.exam_id 
+                    WHERE m.student_id = $studentID AND m.session_id = $sessionID AND m.subject_id = $subjectid");
+
+            $queryResult = $this->db->query($sql);
+            $results[$subjectid] = $queryResult->result_array();
+
+            foreach ($results[$subjectid] as $row) {
+                $marks = json_decode($row['get_mark'], true);
+                $marksTotal = json_decode($row['mark_distribution'], true);
+                foreach ($marksTotal as $value) {
+                    $marksfulltotal = json_decode($value['full_mark'], true);
+                    $TotalFullMarks += $marksfulltotal;
+                }
+                $totalMarks += array_sum($marks);
+            }
+        }
+    
+        $resultfinal = array(
+            'TotalFullMarks' => $TotalFullMarks,
+            'totalMarks' => $totalMarks
+        );
+        return $resultfinal;
+    }
+
+    public function getExamTotalMarkGrandTotal($studentID, $sessionID, $subjectID = '', $examID = '')
+    {
+        // echo $studentID, $sessionID, $subjectID = '', $examID = '';
+        $this->db->select('m.mark as get_mark,IFNULL(m.absent, 0) as get_abs,te.mark_distribution');
+        $this->db->from('mark as m');
+        $this->db->join('timetable_exam as te', 'te.exam_id = m.exam_id and te.class_id = m.class_id and te.section_id = m.section_id and te.subject_id = m.subject_id AND te.session_id = m.session_id', 'left');
+        $this->db->join('exam as e', 'e.id = m.exam_id', 'inner');
+        $this->db->where('m.exam_id', $examID);
+        $this->db->where('m.student_id', $studentID);
+        $this->db->where('m.session_id', $sessionID);
+        $this->db->where('m.subject_id', $subjectID);
+
+        $getMarksList = $this->db->get()->row_array();
+        $columnData = array();
+
+        if (!empty($getMarksList)) {
+            $fullMarkDistribution = json_decode($getMarksList['mark_distribution'], true);
+            $obtainedMark = json_decode($getMarksList['get_mark'], true);
+            $total_obtain_marks = 0;
+            $total_full_marks = 0;
+
+            foreach ($fullMarkDistribution as $i => $val) {
+                $obtained_mark = floatval($obtainedMark[$i]);
+                $fullMark = floatval($val['full_mark']);
+
+                if ($getMarksList['get_abs'] != 'on') {
+                    $total_full_marks += $fullMark;
+                    $total_obtain_marks += $obtained_mark;
+                }
+
+                $columnData[$i]['obtained'][] = $obtained_mark;
+                $columnData[$i]['full'][] = $fullMark;
+            }
+        }
+
+        $grand_obtain_marks = !empty($total_obtain_marks) ? $total_obtain_marks : 0;
+        $grand_full_marks = !empty($total_full_marks) ? $total_full_marks : 0;
+        if (!empty($grand_obtain_marks) || !empty($grand_full_marks)) {
+            return ['column_data' => $columnData, 'grand_obtain_marks' => $grand_obtain_marks, 'grand_full_marks' => $grand_full_marks];
+        } else {
+            return ['column_data' => $columnData, 'grand_obtain_marks' => 0, 'grand_full_marks' => 0];
+        }
+    }
+    
+    public function getExamTotalMarkExcludenew($studentID, $sessionID, $subjectrow)
+    {
+        $results = array();
+        $TotalFullMarks = 0;
+        $totalMarks = 0;
+            $sql = ("SELECT m.mark AS get_mark, IFNULL(m.absent, 0) AS get_abs,te.mark_distribution
+                    FROM mark AS m 
+                    INNER JOIN timetable_exam AS te ON te.exam_id = m.exam_id AND te.class_id = m.class_id AND te.section_id = m.section_id AND te.subject_id = m.subject_id AND te.session_id = m.session_id 
+                    INNER JOIN exam AS e ON e.id = m.exam_id 
+                    WHERE m.student_id = $studentID AND m.session_id = $sessionID AND m.subject_id = $subjectrow");
+
+            $queryResult = $this->db->query($sql);
+            $results[$subjectrow] = $queryResult->result_array();
+
+            foreach ($results[$subjectrow] as $row) {
+                $marks = json_decode($row['get_mark'], true);
+                $marksTotal = json_decode($row['mark_distribution'], true);
+                foreach ($marksTotal as $value) {
+                    $marksfulltotal = json_decode($value['full_mark'], true);
+                    $TotalFullMarks += $marksfulltotal;
+                }
+                $totalMarks += array_sum($marks);
+            }
+    
+        $resultfinal = array(
+            'TotalFullMarks' => $TotalFullMarks,
+            'totalMarks' => $totalMarks
+        );
+        return $resultfinal;
     }
 }

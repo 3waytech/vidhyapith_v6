@@ -73,20 +73,14 @@
 							<th><?=translate('roll')?></th>
 							<th><?=translate('guardian_name')?></th>
 							<th><?=translate('class')?></th>
-							<th><?=translate('deactivate_reason')?></th>
+							<th><?=translate('section')?></th>
 							<th><?=translate('email')?></th>
 							<th><?=translate('mobile_no')?></th>
-							<th><?=translate('action')?></th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php
 						foreach($students as $row):
-							$reason = '';
-							$getDisableReason = $this->student_model->getDisableReason($row['student_id']);
-							if (!empty($getDisableReason)) {
-								$reason = $getDisableReason->reason;
-							}
 						?>
 						<tr>
 							<td class="checked-area">
@@ -99,16 +93,10 @@
 							<td><?php echo $row['register_no'];?></td>
 							<td><?php echo $row['roll'];?></td>
 							<td><?php echo (!empty($row['parent_id']) ? get_type_name_by_id('parent', $row['parent_id']) : 'N/A');?></td>
-							<td><?php echo $row['class_name'] . " (" . $row['section_name'] . ")";?></td>
-							<td><?php echo $reason; ?></td>
+							<td><?php echo $row['class_name'];?></td>
+							<td><?php echo $row['section_name'];?></td>
 							<td><?php echo $row['email'];?></td>
-							<td><?php echo (empty($row['mobileno']) ? '<i class="fas fa-ellipsis"></i>' : $row['mobileno']);?></td>
-							<td>
-								<a href="<?php echo base_url('student/profile/' . $row['student_id']); ?>" class="btn btn-default btn-circle icon" data-toggle="tooltip"
-								data-original-title="<?=translate('view')?>">
-									<i class="fas fa-qrcode"></i>
-								</a>
-							</td>
+							<td><?php echo $row['mobileno'];?></td>
 						</tr>
 						<?php endforeach;?>
 					</tbody>

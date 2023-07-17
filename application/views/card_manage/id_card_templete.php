@@ -148,9 +148,6 @@
 									'roll' => translate('roll'),
 						
 								);
-								if ($this->app_lib->isExistingAddon('qrcode') && moduleIsEnabled('qr_code_attendance')) {
-									$arrayType['attendance'] = translate('qr_code') . " " . translate('attendance');
-								}
 								echo form_dropdown("stu_qr_code", $arrayType, set_value('qr_code'), "class='form-control' data-width='100%'
 								data-plugin-selectTwo  data-minimum-results-for-search='Infinity'");
 							?>
@@ -167,9 +164,6 @@
 									'birthday' => translate('birthday'),
 									'joining_date' => translate('joining_date'),
 								);
-								if ($this->app_lib->isExistingAddon('qrcode') && moduleIsEnabled('qr_code_attendance')) {
-									$arrayType['attendance'] = translate('qr_code') . " " . translate('attendance');
-								}
 								echo form_dropdown("emp_qr_code", $arrayType, set_value('qr_code'), "class='form-control' data-width='100%'
 								data-plugin-selectTwo  data-minimum-results-for-search='Infinity'");
 							?>

@@ -1,9 +1,5 @@
 <?php
 $message 		= $this->communication_model->getSingle('message', $message_id, true);
-if (empty($message)) {
-	redirect(base_url('communication/mailbox/inbox'));
-	exit;
-}
 $getSender 		= explode('-', $message->sender);
 $senderRoleID 	= $getSender[0];
 $senderUserID 	= $getSender[1];

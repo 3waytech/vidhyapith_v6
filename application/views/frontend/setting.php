@@ -34,6 +34,7 @@
 			<header class="panel-heading">
 				<h4 class="panel-title"><i class="fas fa-globe"></i> <?php echo translate('website') . " " . translate('settings'); ?></h4>
 			</header>
+
             <?php echo form_open_multipart('frontend/setting/save' . get_request_url(), array('class' => 'form-horizontal form-bordered frm-submit-data')); ?>
 				<div class="panel-body">
 					<div class="form-group mt-md">
@@ -50,7 +51,6 @@
 							<span class="error"><?php echo form_error('url_alias'); ?></span>
 						</div>
 					</div>
-
 					<div class="form-group">
 						<label  class="col-md-3 control-label"><?php echo translate('cms_frontend'); ?> <span class="required">*</span></label>
 						<div class="col-md-6">
@@ -144,96 +144,31 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-md-3 control-label"><?php echo translate('google_analytics'); ?></label>
+						<label class="col-md-3 control-label"><?php echo translate('theme'); ?> <span class="required">*</span></label>
 						<div class="col-md-6">
-							<textarea class="form-control" id="google_analytics" name="google_analytics" placeholder="" rows="3" ><?php echo set_value('address', $setting['google_analytics']); ?></textarea>
-							<span class="error"><?php echo form_error('google_analytics'); ?></span>
+							<ul class="list-unstyled thememenu-sy">
+								<li>
+									<div class="theme-box">
+										<label> 
+											<input name="theme_color" value="blue" type="radio" <?=($setting['theme'] == null ? 'checked' : '');?> <?=($setting['theme'] == 'blue' ? 'checked' : '');?>>
+											<div class="theme-img">
+												<img src="<?=base_url('assets/frontend/images/theme/blue.png')?>">
+											</div>
+										</label>
+									</div>
+								</li>
+								<li>
+									<div class="theme-box">
+										<label >
+											<input name="theme_color" value="red" type="radio" <?=($setting['theme'] == 'red' ? 'checked' : '');?> >
+											<div class="theme-img">
+												<img src="<?=base_url('assets/frontend/images/theme/red.png')?>">
+											</div>
+										</label>
+									</div>
+								</li>
+							</ul>
 						</div>
-					</div>
-
-
-					<div class="row theme_option">
-						<label class="col-md-3 control-label">Theme <span class="required">*</span></label>
-						<div class="col-md-6">
-							<section class="panel pg-fw mb-md">
-		                        <div class="panel-body">
-		                            <h5 class="chart-title mb-xs">Theme Options</h5>
-		                            <div class="mt-lg">
-										<div class="form-group">
-											<label class="col-md-4 control-label">Primary Color <span class="required">*</span></label>
-											<div class="col-md-6">
-												<input type="text" class="complex-colorpicker form-control" name="primary_color" value="<?php echo set_value('primary_color', $setting['primary_color']) ?>" />
-												<span class="error"></span>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-4 control-label">Menu BG Color <span class="required">*</span></label>
-											<div class="col-md-6">
-												<input type="text" class="complex-colorpicker form-control" name="menu_color" value="<?php echo set_value('menu_color', $setting['menu_color']) ?>" />
-												<span class="error"></span>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-4 control-label">Button Hover Color <span class="required">*</span></label>
-											<div class="col-md-6">
-												<input type="text" class="complex-colorpicker form-control" name="btn_hover" value="<?php echo set_value('btn_hover', $setting['hover_color']) ?>" />
-												<span class="error"></span>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-4 control-label">Text Color <span class="required">*</span></label>
-											<div class="col-md-6">
-												<input type="text" class="complex-colorpicker form-control" name="text_color" value="<?php echo set_value('text_color', $setting['text_color']) ?>" />
-												<span class="error"></span>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-4 control-label">Text Secondary Color <span class="required">*</span></label>
-											<div class="col-md-6">
-												<input type="text" class="complex-colorpicker form-control" name="secondary_text_color" value="<?php echo set_value('secondary_text_color', $setting['text_secondary_color']) ?>" />
-												<span class="error"></span>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-4 control-label">Footer BG Color <span class="required">*</span></label>
-											<div class="col-md-6">
-												<input type="text" class="complex-colorpicker form-control" name="footer_bg_color" value="<?php echo set_value('footer_bg_color', $setting['footer_background_color']) ?>" />
-												<span class="error"></span>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-4 control-label">Footer Text Color <span class="required">*</span></label>
-											<div class="col-md-6">
-												<input type="text" class="complex-colorpicker form-control" name="footer_text_color" value="<?php echo set_value('footer_text_color', $setting['footer_text_color']) ?>" />
-												<span class="error"></span>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-4 control-label">Copyright BG Color <span class="required">*</span></label>
-											<div class="col-md-6">
-												<input type="text" class="complex-colorpicker form-control" name="copyright_bg_color" value="<?php echo set_value('copyright_bg_color', $setting['copyright_bg_color']) ?>" />
-												<span class="error"></span>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-4 control-label">Copyright Text Color <span class="required">*</span></label>
-											<div class="col-md-6">
-												<input type="text" class="complex-colorpicker form-control" name="copyright_text_color" value="<?php echo set_value('copyright_text_color', $setting['copyright_text_color']) ?>" />
-												<span class="error"></span>
-											</div>
-										</div>
-										<div class="form-group">
-											<label class="col-md-4 control-label">Border Radius <span class="required">*</span></label>
-											<div class="col-md-6 mb-md">
-												<input type="text" class="form-control" name="border_radius" autocomplete="off" value="<?php echo set_value('border_radius', $setting['border_radius']) ?>" />
-												<span class="error"></span>
-											</div>
-										</div>
-
-		                            </div>
-		                        </div>
-		                    </section>
-		                </div>
 					</div>
 					<div class="form-group">
 						<label  class="col-md-3 control-label"><?php echo translate('mobile_no'); ?> <span class="required">*</span></label>
@@ -329,16 +264,6 @@
 </div>
 
 <script type="text/javascript">
-    $(".complex-colorpicker").asColorPicker({
-		readonly: false,
-		lang: 'en',
-		mode: 'complex',
-		color: {
-			reduceAlpha: true,
-			zeroAlphaAsTransparent: false
-		},
-    });
-
 	// frontend setting captcha status 
 	$('#captchaStatus').on('change', function(){
 	    var status = $(this).val();

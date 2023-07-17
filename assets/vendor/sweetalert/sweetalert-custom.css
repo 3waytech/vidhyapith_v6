@@ -995,7 +995,7 @@ border:0
 	text-align: center
 }
 .swal2-popup .swal2-checkbox, .swal2-popup .swal2-file, .swal2-popup .swal2-input, .swal2-popup .swal2-radio, .swal2-popup .swal2-select, .swal2-popup .swal2-textarea {
-	margin: 1em auto
+	margin: 0.5em auto
 }
 .swal2-popup .swal2-file, .swal2-popup .swal2-input, .swal2-popup .swal2-textarea {
 	width: 100%;

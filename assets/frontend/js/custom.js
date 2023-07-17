@@ -87,11 +87,11 @@
     // Accordion
     if ($('#accordion-faqs').length) {
         var $active = $('#accordion-faqs .collapse.show').prev().addClass('active');
-        $active.find("a").append("<span class=\"fa fa-minus float-end\"></span>");
+        $active.find("a").append("<span class=\"fa fa-minus float-right\"></span>");
         $('#accordion-faqs .card-header')
             .not($active)
             .find('a')
-            .prepend("<span class=\"fa fa-plus float-end\"></span>");
+            .prepend("<span class=\"fa fa-plus float-right\"></span>");
 
         $('#accordion-faqs').on('show.bs.collapse', function(e) {
             $('#accordion-faqs .card-header.active')
@@ -235,7 +235,6 @@
                 success: function (data) {
                     $('.error').html("");
                     if (data.status == "fail") {
-                        console.log(data.error);
                         $.each(data.error, function (index, value) {
                             $this.find("[name='" + index + "']").parents('.form-group').find('.error').html(value);
                         });
@@ -329,8 +328,8 @@ function counter() {
     }
 }
 
-// Loading button plugin (removed from BS5)
-$(document).ready(function() {
+// Loading button plugin (removed from BS4)
+(function($) {
     $.fn.button = function(action) {
         if (action === 'loading' && this.data('loading-text')) {
             this.data('original-text', this.html()).html(this.data('loading-text')).prop('disabled', true);
@@ -339,7 +338,7 @@ $(document).ready(function() {
             this.html(this.data('original-text')).prop('disabled', false);
         }
     };
-});
+}(jQuery));
 
 $(".whatsapp-button").on( "click", function() {
     $('.whatsapp-popup').toggleClass('open');

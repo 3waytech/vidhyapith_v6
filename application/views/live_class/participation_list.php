@@ -14,8 +14,9 @@
 			if (!empty($list)) {
 			$count = 1; 
 			foreach ($list as $key => $value) {
-				$stuDetails = $this->application_model->getStudentDetails($value['student_id']);
-				?>
+			$stuDetails = $this->application_model->getStudentDetails($value['student_id']);
+
+			?>
 			<tr>
 			<td><?php echo $count++; ?></td>
 			<td><?php echo $stuDetails['first_name'] . " " . $stuDetails['last_name'] ?></td>

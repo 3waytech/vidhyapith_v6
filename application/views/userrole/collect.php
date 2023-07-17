@@ -22,11 +22,6 @@ if (count($allocations)) {
 				<li>
 					<a href="#collect_fees" data-toggle="tab"><i class="far fa-credit-card"></i> <?=translate('online_pay')?></a>
 				</li>
-			<?php if ($getOfflinePaymentsConfig == 1) { ?>
-				<li>
-					<a href="#offline_payments" data-toggle="tab"><i class="far fa-credit-card"></i> <?=translate('offline_payments')?></a>
-				</li>
-			<?php } ?>
 	<?php endif; ?>
 			</ul>
 			<div class="tab-content">
@@ -222,7 +217,7 @@ if (count($allocations)) {
 								<div class="row">
 									<div class="col-xs-6">
 										<div class="ib">
-											<img src="<?=$this->application_model->getBranchImage($basic['branch_id'], 'printing-logo')?>" alt="Img" />
+											<img src="<?=$this->application_model->getBranchImage($basic['branch_id'], 'printing-logo')?>" alt="techtune Img" />
 										</div>
 									</div>
 									<div class="col-md-6 text-right">
@@ -281,63 +276,62 @@ if (count($allocations)) {
 									</div>
 								</div>
 							</div>
-							<div class="table-responsive br-none">
-								<table class="table invoice-items" id="invoice">
-									<thead>
-										<tr class="h5 text-dark">
-											<th id="cell-id" class="text-weight-semibold hidden-print">
-												<div class="checkbox-replace" >
-													<label class="i-checks" data-toggle="tooltip" data-original-title="Print Show / Hidden">
-														<input type="checkbox" name="select-all" id="selectAllchkbox" checked> <i></i>
-													</label>
-												</div>
-											</th>
-											<th id="cell-item" class="text-weight-semibold"><?=translate('fees_type')?></th>
-											<th id="cell-item" class="text-weight-semibold"><?=translate('fees_code')?></th>
-											<th id="cell-item" class="text-weight-semibold"><?=translate('date')?></th>
-											<th id="cell-item" class="text-weight-semibold hidden-print"><?=translate('collect_by')?></th>
-											<th id="cell-desc" class="text-weight-semibold"><?=translate('remarks')?></th>
-											<th id="cell-qty" class="text-weight-semibold"><?=translate('method')?></th>
-											<th id="cell-price" class="text-weight-semibold"><?=translate('amount')?></th>
-											<th id="cell-price" class="text-weight-semibold"><?=translate('discount')?></th>
-											<th id="cell-price" class="text-weight-semibold"><?=translate('fine')?></th>
-										</tr>
-									</thead>
-									<tbody>
-										<?php
-										$allocations = $this->db->where(array('student_id' => $basic['id'], 'session_id' => get_session_id()))->get('fee_allocation')->result_array();
-										foreach ($allocations as $allRow) {
-											$historys = $this->fees_model->getPaymentHistory($allRow['id'], $allRow['group_id']);
-											foreach ($historys as $row) {
-										?>
-										<tr>
-											<td class="hidden-print checked-area">
-												<div class="checkbox-replace">
-													<label class="i-checks"><input type="checkbox" name="chkPrint" checked ><i></i></label>
-												</div>
-											</td>
-											<td class="text-weight-semibold text-dark"><?=$row['name']?></td>
-											<td><?=$row['fee_code']?></td>
-											<td><?=_d($row['date'])?></td>
-											<td class="hidden-print">
-												<?php
-													if ($row['collect_by'] == 'online') {
-														echo translate('online');
-													}else{
-														echo get_type_name_by_id('staff', $row['collect_by']);
-													}
-												?>
-											</td>
-											<td><?=$row['remarks']?></td>
-											<td><?=$row['payvia']?></td>
-											<td><?=$currency_symbol . $row['amount']?></td>
-											<td><?=$currency_symbol . $row['discount']?></td>
-											<td><?=$currency_symbol . $row['fine']?></td>
-										</tr>
-										 <?php } } ?>
-									</tbody>
-								</table>
-							</div>
+
+							<table class="table invoice-items" id="invoice">
+								<thead>
+									<tr class="h5 text-dark">
+										<th id="cell-id" class="text-weight-semibold hidden-print">
+											<div class="checkbox-replace" >
+												<label class="i-checks" data-toggle="tooltip" data-original-title="Print Show / Hidden">
+													<input type="checkbox" name="select-all" id="selectAllchkbox" checked> <i></i>
+												</label>
+											</div>
+										</th>
+										<th id="cell-item" class="text-weight-semibold"><?=translate('fees_type')?></th>
+										<th id="cell-item" class="text-weight-semibold"><?=translate('fees_code')?></th>
+										<th id="cell-item" class="text-weight-semibold"><?=translate('date')?></th>
+										<th id="cell-item" class="text-weight-semibold hidden-print"><?=translate('collect_by')?></th>
+										<th id="cell-desc" class="text-weight-semibold"><?=translate('remarks')?></th>
+										<th id="cell-qty" class="text-weight-semibold"><?=translate('method')?></th>
+										<th id="cell-price" class="text-weight-semibold"><?=translate('amount')?></th>
+										<th id="cell-price" class="text-weight-semibold"><?=translate('discount')?></th>
+										<th id="cell-price" class="text-weight-semibold"><?=translate('fine')?></th>
+									</tr>
+								</thead>
+								<tbody>
+									<?php
+									$allocations = $this->db->where(array('student_id' => $basic['id'], 'session_id' => get_session_id()))->get('fee_allocation')->result_array();
+									foreach ($allocations as $allRow) {
+										$historys = $this->fees_model->getPaymentHistory($allRow['id'], $allRow['group_id']);
+										foreach ($historys as $row) {
+									?>
+									<tr>
+										<td class="hidden-print checked-area">
+											<div class="checkbox-replace">
+												<label class="i-checks"><input type="checkbox" name="chkPrint" checked ><i></i></label>
+											</div>
+										</td>
+										<td class="text-weight-semibold text-dark"><?=$row['name']?></td>
+										<td><?=$row['fee_code']?></td>
+										<td><?=_d($row['date'])?></td>
+										<td class="hidden-print">
+											<?php
+												if ($row['collect_by'] == 'online') {
+													echo translate('online');
+												}else{
+													echo get_type_name_by_id('staff', $row['collect_by']);
+												}
+											?>
+										</td>
+										<td><?=$row['remarks']?></td>
+										<td><?=$row['payvia']?></td>
+										<td><?=$currency_symbol . $row['amount']?></td>
+										<td><?=$currency_symbol . $row['discount']?></td>
+										<td><?=$currency_symbol . $row['fine']?></td>
+									</tr>
+									 <?php } } ?>
+								</tbody>
+							</table>
 							<div class="invoice-summary text-right mt-lg">
 								<div class="row">
 									<div class="col-lg-5 pull-right">
@@ -391,7 +385,7 @@ if (count($allocations)) {
 								<label class="col-md-3 control-label"><?=translate('fees_type')?> <span class="required">*</span></label>
 								<div class="col-md-6">
 								<?php
-									echo form_dropdown("fees_type", $typeData, set_value('fees_type'), "class='form-control' onchange='getBalanceByType(this)' 
+									echo form_dropdown("fees_type", $typeData, set_value('fees_type'), "class='form-control' id='fees_type'
 									data-plugin-selectTwo data-width='100%' ");
 								?>
 								<span class="error"></span>
@@ -434,14 +428,6 @@ if (count($allocations)) {
 											$payvia_list['midtrans'] = 'Midtrans';
 										if ($config['flutterwave_status'] == 1)
 											$payvia_list['flutterwave'] = 'Flutter Wave';
-	                                    if ($config['paytm_status'] == 1)
-	                                        $payvia_list['paytm'] = 'Paytm';
-	                                    if ($config['toyyibpay_status'] == 1)
-	                                        $payvia_list['toyyibpay'] = 'toyyibPay';
-	                                    if ($config['payhere_status'] == 1)
-	                                        $payvia_list['payhere'] = 'Payhere';
-	                                    if ($config['nepalste_status'] == 1)
-	                                        $payvia_list['nepalste'] = 'Nepalste';
 		    							echo form_dropdown("pay_via", $payvia_list, set_value('pay_via'), "class='form-control' data-plugin-selectTwo data-width='100%' id='pay_via'
 		    							data-minimum-results-for-search='Infinity' ");
 		    						?>
@@ -467,21 +453,6 @@ if (count($allocations)) {
 								<label class="col-md-3 control-label">Phone <span class="required">*</span></label>
 								<div class="col-md-6">
 									<input type="text" class="form-control" name="phone" value="<?php echo $getUser['mobileno'] ?>" autocomplete="off" />
-									<span class="error"></span>
-								</div>
-							</div>
-
-							<div class="form-group toyyibpay" style="display: none;">
-								<label class="col-md-3 control-label">Email <span class="required">*</span></label>
-								<div class="col-md-6">
-									<input type="email" class="form-control" name="toyyibpay_email" value="<?php echo $getUser['email'] ?>" autocomplete="off" />
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group toyyibpay" style="display: none;">
-								<label class="col-md-3 control-label">Phone <span class="required">*</span></label>
-								<div class="col-md-6">
-									<input type="text" class="form-control" name="toyyibpay_phone" value="<?php echo $getUser['mobileno'] ?>" autocomplete="off" />
 									<span class="error"></span>
 								</div>
 							</div>
@@ -540,155 +511,6 @@ if (count($allocations)) {
 							</footer>
 						<?php echo form_close();?>
 					</div>
-					<?php if ($getOfflinePaymentsConfig == 1) { ?>
-					<div id="offline_payments" class="tab-pane">
-						<div class="mb-xlg">
-							<!-- offline payments add -->
-					        <section class="panel pg-fw">
-					            <div class="panel-body">
-					                <h5 class="chart-title mb-xs"><i class="fas fa-credit-card"></i> <?=translate('payment')?></h5>
-					                <div class="mt-lg">
-										<?php echo form_open_multipart('userrole/offline_payments', array('class' => 'form-horizontal frm-submit-data' )); ?>
-											<input type="hidden" class="form-control" name="fine_amount" id="fineAmount" value="0" autocomplete="off" readonly="" />
-											<input type="hidden" name="invoice_no" value="<?=$invoice['invoice_no']?>">
-											<div class="form-group">
-												<label class="col-md-3 control-label"><?=translate('fees_type')?> <span class="required">*</span></label>
-												<div class="col-md-5">
-												<?php
-													echo form_dropdown("fees_type", $typeData, set_value('fees_type'), "class='form-control' onchange='getBalanceByType(this)'
-													data-plugin-selectTwo data-width='100%' ");
-												?>
-												<span class="error"></span>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="col-md-3 control-label"><?=translate('payment_method')?> <span class="required">*</span></label>
-												<div class="col-md-5">
-						    						<?php
-														$payvia_list = array('' => translate('select_payment_method'));
-														$paymentTypes = $this->db->where('branch_id', $basic['branch_id'])->get('offline_payment_types')->result();
-														foreach ($paymentTypes as $key => $value) {
-															$payvia_list[$value->id] = $value->name;
-														}
-						    							echo form_dropdown("payment_method", $payvia_list, set_value('payment_method'), "class='form-control' data-plugin-selectTwo data-width='100%' id='paymentMethod'
-						    							data-minimum-results-for-search='Infinity' ");
-						    						?>
-													<span class="error"></span>
-												</div>
-											</div>
-											<div class="form-group hidden-div" id="instructionDiv">
-												<label class="col-md-3 control-label"><?=translate('instructions')?></label>
-												<div class="col-md-5">
-						    						<div class="alert alert-info mb-none" id="instruction"></div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="col-md-3 control-label"><?=translate('date_of_payment')?> <span class="required">*</span></label>
-												<div class="col-md-5">
-													<input type="text" class="form-control" name="date_of_payment" value="" autocomplete="off" data-plugin-datepicker data-plugin-options='{ "todayHighlight" : true }' />
-													<span class="error"></span>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="col-md-3 control-label"><?=translate('amount')?> <span class="required">*</span></label>
-												<div class="col-md-5">
-													<input type="text" class="form-control" name="fee_amount" id="feeAmount" value="" autocomplete="off" />
-													<span class="error"></span>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="col-md-3 control-label"><?=translate('reference')?></label>
-												<div class="col-md-5">
-													<input type="text" class="form-control" name="reference" value="" autocomplete="off" />
-													<span class="error"></span>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="col-md-3 control-label"><?=translate('note')?> <span class="required">*</span></label>
-												<div class="col-md-5">
-													<textarea class="form-control" name="note" rows="3"></textarea>
-													<span class="error"></span>
-												</div>
-											</div>
-			                                <div class="form-group">
-			                                    <label class="col-md-3 control-label"><?php echo translate('proof_of_payment');?></label>
-			                                    <div class="col-md-4">
-			                                        <input type="file" name="proof_of_payment" class="dropify" data-height="150" data-default-file="" />
-			                                        <span class="error"></span>
-			                                    </div>
-			                                </div>
-			                                <div class="form-group mb-lg">
-												<div class="col-md-offset-3 col-md-3">
-													<button type="submit" class="btn btn-default" data-loading-text="<i class='fas fa-spinner fa-spin'></i> Processing">
-														<i class="fas fa-credit-card"></i> <?=translate('pay')?>
-													</button>
-												</div>
-											</div>
-										<?php echo form_close();?>	
-					                </div>
-					            </div>
-					        </section>
-					        <!-- offline payments list -->
-					        <section class="panel pg-fw">
-					            <div class="panel-body">
-					                <h5 class="chart-title mb-xs"><?=translate('offline_payments')?></h5>
-					                <div class="mt-lg">
-										<table class="table table-bordered table-condensed table-hover mb-none tbr-top table-export">
-											<thead>
-												<tr>
-													<th><?=translate('trx_id')?></th>
-													<th><?=translate('student')?></th>
-													<th><?=translate('payment_date')?></th>
-													<th><?=translate('submit_date')?></th>
-													<th><?=translate('amount')?></th>
-													<th><?=translate('status')?></th>
-													<th><?=translate('action')?></th>
-												</tr>
-											</thead>
-											<tbody>
-												<?php
-												$count = 1;
-												$paymentslist = $this->userrole_model->getOfflinePaymentsList();
-												foreach($paymentslist as $row):
-													?>
-												<tr>
-													<td><?php echo $row->id;?></td>
-													<td><?php echo $row->fullname;?></td>
-													<td><?php echo _d($row->payment_date);?></td>
-													<td><?php echo _d($row->submit_date);?></td>
-													<td><?php echo $currency_symbol . $row->amount;?></td>
-													<td>
-														<?php
-															$labelmode = '';
-															$status = $row->status;
-															if($status == 1) {
-																$status = translate('pending');
-																$labelmode = 'label-info-custom';
-															} elseif($status == 2) {
-																$status = translate('approved');
-																$labelmode = 'label-success-custom';
-															} elseif($status == 3) {
-																$status = translate('suspended');
-																$labelmode = 'label-danger-custom';
-															}
-															echo "<span class='value label " . $labelmode . " '>" . $status . "</span>";
-														?>
-													</td>
-													<td>
-														<a href="javascript:void(0);" class="btn btn-circle icon btn-default" onclick="getApprovelOfflinePayments('<?=$row->id ?>')">
-															<i class="fas fa-bars"></i>
-														</a>
-													</td>
-												</tr>
-												<?php  endforeach; ?>
-											</tbody>
-										</table>
-					                </div>
-					            </div>
-					        </section>
-						</div>
-					</div>
-					<?php } ?>
 				<?php endif; ?>
 			</div>
 		</div>
@@ -702,64 +524,19 @@ if (count($allocations)) {
 		</div>
 	</section>
 <?php } ?>
-
-<?php if ($getOfflinePaymentsConfig == 1) { ?>
-<!-- offline payments view modal -->
-<div class="zoom-anim-dialog modal-block modal-block-lg mfp-hide" id="modal">
-	<section class="panel" id='quick_view'></section>
-</div>
-
 <script type="text/javascript">
-	// get payments approvel details
-	function getApprovelOfflinePayments(id) {
+    $('#fees_type').on("change", function(){
+        var typeID = $(this).val();
 	    $.ajax({
-	        url: base_url + 'userrole/getOfflinePaymentslDetails',
-	        type: 'POST',
-	        data: {'id': id},
-	        dataType: "html",
-	        success: function (data) {
-				$('#quick_view').html(data);
-				mfp_modal('#modal');
-	        }
-	    });
-	}
-</script>
-<?php } ?>
-
-<script type="text/javascript">
-	function getBalanceByType(sel)
-	{
-        var typeID = $(sel).val();
-	    $.ajax({
-	        url: base_url + 'userrole/getBalanceByType',
+	        url: base_url + 'fees/getBalanceByType',
 	        type: 'POST',
 	        data: {
 	        	'typeID': typeID
 	        },
 	        dataType: "json",
 	        success: function (data) {
-	            $(sel).closest('form').find('#feeAmount').val(data.balance.toFixed(2));
-	            $(sel).closest('form').find('#fineAmount').val(data.fine.toFixed(2));
-	        }
-	    });
-	}
-
-    $('#paymentMethod').on("change", function(){
-        var typeID = $(this).val();
-	    $.ajax({
-	        url: base_url + 'offline_payments/getTypeInstruction',
-	        type: 'POST',
-	        data: {
-	        	'typeID': typeID
-	        },
-	        dataType: "html",
-	        success: function (str) {
-	        	if (!str || str.length === 0) {
-	        		$('#instructionDiv').hide(500);
-	        	} else {
-	        		$('#instruction').html(str);
-	        		$('#instructionDiv').show(500);
-	        	}
+	            $('#feeAmount').val(data.balance.toFixed(2));
+	            $('#fineAmount').val(data.fine.toFixed(2));
 	        }
 	    });
     });
@@ -770,22 +547,11 @@ if (count($allocations)) {
 			if (method =="payumoney") {
 				$('.payu').show(400);
 				$('.sslcommerz').hide(400);
-				$('.toyyibpay').hide(400);
 			} else if (method =="sslcommerz") {
 				$('.sslcommerz').show(400);
 				$('.payu').hide(400);
-				$('.toyyibpay').hide(400);
-			} else if (method == "toyyibpay" || method == "payhere") {
-				$('.toyyibpay').show(400);
-				$('.sslcommerz').hide(400);
-				$('.payu').hide(400);
-			} else if (method =="toyyibpay") {
-				$('.toyyibpay').show(400);
-				$('.sslcommerz').hide(400);
-				$('.payu').hide(400);
 			} else{
 				$('.sslcommerz').hide(400);
-				$('.toyyibpay').hide(400);
 				$('.payu').hide(400);
 			}
 		});

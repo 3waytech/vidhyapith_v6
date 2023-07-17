@@ -80,7 +80,7 @@ class Subject extends Admin_Controller
                     }
                     set_alert('success', translate('information_has_been_updated_successfully'));
                 }
-                $url = base_url('subject/index');
+                $url = base_url('subject');
                 $array = array('status' => 'success', 'url' => $url);
             } else {
                 $error = $this->form_validation->error_array();
@@ -323,5 +323,31 @@ class Subject extends Admin_Controller
             $html .= '<option value="">' . translate('select') . '</option>';
         }
         echo $html;
+    }
+    // get subject list based on class section
+    public function getByExamType()
+    {
+        $html = '';
+        $classID = $this->input->post('classID');
+        $sectionID = $this->input->post('sectionID');
+        $subject_id = $this->input->post('subject_id');
+        $exam_id = $this->input->post('exam_id');
+        if (!empty($subject_id)) {
+            $query = $this->subject_model->getSubjectByExamType($classID, $sectionID,$subject_id,$exam_id);
+            
+            $distributions = json_decode($query['mark_distribution'], true);
+            $html = '<select name="subject">';
+            $html .= '<option value="">' . translate('select') . '</option>';
+            foreach ($distributions as $i => $value) {
+                $html .= '<option value="' . $i . '">' . get_type_name_by_id('exam_mark_distribution', $i) . ' (' . $value['full_mark'] . ')</option>';
+            }
+            $html .= '</select>';
+            echo $html;
+
+
+        } else {
+            $html .= '<option value="">' . translate('no_information_available') . '</option>';
+        }
+        
     }
 }

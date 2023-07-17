@@ -36,7 +36,7 @@
 							<td><?php echo $row['subject_code'];?></td>
 							<td><?php echo $row['subject_type'];?></td>
 							<td><?php echo $row['subject_author'];?></td>
-							<td class="action">
+							<td>
 							<?php if (get_permission('subject', 'is_edit')): ?>
 								<!-- subject update link -->
 								<a href="<?php echo base_url('subject/edit/' . $row['id']);?>" class="btn btn-circle btn-default icon" >

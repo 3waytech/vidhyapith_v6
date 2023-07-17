@@ -223,9 +223,7 @@ class Ajax extends MY_Controller
             $this->db->select('staff.id,staff.name,staff.staff_id,lc.role');
             $this->db->from('staff');
             $this->db->join('login_credential as lc', 'lc.user_id = staff.id AND lc.role != 6 AND lc.role != 7', 'inner');
-            if (!empty($role_id)) {
-                $this->db->where('lc.role', $role_id);
-            }
+            $this->db->where('lc.role', $role_id);
             $this->db->where('staff.branch_id', $branch_id);
             $this->db->order_by('staff.id', 'asc');
             $result = $this->db->get()->result_array();
@@ -359,17 +357,6 @@ class Ajax extends MY_Controller
                 $data['guardian'] = 0;
             }
             echo json_encode($data);
-        }
-    }
-
-    public function getProductCategoryDetails()
-    {
-        if (get_permission('product_category', 'is_edit')) {
-            $id = $this->input->post('id');
-            $this->db->where('id', $id);
-            $query = $this->db->get('product_category');
-            $result = $query->row_array();
-            echo json_encode($result);
         }
     }
 }

@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -18,9 +18,6 @@ class Fees extends Admin_Controller
     {
         parent::__construct();
         $this->load->model('fees_model');
-        if (!moduleIsEnabled('student_accounting')) {
-            access_denied();
-        }
     }
 
     public function index()
@@ -586,13 +583,37 @@ class Fees extends Admin_Controller
         $this->form_validation->set_rules('amount', translate('amount'), array('trim', 'required', 'numeric', 'greater_than[0]', array('deposit_verify', array($this->fees_model, 'depositAmountVerify'))));
         $this->form_validation->set_rules('discount_amount', translate('discount'), array('trim', 'numeric', array('deposit_verify', array($this->fees_model, 'depositAmountVerify'))));
         $this->form_validation->set_rules('pay_via', translate('payment_method'), 'trim|required');
+        $payVia = $this->input->post('pay_via');
+        $pay_via_details = "";
+        if ($payVia == 3) {
+            $this->form_validation->set_rules('chequeNo', translate('cheqe_number'), 'trim|required');
+            $this->form_validation->set_rules('bankName', translate('bank_name'), 'trim|required');
+            $this->form_validation->set_rules('chequeDate', translate('cheque_date'), 'trim|required');
+            $pay_via_details = array(
+                'chequeNo' => $this->input->post('chequeNo'),
+                'bankName' => $this->input->post('bankName'),
+                'chequeDate' => $this->input->post('chequeDate')
+            );
+        }
+        if ($payVia == 2) {
+            $this->form_validation->set_rules('transactionNo', translate('transaction_number'), 'trim|required');
+            $pay_via_details = array(
+                'transactionNo' => $this->input->post('transactionNo')
+            );
+        }
+        if ($payVia == 4 || $payVia == 6 || $payVia == 7 || $payVia == 8 || $payVia == 9 || $payVia == 10 || $payVia == 11 || $payVia == 12 || $payVia == 13 || $payVia == 14 || $payVia == 15 || $payVia == 16) {
+            $this->form_validation->set_rules('transferId', translate('transfer_id'), 'trim|required');
+            $pay_via_details = array(
+                'transferId' => $this->input->post('transferId')
+            );
+        }
         if ($this->form_validation->run() !== false) {
             $feesType = explode("|", $this->input->post('fees_type'));
             $amount = $this->input->post('amount');
             $fineAmount = $this->input->post('fine_amount');
             $discountAmount = $this->input->post('discount_amount');
             $date = $this->input->post('date');
-            $payVia = $this->input->post('pay_via');
+            // $payVia = $this->input->post('pay_via');
             $arrayFees = array(
                 'allocation_id' => $feesType[0],
                 'type_id' => $feesType[1],
@@ -603,9 +624,10 @@ class Fees extends Admin_Controller
                 'pay_via' => $payVia,
                 'remarks' => $this->input->post('remarks'),
                 'date' => $date,
+                'pay_via_details' => json_encode($pay_via_details)
+
             );
             $this->db->insert('fee_payment_history', $arrayFees);
-            $payment_historyID = $this->db->insert_id();
 
             // transaction voucher save function
             if (isset($_POST['account_id'])) {
@@ -614,7 +636,7 @@ class Fees extends Admin_Controller
                     'amount' => ($amount + $fineAmount) - $discountAmount,
                     'date' => $date,
                 );
-                $this->fees_model->saveTransaction($arrayTransaction, $payment_historyID);
+                $this->fees_model->saveTransaction($arrayTransaction);
             }
 
             // send payment confirmation sms
@@ -662,6 +684,7 @@ class Fees extends Admin_Controller
             $result = $this->db->get('fee_groups')->result_array();
             if (count($result)) {
                 $html .= "<option value=''>" . translate('select') . "</option>";
+                $html .= "<option value='all'>" . translate('select_all') . "</option>";
                 foreach ($result as $row) {
                     $html .= '<optgroup label="' . $row['name'] . '">';
                     $this->db->where('fee_groups_id', $row['id']);
@@ -932,41 +955,8 @@ class Fees extends Admin_Controller
         $array = array('status' => 'success', 'message' => translate('information_deleted'));
         $ids = $this->input->post('id');
         foreach ($ids as $key => $value) {
-
-            $feeDetails = $this->db->select('id,amount,fine')->where('id', $value)->get('fee_payment_history')->row();
-            if (!empty($feeDetails)) {
-
-                $amount = ($feeDetails->amount + $feeDetails->fine);
-
-                $sql = "SELECT `transactions`.`account_id`, `transactions_links_details`.`transactions_id` FROM `transactions_links_details` INNER JOIN `transactions` ON `transactions`.`id` = `transactions_links_details`.`transactions_id` WHERE `transactions_links_details`.`payment_id` = " . $this->db->escape($value);
-                $transactionsDetails = $this->db->query($sql)->row();
-                if (!empty($transactionsDetails)) {
-
-                    $sql = "UPDATE `transactions` SET `amount` = `amount` + $amount, `cr` = `cr` - $amount, `bal` = `bal` - $amount WHERE `id` = " . $this->db->escape($transactionsDetails->transactions_id);
-                    $this->db->query($sql);
-
-                    $sql = "UPDATE `accounts` SET `balance` = `balance` - $amount WHERE `id` = " . $this->db->escape($transactionsDetails->account_id);
-                    $this->db->query($sql);
-
-
-                 
-                    /*$this->db->set('amount', 'amount+' . $amount, false);
-                    $this->db->set('cr', 'cr-' . $amount, false);
-                    $this->db->set('bal', 'bal-' . $amount, false);
-                    $this->db->where('id', $transactionsDetails->transactions_id);
-                    $this->db->update('transactions');
-
-                    $this->db->set('balance', 'balance-' . $amount, false);
-                    $this->db->where('id', $transactionsDetails->account_id);
-                    $this->db->update('accounts');*/
-                    
-                }
-
-
-
-                $this->db->where('id', $value);
-                $this->db->delete('fee_payment_history');
-            }
+            $this->db->where('id', $value);
+            $this->db->delete('fee_payment_history');
         }
         echo json_encode($array);
     }
@@ -978,10 +968,45 @@ class Fees extends Admin_Controller
         }
         $this->form_validation->set_rules('date', translate('date'), 'trim|required');
         $this->form_validation->set_rules('pay_via', translate('payment_method'), 'trim|required');
+        $payVia = $this->input->post('pay_via');
+        if ($payVia == 3) {
+            $this->form_validation->set_rules('chequeNofull', translate('cheqe_number'), 'trim|required');
+            $this->form_validation->set_rules('bankNamefull', translate('bank_name'), 'trim|required');
+            $this->form_validation->set_rules('chequeDatefull', translate('cheque_date'), 'trim|required');
+           
+        }
+        if ($payVia == 2) {
+            $this->form_validation->set_rules('transactionNofull', translate('transaction_number'), 'trim|required');
+
+        }
+        if ($payVia == 4 || $payVia == 6 || $payVia == 7 || $payVia == 8 || $payVia == 9 || $payVia == 10 || $payVia == 11 || $payVia == 12 || $payVia == 13 || $payVia == 14 || $payVia == 15 || $payVia == 16) {
+            $this->form_validation->set_rules('transferIdfull', translate('transfer_id'), 'trim|required');
+
+        }
         if ($this->form_validation->run() !== false) {
             $date = $this->input->post('date');
-            $payVia = $this->input->post('pay_via');
+            // $payVia = $this->input->post('pay_via');
             $invoiceID = $this->input->post('invoice_id');
+            $pay_via_details = "";
+
+            if ($payVia == 3) {
+                $pay_via_details = array(
+                    'chequeNo' => $this->input->post('chequeNofull'),
+                    'bankName' => $this->input->post('bankNamefull'),
+                    'chequeDate' => $this->input->post('chequeDatefull')
+                );
+                // print_r($pay_via_details);
+            }
+            if ($payVia == 2) {
+                $pay_via_details = array(
+                    'transactionNo' => $this->input->post('transactionNofull')
+                );
+            }
+            if ($payVia == 4 || $payVia == 6 || $payVia == 7 || $payVia == 8 || $payVia == 9 || $payVia == 10 || $payVia == 11 || $payVia == 12 || $payVia == 13 || $payVia == 14 || $payVia == 15 || $payVia == 16) {
+                $pay_via_details = array(
+                    'transferId' => $this->input->post('transferIdfull')
+                );
+            }
 
             $allocations = $this->fees_model->getInvoiceDetails($invoiceID);
             $totalBalance = 0;
@@ -1004,9 +1029,10 @@ class Fees extends Admin_Controller
                         'pay_via' => $payVia,
                         'remarks' => $this->input->post('remarks'),
                         'date' => $date,
+                        'pay_via_details' => json_encode($pay_via_details)
+
                     );
                     $this->db->insert('fee_payment_history', $arrayFees);
-
                 }
             }
 
@@ -1045,9 +1071,14 @@ class Fees extends Admin_Controller
             $record_array = json_decode($record, true);
             $this->db->where_in('id', array_column($record_array, 'payment_id'));
             $paymentHistory = $this->db->select("sum(amount) as total_amount,sum(discount) as total_discount,sum(fine) as total_fine")->get('fee_payment_history')->row_array();
+            
+            $this->db->where_in('id', array_column($record_array, 'payment_id'));
+            $paymentHistoryDetais = $this->db->select("pay_via_details,pay_via")->get('fee_payment_history')->result_array();
+            
             $this->data['total_paid'] = $paymentHistory['total_amount'];
             $this->data['total_discount'] = $paymentHistory['total_discount'];
             $this->data['total_fine'] = $paymentHistory['total_fine'];
+            $this->data['pay_via_details'] = $paymentHistoryDetais;
             $this->load->view('fees/printFeesPaymentHistory', $this->data);
         }
     }
@@ -1084,20 +1115,6 @@ class Fees extends Admin_Controller
         }
     }
 
-    public function payReceiptPrint()
-    {
-        if ($_POST) {
-            if (!get_permission('collect_fees', 'is_add')) {
-                ajax_access_denied();
-            }
-            $studentID = $this->input->post('student_id');
-            $record = $this->input->post('data');
-            $this->data['studentID'] = $studentID;
-            $this->data['record'] = $record;
-            $this->load->view('fees/paySlipPrint', $this->data);
-        }
-    }
-
     public function selectedFeesPay()
     {
         if (!get_permission('collect_fees', 'is_add')) {
@@ -1129,6 +1146,22 @@ class Fees extends Admin_Controller
                 echo json_encode($array);
                 exit;
             }
+            $payVia = $this->input->post('collect_fees[' . $key . '][pay_via]');
+            $pay_via_details = "";
+            if ($payVia == 3) {
+                $this->form_validation->set_rules('chequeNo' . $key . '', translate('cheqe_number'), 'trim|required');
+                $this->form_validation->set_rules('bankName' . $key . '', translate('bank_name'), 'trim|required');
+                $this->form_validation->set_rules('chequeDate' . $key . '', translate('cheque_date'), 'trim|required');
+                
+            }
+            if ($payVia == 2) {
+                $this->form_validation->set_rules('transactionNo' . $key . '', translate('transaction_number'), 'trim|required');
+              
+            }
+            if ($payVia == 4 || $payVia == 6 || $payVia == 7 || $payVia == 8 || $payVia == 9 || $payVia == 10 || $payVia == 11 || $payVia == 12 || $payVia == 13 || $payVia == 14 || $payVia == 15 || $payVia == 16) {
+                $this->form_validation->set_rules('transferId' . $key . '', translate('transfer_id'), 'trim|required');
+             
+            }
         }
 
         if ($this->form_validation->run() !== false) {
@@ -1139,6 +1172,28 @@ class Fees extends Admin_Controller
                 $discountAmount = $value['discount_amount'];
                 $date = $value['date'];
                 $payVia = $value['pay_via'];
+                $pay_via_details = "";
+
+                if ($payVia == 3) {
+                    $pay_via_details = array(
+    
+                        'chequeNo' => $this->input->post('chequeNo' . $key . ''),
+                        'bankName' => $this->input->post('bankName' . $key . ''),
+                        'chequeDate' => $this->input->post('chequeDate' . $key . '')
+                    );
+                    // print_r($pay_via_details);
+                }
+                if ($payVia == 2) {
+                    $pay_via_details = array(
+                        'transactionNo' => $this->input->post('transactionNo' . $key . '')
+                    );
+                }
+                if ($payVia == 4 || $payVia == 6 || $payVia == 7 || $payVia == 8 || $payVia == 9 || $payVia == 10 || $payVia == 11 || $payVia == 12 || $payVia == 13 || $payVia == 14 || $payVia == 15 || $payVia == 16) {
+                    $pay_via_details = array(
+                        'transferId' => $this->input->post('transferId' . $key . '')
+                    );
+                    // print_r($pay_via_details);
+                }
                 $arrayFees = array(
                     'allocation_id' => $value['allocation_id'],
                     'type_id' => $value['type_id'],
@@ -1149,6 +1204,8 @@ class Fees extends Admin_Controller
                     'pay_via' => $payVia,
                     'remarks' => $value['remarks'],
                     'date' => $date,
+                    'pay_via_details' => json_encode($pay_via_details)
+
                 );
                 $this->db->insert('fee_payment_history', $arrayFees);
 

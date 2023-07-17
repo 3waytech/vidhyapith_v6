@@ -20,9 +20,6 @@ class Homework extends Admin_Controller
         $this->load->model('homework_model');
         $this->load->model('subject_model');
         $this->load->model('sms_model');
-        if (!moduleIsEnabled('homework')) {
-            access_denied();
-        }
     }
 
     public function index()
@@ -233,13 +230,9 @@ class Homework extends Admin_Controller
     public function download_submitted()
     {
         $this->load->helper('download');
-        $encrypt_name = urldecode($this->input->get('file'));
-        if(preg_match('/^[^.][-a-z0-9_.]+[a-z]$/i', $encrypt_name)) {
-            $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get('homework_submit')->row()->file_name;
-            if (!empty($file_name)) {
-                force_download($file_name, file_get_contents('uploads/attachments/homework_submit/' . $encrypt_name));
-            }
-        }
+        $encrypt_name = $this->input->get('file');
+        $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get('homework_submit')->row()->file_name;
+        force_download($file_name, file_get_contents('uploads/attachments/homework_submit/' . $encrypt_name));
     }
 
     public function delete($id = '')

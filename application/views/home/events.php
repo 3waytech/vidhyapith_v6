@@ -57,7 +57,7 @@
                     <p>
                         <?php echo mb_strimwidth(strip_tags($value['remark']), 0, 80, "..."); ?>
                     </p>
-                    <a href="<?=base_url("$url_alias/event_view/". $value['id'])?>" class="btn btn-1">
+                    <a href="<?=base_url('home/event_view/'. $value['id'] . "/" . $url_alias)?>" class="btn btn-1">
                         <i class="fa fa-arrow-circle-right"></i>
                         Read More
                     </a>

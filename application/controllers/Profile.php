@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -39,7 +39,7 @@ class Profile extends Admin_Controller
                 $this->form_validation->set_rules('income', translate('income'), 'trim|numeric');
                 $this->form_validation->set_rules('mobileno', translate('mobile_no'), 'trim|required');
                 $this->form_validation->set_rules('email', translate('email'), 'trim|valid_email');
-                $this->form_validation->set_rules('username', translate('username'), 'trim|required|callback_unique_username');
+                // $this->form_validation->set_rules('username', translate('username'), 'trim|required|callback_unique_username');
                 $this->form_validation->set_rules('user_photo', 'profile_picture', 'callback_photoHandleUpload[user_photo]');
                 $this->form_validation->set_rules('facebook', 'Facebook', 'valid_url');
                 $this->form_validation->set_rules('twitter', 'Twitter', 'valid_url');
@@ -48,13 +48,15 @@ class Profile extends Admin_Controller
                     $data = $this->input->post();
                     $this->profile_model->parentUpdate($data);
                     set_alert('success', translate('information_has_been_updated_successfully'));
-                    redirect(base_url('profile'));
+                    redirect(base_url('profile')); 
                 }
             }
             $this->data['parent'] = $this->parents_model->getSingleParent($userID);
             $this->data['sub_page'] = 'profile/parent';
         } elseif ($loggedinRoleID == 7) {
             if ($_POST) {
+                // echo "helo--------------";
+
                 $this->form_validation->set_rules('student_id', translate('student'), 'trim');
                 // system fields validation rules
                 $validArr = array();
@@ -64,7 +66,9 @@ class Profile extends Admin_Controller
                         $validArr[$value->prefix] = 1;
                     }
                 }
+
                 $this->form_validation->set_rules('user_photo', 'profile_picture', 'callback_photoHandleUpload[user_photo]');
+                
                 if (isset($validArr['admission_date'])) {
                     $this->form_validation->set_rules('admission_date', translate('admission_date'), 'trim|required');
                 }
@@ -124,9 +128,13 @@ class Profile extends Admin_Controller
                     $this->form_validation->set_rules('school_name', translate('school_name'), 'trim|required');
                     $this->form_validation->set_rules('qualification', translate('qualification'), 'trim|required');
                 }
+
                 if ($this->form_validation->run() == true) {
                     $data = $this->input->post();
-                    $this->profile_model->studentUpdate($data);
+
+                    // echo "-----------------",$data;
+
+                    $this->profile_model->studentUpdate($data); 
                     set_alert('success', translate('information_has_been_updated_successfully'));
                     $array = array('status' => 'success');
                 } else {
@@ -150,6 +158,7 @@ class Profile extends Admin_Controller
                     $this->form_validation->set_rules('qualification', translate('qualification'), 'trim|required');
                 }
                 $this->form_validation->set_rules('email', translate('email'), 'trim|required|valid_email');
+                // $this->form_validation->set_rules('username', translate('username'), 'trim|required|callback_unique_username');
                 $this->form_validation->set_rules('facebook', 'Facebook', 'trim|valid_url');
                 $this->form_validation->set_rules('twitter', 'Twitter', 'trim|valid_url');
                 $this->form_validation->set_rules('linkedin', 'Linkedin', 'trim|valid_url');
@@ -167,6 +176,8 @@ class Profile extends Admin_Controller
 
         $this->data['title'] = translate('profile') . " " . translate('edit');
         $this->data['main_menu'] = 'profile';
+
+       
         $this->data['headerelements'] = array(
             'css' => array(
                 'vendor/dropify/css/dropify.min.css',
@@ -195,6 +206,7 @@ class Profile extends Admin_Controller
         }
     }
 
+
     // when user change his password
     public function password()
     {
@@ -209,7 +221,7 @@ class Profile extends Admin_Controller
                 // password change email alert
                 $emailData = array(
                     'branch_id' => get_loggedin_branch_id(),
-                    'password' => $new_password,
+                    'password' => $new_password, 
                 );
                 $this->email_model->changePassword($emailData);
                 set_alert('success', translate('password_has_been_changed'));

@@ -11,7 +11,7 @@ class Frontend_model extends MY_Model
     public function getBranchID()
     {
         if (is_superadmin_loggedin()) {
-            return urlencode($this->input->get('branch_id', true));
+            return $this->input->get('branch_id', true);
         } else {
             return get_loggedin_branch_id();
         }

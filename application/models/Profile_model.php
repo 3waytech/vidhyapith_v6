@@ -42,6 +42,8 @@ class Profile_model extends MY_Model
 
     public function studentUpdate($data)
     {
+
+        // echo $data;
         
         $arrData = array();
         if (isset($data['admission_date'])) {
@@ -86,8 +88,11 @@ class Profile_model extends MY_Model
         if (isset($data['state'])) {
             $arrData['state'] = $data['state'];
         }
-        if (isset($_FILES["user_photo"]) && !empty($_FILES["user_photo"]['name'])) {
+        if (isset($_FILES["user_photo"]) && ($_FILES["user_photo"]['name'])) {
+            // $arrData['photo'] = $this->uploadImage('student');
             $arrData['photo'] = $this->uploadImage('student');
+
+            // echo $arrData['photo'] = $this->uploadImage('student');
         }
 
         $previous_details = array(

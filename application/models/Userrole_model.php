@@ -83,12 +83,13 @@ class Userrole_model extends MY_Model
     }
 
     // check attendance by staff id and date
-    public function get_attendance_by_date($enroll_id, $date)
+    public function get_attendance_by_date($studentID, $date)
     {
-        $sql = "SELECT `student_attendance`.* FROM `student_attendance` WHERE `enroll_id` = " . $this->db->escape($enroll_id) . " AND `date` = " . $this->db->escape($date);
+        $sql = "SELECT student_attendance.* FROM student_attendance WHERE student_id = " . $this->db->escape($studentID) . " AND date = " . $this->db->escape($date);
         return $this->db->query($sql)->row_array();
     }
 
+   
     public function getStudentDetails()
     {
         $sessionID = get_session_id();
@@ -97,7 +98,7 @@ class Userrole_model extends MY_Model
         } elseif (is_parent_loggedin()) {
             $studentID = get_activeChildren_id();
         }
-        $this->db->select('CONCAT_WS(" ",s.first_name, s.last_name) as fullname,s.email as student_email,s.register_no,e.branch_id,e.id as enroll_id,e.student_id,s.hostel_id,s.room_id,s.route_id,s.vehicle_id,e.class_id,e.section_id,c.name as class_name,se.name as section_name,b.school_name,b.email as school_email,b.mobileno as school_mobileno,b.address as school_address');
+        $this->db->select('CONCAT_WS(" ",s.first_name, s.last_name) as fullname,s.email as student_email,s.register_no,e.branch_id,e.student_id,s.hostel_id,s.room_id,s.route_id,s.vehicle_id,e.class_id,e.section_id,c.name as class_name,se.name as section_name,b.school_name,b.email as school_email,b.mobileno as school_mobileno,b.address as school_address');
         $this->db->from('enroll as e');
         $this->db->join('student as s', 's.id = e.student_id', 'inner');
         $this->db->join('branch as b', 'b.id = e.branch_id', 'left');
@@ -303,38 +304,5 @@ class Userrole_model extends MY_Model
             return [];
         }
     }
-
-
-    public function getOfflinePaymentsList($where = array(), $single = false)
-    {
-        $student = $this->getStudentDetails();
-        $this->db->select('op.*,CONCAT_WS(" ",student.first_name, student.last_name) as fullname,student.email,student.mobileno,student.register_no,class.name as class_name,section.name as section_name,branch.name as branchname');
-        $this->db->from('offline_fees_payments as op');
-        $this->db->join('enroll', 'enroll.id = op.student_enroll_id', 'left');
-        $this->db->join('branch', 'branch.id = enroll.branch_id', 'left');
-        $this->db->join('student', 'student.id = enroll.student_id', 'left');
-        $this->db->join('class', 'class.id = enroll.class_id', 'left');
-        $this->db->join('section', 'section.id = enroll.section_id', 'left');
-        $this->db->where('op.student_enroll_id', $student['enroll_id']);
-        if (!empty($where)) {
-            $this->db->where($where);
-        }
-        if ($single == true) {
-            $result = $this->db->get()->row_array();
-        } else {
-            $this->db->order_by('op.id', 'ASC');
-            $result = $this->db->get()->result();
-        }
-        return $result;
-    }
-
-    public function getOfflinePaymentsConfig()
-    {
-        $branchID = get_loggedin_branch_id();
-        $row = $this->db->select('offline_payments')->where('id', $branchID)->get('branch')->row()->offline_payments;
-        return $row;
-    }
-
-
 
 }

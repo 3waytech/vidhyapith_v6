@@ -236,8 +236,8 @@ if (count($student_array)) {
 				<?php
 				if ($attendance == true) {
 					$year = explode('-', $schoolYear);
-					$getTotalWorking = $this->db->where(array('enroll_id' => $student['enrollID'], 'year(date)' => $year[0]))->get('student_attendance')->num_rows();
-					$getTotalAttendance = $this->db->where(array('enroll_id' => $student['enrollID'], 'status' => 'P', 'year(date)' => $year[0]))->get('student_attendance')->num_rows();
+					$getTotalWorking = $this->db->where(array('student_id' => $studentID, 'status !=' => 'H', 'year(date)' => $year[0]))->get('student_attendance')->num_rows();
+					$getTotalAttendance = $this->db->where(array('student_id' => $studentID, 'status' => 'P', 'year(date)' => $year[0]))->get('student_attendance')->num_rows();
 					$attenPercentage = empty($getTotalWorking) ? '0.00' : ($getTotalAttendance * 100) / $getTotalWorking;
 					?>
 				<table class="table table-bordered table-condensed">

@@ -161,40 +161,21 @@ class Online_admission_model extends MY_Model
         return $query->result_array();
     }
 
-    public function regSerNumber($school_id = '')
+    public function regSerNumber()
     {
-        $registerNoPrefix = '';
-        if (!empty($school_id)) {
-            $schoolconfig = $this->db->select('reg_prefix_enable,reg_start_from,institution_code,reg_prefix_digit')->where(array('id' => $school_id))->get('branch')->row();
-            if ($schoolconfig->reg_prefix_enable == 1) {
-                $registerNoPrefix = $schoolconfig->institution_code . $schoolconfig->reg_start_from;
-                $last_registerNo = $this->app_lib->studentLastRegID($school_id);
-                if (!empty($last_registerNo)) {
-                    $last_registerNo_digit = str_replace($schoolconfig->institution_code, "", $last_registerNo->register_no);
-                    if (!is_numeric($last_registerNo_digit)) {
-                        $last_registerNo_digit = $schoolconfig->reg_start_from;
-                    } else {
-                        $last_registerNo_digit = $last_registerNo_digit + 1;
-                    }
-                    $registerNoPrefix = $schoolconfig->institution_code . sprintf("%0" . $schoolconfig->reg_prefix_digit . "d", $last_registerNo_digit);
-                } else {
-                    $registerNoPrefix = $schoolconfig->institution_code . sprintf("%0" . $schoolconfig->reg_prefix_digit . "d", $schoolconfig->reg_start_from);
-                }
-            }
-            return $registerNoPrefix;
-        } else {
-            $config = $this->db->select('institution_code,reg_prefix')->where(array('id' => 1))->get('global_settings')->row();
-            if ($config->reg_prefix == 'on') {
-                $prefix = $config->institution_code;
-            }
-            $result = $this->db->select("max(id) as id")->get('student')->row_array();
-            $id = $result["id"];
-            if (!empty($id)) {
-                $maxNum = str_pad($id + 1, 5, '0', STR_PAD_LEFT);
-            } else {
-                $maxNum = '00001';
-            }
-            return ($prefix . $maxNum);
+        $prefix = '';
+        $config = $this->db->select('institution_code,reg_prefix')->where(array('id' => 1))->get('global_settings')->row();
+        if ($config->reg_prefix == 'on') {
+            $prefix = $config->institution_code;
         }
+        $result = $this->db->select("max(id) as id")->get('student')->row_array();
+        $id = $result["id"];
+        if (!empty($id)) {
+            $maxNum = str_pad($id + 1, 5, '0', STR_PAD_LEFT);
+        } else {
+            $maxNum = '00001';
+        }
+
+        return ($prefix . $maxNum);
     }
 }

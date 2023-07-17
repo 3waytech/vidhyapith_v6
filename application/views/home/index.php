@@ -57,7 +57,7 @@
     <section class="welcome-area">
         <div class="row">
             <div class="col-md-6 col-sm-12">
-                <h2 class="main-heading1 lite" style="color: <?php echo $wellcome['color1'] == "" ? '#000' : $wellcome['color1']; ?>"><?php echo $wellcome['title']; ?></h2>
+                <h2 class="main-heading1 lite"><?php echo $wellcome['title']; ?></h2>
                 <div class="sec-title style-two mb-tt">
                     <h2 class="main-heading2"><?php echo $wellcome['subtitle']; ?></h2>
                     <span class="decor"><span class="inner"></span></span>
@@ -82,8 +82,8 @@
 <section class="featured-doctors" style="background-image: url(<?php echo base_url('uploads/frontend/home_page/' . $elements['image']); ?>);">
     <div class="container px-md-0">
         <div class="sec-title text-center">
-            <h2 style="color: <?php echo $teachers['color1'] == "" ? '#fff' : $teachers['color1'] ?>"><?php echo $teachers['title'] ?></h2>
-            <p style="color: <?php echo $teachers['color2'] == "" ? '#fff' : $teachers['color2'] ?>"><?php echo nl2br($teachers['description']); ?></p>
+            <h2><?php echo $teachers['title'] ?></h2>
+            <p><?php echo nl2br($teachers['description']); ?></p>
             <span class="decor"><span class="inner"></span></span>
         </div>
         <div class="row">
@@ -183,8 +183,8 @@
 <section class="counters-wrapper" style="background-image: url(<?php echo base_url('uploads/frontend/home_page/' . $statisticsElem['image']); ?>);" >
     <div class="container px-md-0">
         <div class="sec-title text-center">
-            <h2 style="color: <?php echo $statistics['color1'] == "" ? '#fff' : $statistics['color1']; ?>"><?php echo $statistics['title'] ?></h2>
-            <p style="color: <?php echo $statistics['color2'] == "" ? '#fff' : $statistics['color2']; ?>"><?php echo nl2br($statistics['description']); ?></p>
+            <h2><?php echo $statistics['title'] ?></h2>
+            <p><?php echo nl2br($statistics['description']); ?></p>
             <span class="decor"><span class="inner"></span></span>
         </div>
         <div class="row">
@@ -193,10 +193,10 @@
             <div class="col-lg-3 col-sm-6 col-xs-6 text-center">
                 <div class="counters-item">
                     <i class="<?php echo $statisticsElem['widget_icon_' . $i] ?>"></i>
-                    <div style="color: <?php echo $statistics['color1'] == "" ? '#fff' : $statistics['color1']; ?>">
+                    <div>
                         <span class="counter" data-count="<?php echo $this->home_model->getStatisticsCounter($statisticsElem['type_' . $i], $branchID); ?>">0</span>
                     </div>
-                    <h3 style="color: <?php echo $statistics['color1'] == "" ? '#fff' : $statistics['color1']; ?>"><?php echo $statisticsElem['widget_title_' . $i]; ?></h3>
+                    <h3><?php echo $statisticsElem['widget_title_' . $i]; ?></h3>
                 </div>
             </div>
             <?php } ?>
@@ -207,12 +207,12 @@
     if (!empty($services) || !empty($cta_box)) {
         ?>
 <!-- Services Section Starts -->      
-<div class="" style="background-image: url(<?php echo base_url('assets/frontend/images/14.png') ?>); padding: 60px 0; background-color: <?php echo $services['color2'] == "" ? '#fff' : $services['color2']; ?>;">
+<div class="" style="background-image: url(<?php echo base_url('assets/frontend/images/14.png') ?>); padding: 60px 0;">
     <div class="container px-md-0">
     <?php if (!empty($services)) { ?>
         <section class="medical-services">
             <div class="sec-title text-center">
-                <h2 style="color: <?php echo $services['color1'] == "" ? '#000' : $services['color1']; ?>"><?php echo $services['title']; ?></h2>
+                <h2><?php echo $services['title']; ?></h2>
                 <p><?php echo nl2br($services['description']); ?></p>
                 <span class="decor"><span class="inner"></span></span>
             </div>
@@ -236,11 +236,11 @@
 		if (!empty($cta_box)) {
         $elements = json_decode($cta_box[ 'elements' ], true);
 		?>
-        <div class="book-appointment-box" style="background-color: <?php echo $cta_box['color1'] == "" ? '#464646' : $cta_box['color1']; ?>;">
+        <div class="book-appointment-box">
             <div class="row">
                 <div class="col-lg-8 col-md-12 text-center text-lg-left">
-                    <h4 style="color: <?php echo $cta_box['color2'] == "" ? '#fff' : $cta_box['color2']; ?>;"><?php echo $cta_box['title']; ?></h4>
-                    <h3 style="color: <?php echo $cta_box['color2'] == "" ? '#fff' : $cta_box['color2']; ?>;"><div class="inner-box"><i class="fa fa-phone"></i></div> <?php echo $elements['mobile_no']; ?></h3>
+                    <h4><?php echo $cta_box['title']; ?></h4>
+                    <h3><div class="inner-box"><i class="fa fa-phone"></i></div> <?php echo $elements['mobile_no']; ?></h3>
                 </div>
                 <div class="col-lg-4 col-md-12 text-center text-lg-left">
                     <a href="<?php echo $elements['button_url']; ?>" class="btn btn-main btn-1 text-uppercase"><?php echo $elements['button_text']; ?></a>

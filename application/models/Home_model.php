@@ -10,30 +10,18 @@ class Home_model extends MY_Model
 
     public function getDefaultBranch()
     {
-        $saasExisting = $this->app_lib->isExistingAddon('saas');
-        if ($saasExisting && $this->db->table_exists("custom_domain")) {
-            $getDomain = $this->getCurrentDomain();
-            if(!empty($getDomain)) {
-                return $getDomain->school_id; 
-            } else {
-                $school = "";
-                $school = $this->uri->segment(1);
-                $row = $this->db->select('branch_id')->get_where('front_cms_setting', array('url_alias' => $school))->row_array();
-                if (empty($row) || $row['branch_id'] == 0) {
-                    return $this->getCMSdefault();
-                } else {
-                    return $row['branch_id'];
-                }
-            }
+        $school = "";
+        if ($this->uri->segment(4)) {
+            $school = $this->uri->segment(4);
         } else {
-            $school = "";
-            $school = $this->uri->segment(1);
-            $row = $this->db->select('branch_id')->get_where('front_cms_setting', array('url_alias' => $school))->row_array();
-            if (empty($row) || $row['branch_id'] == 0) {
-                return $this->getCMSdefault();
-            } else {
-                return $row['branch_id'];
-            }
+            $school = $this->uri->segment(3);
+        }
+        $row = $this->db->select('branch_id')->get_where('front_cms_setting', array('url_alias' => $school))->row_array();
+        if (empty($row) || $row['branch_id'] == 0) {
+            $row = $this->db->where('id', 1)->get('global_settings')->row_array();
+            return $row['cms_default_branch'];
+        } else {
+            return $row['branch_id'];
         }
     }
 
@@ -129,10 +117,6 @@ class Home_model extends MY_Model
         if (empty($branchID)) {
             $branchID = $this->getDefaultBranch();
         }
-        if (empty($school)) {
-            $cms_setting = $this->db->select('url_alias')->get_where('front_cms_setting', array('branch_id' => $branchID))->row();
-            $school = $cms_setting->url_alias;
-        }
         $this->db->select('front_cms_menu.*,if(mv.name is null, front_cms_menu.title, mv.name) as title,if(mv.parent_id is null, front_cms_menu.parent_id, mv.parent_id) as parent_id,if(mv.ordering is null, front_cms_menu.ordering, mv.ordering) as ordering,mv.invisible');
         $this->db->from('front_cms_menu');
         $this->db->join('front_cms_menu_visible as mv', 'mv.menu_id = front_cms_menu.id and mv.branch_id = ' . $branchID, 'left');
@@ -171,25 +155,17 @@ class Home_model extends MY_Model
     public function genURL($array = array(), $school = '')
     {
         $url = "#";
-        if (!empty($school)) {
+        if ($school != '') {
             $school = '/' . $school;
         }
 
-        $saasExisting = $this->app_lib->isExistingAddon('saas');
-        if ($saasExisting && $this->db->table_exists("custom_domain")) {
-            $getDomain = $this->getCurrentDomain();
-            if(!empty($getDomain)) {
-                $school = "";
-            }
-        }
-        
         if ($array['system'] && $array['alias'] !== 'pages') {
-            $url = base_url($school . '/' . $array['alias']);
+            $url = base_url('home/' . $array['alias'] . $school);
         } else {
             if ($array['ext_url']) {
                 $url = $array['ext_url_address'];
             } else {
-                $url = base_url( $school . '/page/' . $array['alias']);
+                $url = base_url('home/page/' . $array['alias'] . $school);
             }
         }
         return $url;
@@ -289,22 +265,5 @@ class Home_model extends MY_Model
         $this->db->where('branch_id', $branchID);
         $this->db->select('*')->from('payment_config');
         return $this->db->get()->row_array();
-    }
-
-    public function getCurrentDomain()
-    {
-        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        $url = rtrim($url, '/');
-        $domain =  parse_url($url, PHP_URL_HOST);
-        $getDomain = $this->db->select('school_id')->get_where('custom_domain', array('status' => 1, 'url' => $domain))->row();
-        return $getDomain;
-    }
-
-    public function getCMSdefault()
-    {  
-        $this->db->select('cms_default_branch');
-        $this->db->where('id', 1);
-        $row = $this->db->get('global_settings')->row_array();
-        return $row['cms_default_branch'];
     }
 }

@@ -50,87 +50,102 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |		my-controller/my-method	-> my_controller/my_method
 */
 
-require_once( BASEPATH .'database/DB.php');
-$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-$url = rtrim($url, '/');;
-$domain =  parse_url($url, PHP_URL_HOST);
-$db =& DB();
-$saas_default = false;
-if ($db->table_exists("custom_domain")) {
-	$getURL = $db->select('count(id) as cid')->get_where('custom_domain', array('status' => 1, 'url' => $domain))->row()->cid;
-	if($getURL > 0 ) {
-		$route['authentication'] = 'authentication/index/$1';
-		$route['teachers'] = 'home/teachers';
-		$route['events'] = 'home/events';
-		$route['about'] = 'home/about';
-		$route['faq'] = 'home/faq';
-		$route['admission'] = 'home/admission';
-		$route['gallery'] = 'home/gallery';
-		$route['contact'] = 'home/contact';
-		$route['admit_card'] = 'home/admit_card';
-		$route['exam_results'] = 'home/exam_results';
-		$route['certificates'] = 'home/certificates';
-		$route['page/(:any)'] = 'home/page/$1';
-		$route['gallery_view/(:any)'] = 'home/gallery_view/$1';
-		$route['event_view/(:num)'] = 'home/event_view/$1';
-		$route['default_controller'] = 'home/index';
-	} else {
-		$saas_default = true;
-	}
-} else {
-	$saas_default = true;
-}
-
-$route['(:any)/authentication'] = 'authentication/index/$1';
-$route['(:any)/teachers'] = 'home/teachers';
-$route['(:any)/events'] = 'home/events';
-$route['(:any)/about'] = 'home/about';
-$route['(:any)/faq'] = 'home/faq';
-$route['(:any)/admission'] = 'home/admission';
-$route['(:any)/gallery'] = 'home/gallery';
-$route['(:any)/contact'] = 'home/contact';
-$route['(:any)/admit_card'] = 'home/admit_card';
-$route['(:any)/exam_results'] = 'home/exam_results';
-$route['(:any)/certificates'] = 'home/certificates';
-$route['(:any)/page/(:any)'] = 'home/page/$2';
-$route['(:any)/gallery_view/(:any)'] = 'home/gallery_view/$2';
-$route['(:any)/event_view/(:num)'] = 'home/event_view/$2';
-
-$route['dashboard'] = 'dashboard/index';
-$route['branch'] = 'branch/index';
-$route['attachments'] = 'attachments/index';
-$route['homework'] = 'homework/index';
-$route['onlineexam'] = 'onlineexam/index';
-$route['hostels'] = 'hostels/index';
-$route['event'] = 'event/index';
-$route['accounting'] = 'accounting/index';
-$route['school_settings'] = 'school_settings/index';
-$route['role'] = 'role/index';
-$route['sessions'] = 'sessions/index';
-$route['translations'] = 'translations/index';
-$route['cron_api'] = 'cron_api/index';
-$route['modules'] = 'modules/index';
-$route['system_student_field'] = 'system_student_field/index';
-$route['custom_field'] = 'custom_field/index';
-$route['backup'] = 'backup/index';
-$route['advance_salary'] = 'advance_salary/index';
-$route['system_update'] = 'system_update/index';
-$route['certificate'] = 'certificate/index';
-$route['payroll'] = 'payroll/index';
-$route['leave'] = 'leave/index';
-$route['award'] = 'award/index';
-$route['classes'] = 'classes/index';
-$route['student_promotion'] = 'student_promotion/index';
-$route['live_class'] = 'live_class/index';
-$route['exam'] = 'exam/index';
-$route['profile'] = 'profile/index';
-$route['sections'] = 'sections/index';
-
-$route['authentication'] = 'authentication/index';
-$route['install'] = 'install/index';
+$route['default_controller'] = 'home';
 $route['404_override'] = 'errors';
-if ($saas_default) {
-	$route['default_controller'] = 'saas_website/index';
-}
-$route['(:any)'] = 'home/index/$1';
 $route['translate_uri_dashes'] = FALSE;
+
+
+// Api Route 
+
+$route['api/demo'] = 'api/Auth_Controller_Parents/index';
+$route['api/login'] = 'api/Auth_Controller_Parents/login';
+$route['api/profile'] = 'api/ParentsApiController/profile';
+$route['api/update'] = 'api/ParentsApiController/update';
+$route['api/my_children'] = 'api/ParentsApiController/my_children';
+$route['api/single_children'] = 'api/ParentsApiController/single_children';
+$route['api/getbranchdetails'] = 'api/ParentsApiController/getbranchdetails';
+$route['api/getallbranch_teacherlist'] = 'api/ParentsApiController/getallbranch_teacherlist';
+$route['api/getteacher_profile'] = 'api/ParentsApiController/getteacher_profile';
+$route['api/eventlist'] = 'api/ParentsApiController/eventlist';
+$route['api/attachmentslist'] = 'api/ParentsApiController/attachmentslist';
+$route['api/booklist'] = 'api/ParentsApiController/booklist';
+$route['api/book_issue_list'] = 'api/ParentsApiController/book_issue_list';
+$route['api/subjectlist'] = 'api/ParentsApiController/subjectlist';
+
+// sfhd
+
+
+$route['api/logout'] = 'api/ParentsApiController/logout';
+$route['api/change_pass'] = 'api/ParentsApiController/change_pass';
+$route['api/subj_list'] = 'api/ParentsApiController/subj_list';
+$route['api/class_schedule'] = 'api/ParentsApiController/class_schedule';
+$route['api/exam'] = 'api/ParentsApiController/exam';
+$route['api/examschedule'] = 'api/ParentsApiController/examschedule';
+$route['api/getExamTimetableM'] = 'api/ParentsApiController/getExamTimetableM';
+$route['api/viewexam'] = 'api/ParentsApiController/viewexam';
+$route['api/reportcard'] = 'api/ParentsApiController/exam_report_card';
+$route['api/fees_invoice'] = 'api/ParentsApiController/fees_invoice';
+$route['api/attendance_report'] = 'api/ParentsApiController/attendance_report';
+$route['api/my_kids'] = 'api/ParentsApiController/my_kids';
+$route['api/hostel_list'] = 'api/ParentsApiController/hostel_list';
+$route['api/route_list_parents'] = 'api/ParentsApiController/route_list';
+$route['api/transport_assign'] = 'api/ParentsApiController/transport_assign';
+$route['api/leave_request'] = 'api/ParentsApiController/leave_request';
+
+$route['api/homeworklist'] = 'api/ParentsApiController/homeworklist';
+// $route['api/attendance_report'] = 'api/ParentsApiController/attendance_report';
+
+
+// Driver
+
+$route['api/driver'] = 'api/DriverApiController/index';
+$route['api/driverlogin'] = 'api/DriverApiController/login';
+$route['api/driverprofile'] = 'api/DriverApiController/driverprofile';
+
+
+
+// students api
+$route['api/studentlogin'] = 'api/Auth_Controller_students/login';
+$route['api/index'] = 'api/ApiStudentsController/index';
+$route['api/teachers'] = 'api/ApiStudentsController/teachers';
+$route['api/parent_info'] = 'api/ApiStudentsController/parent_info';
+$route['api/profile'] = 'api/ApiStudentsController/profile';
+$route['api/attachments'] = 'api/ApiStudentsController/attachments';
+$route['api/event'] = 'api/ApiStudentsController/event';
+$route['api/book_list'] = 'api/ApiStudentsController/booklist';
+$route['api/book_issue'] = 'api/ApiStudentsController/book_issue';
+$route['api/route_list'] = 'api/ApiStudentsController/route_list';
+$route['api/hostellist'] = 'api/ApiStudentsController/hostel_list';
+// $route['api/homeworklist'] = 'api/ApiStudentsController/homeworklist';
+
+
+$route['api/subject'] = 'api/ApiStudentsController/subjects';
+$route['api/homework'] = 'api/ApiStudentsController/homeworklist';
+
+$route['api/attendance'] = 'api/ApiStudentsController/attendance';
+$route['api/leave_list'] = 'api/ApiStudentsController/leave_list';
+$route['api/live_class_list'] = 'api/ApiStudentsController/live_class_list';
+
+$route['api/online_exam'] = 'api/ApiStudentsController/online_exam';
+$route['api/class_schedule_stud'] = 'api/ApiStudentsController/class_schedule_stud';
+
+$route['api/examschedule_stud'] = 'api/ApiStudentsController/examschedule_stud';
+$route['api/exam_stud'] = 'api/ApiStudentsController/exam_stud';
+$route['api/viewexam_stud'] = 'api/ApiStudentsController/viewexam_stud';
+
+$route['api/reportcard_stud'] = 'api/ApiStudentsController/reportcard_stud';
+$route['api/change_pass_stud'] = 'api/ApiStudentsController/change_pass_stud';
+
+$route['api/fees_history'] = 'api/ApiStudentsController/fees_history';
+$route['api/leave_request_student'] = 'api/ApiStudentsController/leave_request';
+$route['api/leave_check_today'] = 'api/ApiStudentsController/leave_check_today';
+$route['api/book_title'] = 'api/ApiStudentsController/book_title';
+$route['api/book_request'] = 'api/ApiStudentsController/book_request';
+
+
+
+// teachers api 
+$route['api/index3'] = 'api/Auth_Controller_Teachers/index';
+$route['api/teacher_login'] = 'api/Auth_Controller_Teachers/login';
+
+$route['api/teacher/(:any)'] = 'api/ApiTeachersController/$1';

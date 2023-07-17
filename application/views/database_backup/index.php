@@ -39,7 +39,6 @@
 					<?php
 						$count = 1;
 						$files = get_filenames(FCPATH.'/uploads/db_backup/');
-						sort($files, SORT_NATURAL | SORT_FLAG_CASE);
 						if (!empty($files)){
 							foreach ($files as $file):
 								$ext = pathinfo($file, PATHINFO_EXTENSION);

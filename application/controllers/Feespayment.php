@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -25,7 +25,6 @@ class Feespayment extends Admin_Controller
         $this->load->library('razorpay_payment');
         $this->load->library('sslcommerz');
         $this->load->library('midtrans_payment');
-        $this->load->library('paytm_kit_lib');
     }
 
     public function index()
@@ -61,11 +60,6 @@ class Feespayment extends Admin_Controller
                 $this->form_validation->set_rules('sslcommerz_postcode', translate('postcode'), 'trim|required');
                 $this->form_validation->set_rules('sslcommerz_state', translate('state'), 'trim|required');
                 $this->form_validation->set_rules('sslcommerz_phone', translate('phone'), 'trim|required');
-            }
-
-            if ($payVia == 'toyyibpay' || $payVia == 'payhere') {
-                $this->form_validation->set_rules('toyyibpay_email', translate('email'), 'trim|required|valid_email');
-                $this->form_validation->set_rules('toyyibpay_phone', translate('phone'), 'trim|required');
             }
 
             if ($this->form_validation->run() !== false) {
@@ -139,29 +133,6 @@ class Feespayment extends Admin_Controller
 
                 if ($payVia == 'flutterwave') {
                     $url = base_url("feespayment/flutterwave");
-                    $this->session->set_userdata("params", $params);
-                }
-
-                if ($payVia == 'paytm') {
-                    $url = base_url("feespayment/paytm");
-                    $this->session->set_userdata("params", $params);
-                }
-
-                if ($payVia == 'toyyibpay') {
-                    $url = base_url("feespayment/toyyibpay");
-                    $params['payer_email'] = $this->input->post('toyyibpay_email');
-                    $params['payer_phone'] = $this->input->post('toyyibpay_phone');
-                    $this->session->set_userdata("params", $params);
-                }
-
-                if ($payVia == 'payhere') {
-                    $url = base_url("feespayment/payhere");
-                    $params['payer_email'] = $this->input->post('toyyibpay_email');
-                    $params['payer_phone'] = $this->input->post('toyyibpay_phone');
-                    $this->session->set_userdata("params", $params);
-                }
-                if ($payVia == 'nepalste') {
-                    $url = base_url("feespayment/nepalste");
                     $this->session->set_userdata("params", $params);
                 }
 
@@ -255,7 +226,6 @@ class Feespayment extends Admin_Controller
         }
     }
 
-    // stripe payment gateway script start
     public function stripe()
     {
         $config = $this->get_payment_config();
@@ -315,14 +285,13 @@ class Feespayment extends Admin_Controller
                     set_alert('error', "Something went wrong!");
                     redirect(base_url('userrole/invoice'));
                 }
-            } catch (\Exception $ex) {
+            } catch (\Exception$ex) {
                 set_alert('error', $ex->getMessage());
                 redirect(site_url('userrole/invoice'));
             }
         }
     }
 
-    // paystack payment gateway script start
     public function paystack()
     {
         $config = $this->get_payment_config();
@@ -536,7 +505,6 @@ class Feespayment extends Admin_Controller
         }
     }
 
-    // razorpay payment gateway script start
     public function razorpay()
     {
         $config = $this->get_payment_config();
@@ -602,7 +570,6 @@ class Feespayment extends Admin_Controller
         }
     }
 
-    // sslcommerz payment gateway script start
     public function sslcommerz()
     {
         $config = $this->get_payment_config();
@@ -672,7 +639,6 @@ class Feespayment extends Admin_Controller
         }
     }
 
-    // jazzcash payment gateway script start
     public function jazzcash()
     {
         $config = $this->get_payment_config();
@@ -778,7 +744,6 @@ class Feespayment extends Admin_Controller
         }
     }
 
-    // midtrans payment gateway script start
     public function midtrans()
     {
         $config = $this->get_payment_config();
@@ -830,7 +795,6 @@ class Feespayment extends Admin_Controller
         }
     }
 
-    // flutterwave payment gateway script start
     public function flutterwave()
     {
         $config = $this->get_payment_config();
@@ -913,365 +877,6 @@ class Feespayment extends Admin_Controller
         } else {
             set_alert('error', "Transaction Failed");
             redirect(base_url('userrole/invoice'));
-        }
-    }
-
-    //Paytm payment gateway script start
-    public function paytm()
-    {
-        $config = $this->get_payment_config();
-        $params = $this->session->userdata('params');
-        if (!empty($params)) {
-            if ($config['paytm_merchantmid'] == "" && $config['paytm_merchantkey'] == "") {
-                set_alert('error', 'Paytm config not available');
-                redirect($_SERVER['HTTP_REFERER']);
-            } else {
-                $PAYTM_MERCHANT_MID = $config['paytm_merchantmid'];
-                $PAYTM_MERCHANT_KEY = $config['paytm_merchantkey'];
-                $PAYTM_MERCHANT_WEBSITE = $config['paytm_merchant_website'];
-                $PAYTM_INDUSTRY_TYPE = $config['paytm_industry_type'];
-                $transactionURL = 'https://securegw.paytm.in/theia/processTransaction'; //For Production or LIVE Credentials
-                // $transactionURL = 'https://securegw-stage.paytm.in/theia/processTransaction'; //TEST Credentials
-
-                $orderID = time();
-                $paytmParams = array();
-                $paytmParams['ORDER_ID'] = $orderID;
-                $paytmParams['TXN_AMOUNT'] = floatval($params['amount'] + $params['fine']);
-                $paytmParams["CUST_ID"] = get_loggedin_user_id();
-                $paytmParams["EMAIL"] = (!empty($params['email']) ? $params['email'] : "");
-                $paytmParams["MID"] = $PAYTM_MERCHANT_MID;
-                $paytmParams["CHANNEL_ID"] = "WEB";
-                $paytmParams["WEBSITE"] = $PAYTM_MERCHANT_WEBSITE;
-                $paytmParams["CALLBACK_URL"] = base_url('feespayment/paytm_success');
-                $paytmParams["INDUSTRY_TYPE_ID"] = $PAYTM_INDUSTRY_TYPE;
-
-                $paytmChecksum = $this->paytm_kit_lib->generateSignature($paytmParams, $PAYTM_MERCHANT_MID);
-                $paytmParams["CHECKSUMHASH"] = $paytmChecksum;
-                $data = array();
-                $data['paytmParams'] = $paytmParams;
-                $data['transactionURL'] = $transactionURL;
-                $this->load->view('layout/paytm', $data);
-            }
-        }
-    }
-
-    public function paytm_success()
-    {
-        $params = $this->session->userdata('params');
-        $this->session->set_userdata("params", "");
-        $config = $this->get_payment_config();
-        $PAYTM_MERCHANT_KEY = $config['paytm_merchantkey'];
-        $paytmChecksum = "";
-        $paramList = array();
-        $isValidChecksum = "FALSE";
-        $paramList = $_POST;
-        $paytmChecksum = isset($_POST["CHECKSUMHASH"]) ? $_POST["CHECKSUMHASH"] : "";
-        $isValidChecksum = $this->paytm_kit_lib->verifySignature($paramList, $PAYTM_MERCHANT_KEY, $paytmChecksum);
-        if ($isValidChecksum == "TRUE") {
-            if ($_POST["STATUS"] == "TXN_SUCCESS") {
-                $tran_id = $_POST['TXNID'];
-
-                $arrayFees = array(
-                    'allocation_id' => $params['allocation_id'],
-                    'type_id' => $params['type_id'],
-                    'amount' => $params['amount'],
-                    'fine' => $params['fine'],
-                    'collect_by' => "",
-                    'discount' => 0,
-                    'pay_via' => 15,
-                    'collect_by' => 'online',
-                    'remarks' => "Fees deposits online via Paytm TXREF: " . $tran_id,
-                    'date' => date("Y-m-d"),
-                );
-                $this->savePaymentData($arrayFees);
-                set_alert('success', translate('payment_successfull'));
-                redirect(base_url('userrole/invoice'));
-            } else {
-                set_alert('error', "Something went wrong!");
-                redirect(base_url('userrole/invoice'));
-            }
-        } else {
-            set_alert('error', "Checksum mismatched.");
-            redirect(base_url('userrole/invoice'));
-        }
-    }
-
-    // toyyibpay payment gateway script start
-    public function toyyibpay()
-    {
-        $config = $this->get_payment_config();
-        $params = $this->session->userdata('params');
-        if (!empty($params)) {
-            if ($config['toyyibpay_secretkey'] == "" && $config['toyyibpay_categorycode'] == "") {
-                set_alert('error', 'toyyibPay config not available');
-                redirect($_SERVER['HTTP_REFERER']);
-            } else {
-                $payment_data = array(
-                    'userSecretKey' => $config['toyyibpay_secretkey'],
-                    'categoryCode' => $config['toyyibpay_categorycode'],
-                    'billName' => 'School Fee',
-                    'billDescription' => 'Student Fee',
-                    'billPriceSetting' => 1,
-                    'billPayorInfo' => 1,
-                    'billAmount' => floatval($params['amount'] + $params['fine']) * 100,
-                    'billReturnUrl' => base_url('feespayment/toyyibpay_success'),
-                    'billCallbackUrl' => base_url('feespayment/toyyibpay_callbackurl'),
-                    'billExternalReferenceNo' => substr(hash('sha256', mt_rand() . microtime()), 0, 20),
-                    'billTo' => $params['student_name'],
-                    'billEmail' => $params['payer_email'],
-                    'billPhone' => $params['payer_phone'],
-                    'billSplitPayment' => 0,
-                    'billSplitPaymentArgs' => '',
-                    'billPaymentChannel' => '0',
-                    'billContentEmail' => 'Thank you for pay school fees',
-                    'billChargeToCustomer' => 1,
-                );
-
-                $curl = curl_init();
-                curl_setopt($curl, CURLOPT_POST, 1);
-                curl_setopt($curl, CURLOPT_URL, 'https://toyyibpay.com/index.php/api/createBill');
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $payment_data);
-                $result = curl_exec($curl);
-                $info = curl_getinfo($curl);
-                curl_close($curl);
-                $obj = json_decode($result);
-                if (!empty($obj)) {
-                    $url = "https://toyyibpay.com/" . $obj[0]->BillCode;
-                    header("Location: $url");
-                } else {
-                    set_alert('error', "Transaction Failed");
-                    redirect($_SERVER['HTTP_REFERER']);
-                }
-            }
-        }
-    }
-
-    public function toyyibpay_success()
-    {
-        if ($_GET['status_id'] == 1) {
-            set_alert('success', translate('payment_successfull'));
-            redirect(base_url('userrole/invoice'));
-        } else {
-            set_alert('error', "Transaction Failed");
-            redirect(base_url('userrole/invoice'));
-        }
-    }
-
-    public function toyyibpay_callbackurl()
-    {
-        if (!empty($_POST['status']) && $_POST['status'] == 1) {
-            $refno = $_POST['refno'];
-            $params = $this->session->userdata('params');
-            $this->session->set_userdata("params", "");
-            $arrayFees = array(
-                'allocation_id' => $params['allocation_id'],
-                'type_id' => $params['type_id'],
-                'amount' => $params['amount'],
-                'fine' => $params['fine'],
-                'collect_by' => "",
-                'discount' => 0,
-                'pay_via' => 16,
-                'collect_by' => 'online',
-                'remarks' => "Fees deposits online via toyyibPay TXREF: " . $refno,
-                'date' => date("Y-m-d"),
-            );
-            $this->savePaymentData($arrayFees);
-        }
-    }
-
-    // payhere payment gateway script start
-    public function payhere()
-    {
-        $config = $this->get_payment_config();
-        $params = $this->session->userdata('params');
-        if (!empty($params)) {
-            if ($config['payhere_merchant_id'] == "" && $config['payhere_merchant_secret'] == "") {
-                set_alert('error', 'Payhere config not available.');
-                redirect($_SERVER['HTTP_REFERER']);
-            } else {
-
-                $merchantID = $config['payhere_merchant_id'];
-                $orderID = substr(hash('sha256', mt_rand() . microtime()), 0, 20);
-                $currency = 'LKR';
-                $merchant_secret = $config['payhere_merchant_secret'];
-                $hash = strtoupper(
-                    md5(
-                        $merchantID .
-                        $orderID .
-                        number_format($params['amount'], 2, '.', '') .
-                        $currency .
-                        strtoupper(md5($merchant_secret))
-                    )
-                );
-                $paytmParams = array();
-                $paytmParams['merchant_id'] = $merchantID;
-                $paytmParams['return_url'] = base_url('feespayment/payhere_return');
-                $paytmParams["cancel_url"] = base_url('feespayment/payhere_cancel');
-                $paytmParams["notify_url"] = base_url('feespayment/payhere_notify');
-                $paytmParams["order_id"] = $orderID;
-                $paytmParams["items"] = "School Fees";
-                $paytmParams["currency"] = "LKR";
-                $paytmParams["amount"] = floatval($params['amount']);
-                $paytmParams["first_name"] = $params['student_name'];
-                $paytmParams["last_name"] = '';
-                $paytmParams["email"] = $params['payer_email'];
-                $paytmParams["phone"] = $params['payer_phone'];
-                $paytmParams["address"] = '';
-                $paytmParams["city"] = '';
-                $paytmParams["country"] = 'Sri Lanka';
-                $paytmParams["hash"] = $hash;
-                $data['paytmParams'] = $paytmParams;
-                $this->load->view('layout/payhere', $data);
-            }
-        }
-    }
-
-    public function payhere_notify()
-    {
-        if ($_POST) {
-            $config = $this->get_payment_config();
-            $merchant_id = $_POST['merchant_id'];
-            $order_id = $_POST['order_id'];
-            $payhere_amount = $_POST['payhere_amount'];
-            $payhere_currency = $_POST['payhere_currency'];
-            $status_code = $_POST['status_code'];
-            $md5sig = $_POST['md5sig'];
-            $merchant_secret = $config['payhere_merchant_secret'];
-            $local_md5sig = strtoupper(
-                md5(
-                    $merchant_id .
-                    $order_id .
-                    $payhere_amount .
-                    $payhere_currency .
-                    $status_code .
-                    strtoupper(md5($merchant_secret))
-                )
-            );
-            if (($local_md5sig === $md5sig) && ($status_code == 2)) {
-                $params = $this->session->userdata('params');
-                $this->session->set_userdata("params", "");
-                $arrayFees = array(
-                    'allocation_id' => $params['allocation_id'],
-                    'type_id' => $params['type_id'],
-                    'collect_by' => "",
-                    'amount' => $params['amount'],
-                    'discount' => 0,
-                    'fine' => $params['fine'],
-                    'pay_via' => 18,
-                    'collect_by' => 'online',
-                    'remarks' => "Fees deposits online via Payhere TXN ID: " . $order_id,
-                    'date' => date("Y-m-d"),
-                );
-                $this->savePaymentData($arrayFees);
-            }
-        }
-    }
-
-    public function payhere_cancel()
-    {
-        $params = $this->session->userdata('params');
-        $this->session->set_userdata("params", "");
-        set_alert('error', "Something went wrong!");
-        redirect(base_url('userrole/invoice'));
-    }
-
-    public function payhere_return()
-    {
-        set_alert('success', translate('payment_successfull'));
-        redirect(base_url('userrole/invoice'));
-    }
-
-    public function nepalste()
-    {
-        $config = $this->get_payment_config();
-        $params = $this->session->userdata('params');
-        if (!empty($params)) {
-            if ($config['nepalste_public_key'] == "" && $config['nepalste_secret_key'] == "") {
-                set_alert('error', 'Nepalste config not available');
-                redirect($_SERVER['HTTP_REFERER']);
-            } else {
-
-                $orderID = substr(hash('sha256', mt_rand() . microtime()), 0, 20);
-                $params['myIdentifier'] = $orderID;
-                $this->session->set_userdata("params", $params);
-                $parameters = [
-                    'identifier' => $orderID,
-                    'currency' => 'NPR',
-                    'amount' => number_format(floatval($params['amount'] + $params['fine']), 2, '.', ''),
-                    'details' => "Online Student fees deposit. Invoice No - " . $params['invoice_no'],
-                    'ipn_url' => base_url('feespayment/nepalste_notify'),
-                    'cancel_url' => base_url('feespayment/payhere_cancel'),
-                    'success_url' => base_url('feespayment/payhere_return'),
-                    'public_key' => $config['nepalste_public_key'],
-                    'site_logo' => $this->application_model->getBranchImage(get_loggedin_branch_id(), 'logo-small'),
-                    'checkout_theme' => 'dark',
-                    'customer_name' => $params['student_name'],
-                    'customer_email' => (empty($params['student_email']) ? 'john@mail.com' : $params['student_email']),
-                ]; 
-
-                //live end point
-                $url = "https://nepalste.com.np/payment/initiate";
-
-                /* test end point
-                $url = "https://nepalste.com.np/sandbox/payment/initiate";*/
-
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-                curl_setopt($ch, CURLOPT_URL, $url);
-                curl_setopt($ch, CURLOPT_POSTFIELDS,  $parameters);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $result = curl_exec($ch); 
-                curl_close($ch);
-                $obj = json_decode($result);
-                if (!empty($obj)) {
-                    $url = $obj->url;
-                    header("Location: $url");
-                } else {
-                    set_alert('error', "Transaction Failed");
-                    redirect($_SERVER['HTTP_REFERER']);
-                }
-            }
-        }
-    }
-
-    public function nepalste_notify()
-    {
-        if ($_POST) {
-            $params = $this->session->userdata('params');
-            $this->session->set_userdata("params", "");
-            $config = $this->get_payment_config();
-
-            //Receive the response parameter
-            $status = $_POST['status'];
-            $signature = $_POST['signature'];
-            $identifier = $_POST['identifier'];
-            $data = $_POST['data'];
-
-            // Generate your signature
-            $customKey = $data['amount'].$identifier;
-            $secret = $config['nepalste_secret_key'];
-            $mySignature = strtoupper(hash_hmac('sha256', $customKey , $secret));
-            $myIdentifier = $params['myIdentifier'];
-            if($status == "success" && $signature == $mySignature &&  $identifier ==  $myIdentifier){
-                $arrayFees = array(
-                    'allocation_id' => $params['allocation_id'],
-                    'type_id' => $params['type_id'],
-                    'collect_by' => "",
-                    'amount' => $params['amount'],
-                    'discount' => 0,
-                    'fine' => $params['fine'],
-                    'pay_via' => 19,
-                    'collect_by' => 'online',
-                    'remarks' => "Fees deposits online via Nepalste TXN ID: " . $identifier,
-                    'date' => date("Y-m-d"),
-                );
-                $this->savePaymentData($arrayFees);
-            }
         }
     }
 

@@ -25,14 +25,6 @@
 				$payvia_list['midtrans'] = 'Midtrans';
 			if ($config['flutterwave_status'] == 1)
 				$payvia_list['flutterwave'] = 'Flutter Wave';
-            if ($config['paytm_status'] == 1)
-                $payvia_list['paytm'] = 'Paytm';
-            if ($config['toyyibpay_status'] == 1)
-                $payvia_list['toyyibpay'] = 'toyyibPay';
-            if ($config['payhere_status'] == 1)
-                $payvia_list['payhere'] = 'Payhere';
-			if ($config['nepalste_status'] == 1)
-				$payvia_list['nepalste'] = 'Nepalste';
 			echo form_dropdown("pay_via", $payvia_list, set_value('pay_via'), "class='form-control' data-width='100%' id='payVia'
 			data-minimum-results-for-search='Infinity' ");
 		?>
@@ -58,21 +50,6 @@
 	<div class="col-md-12">
 	<label class="control-label">Phone <span class="required">*</span></label>
 		<input type="text" class="form-control" name="phone" value="<?php echo $getUser['mobileno'] ?>" autocomplete="off" />
-		<span class="error"></span>
-	</div>
-</div>
-
-<div class="form-group toyyibpay" style="display: none;">
-	<div class="col-md-12">
-		<label class="control-label">Email <span class="required">*</span></label>
-		<input type="email" class="form-control" name="toyyibpay_email" value="<?php echo $getUser['email'] ?>" autocomplete="off" />
-		<span class="error"></span>
-	</div>
-</div>
-<div class="form-group toyyibpay" style="display: none;">
-	<div class="col-md-12">
-		<label class="control-label">Phone <span class="required">*</span></label>
-		<input type="text" class="form-control" name="toyyibpay_phone" value="<?php echo $getUser['mobileno'] ?>" autocomplete="off" />
 		<span class="error"></span>
 	</div>
 </div>

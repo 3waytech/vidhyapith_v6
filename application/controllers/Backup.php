@@ -64,11 +64,9 @@ class Backup extends Admin_Controller
 
     public function download()
     {
-        $file = urldecode($this->input->get('file'));
-        if(preg_match('/^[^.][-a-z0-9_.]+[a-z]$/i', $file)) {
-            $this->data = file_get_contents('./uploads/db_backup/' . $file);
-            force_download($file, $this->data);
-        }
+        $file = $this->input->get('file');
+        $this->data = file_get_contents('./uploads/db_backup/' . $file);
+        force_download($file, $this->data);
         redirect(base_url('backup'));
     }
 

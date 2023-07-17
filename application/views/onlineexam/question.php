@@ -9,9 +9,6 @@
 					<a href="<?=base_url('onlineexam/question_add')?>" class="btn btn-default btn-circle">
 						<i class="fas fa-circle-question"></i> <?=translate('add') . " " . translate('question')?>
 					</a>
-					<a href="<?=base_url('onlineexam/question_import')?>" class="btn btn-default btn-circle">
-						<i class="fas fa-plus"></i> <?=translate('question') . " " . translate('import')?>
-					</a>
 				</div>
 			<?php } ?>
 			</header>

@@ -33,84 +33,7 @@ if (empty($student['previous_details'])) {
 			</div>
 		</div>
 	</div>
-
-<?php if ($student['active'] == 0) { 
-	$getDisableReason = $this->student_model->getDisableReason($student['id']);
-	$disableReason = '-';
-	$disableDate = '-';
-	$disableNote = '-';
-	if (!empty($getDisableReason )) {
-		$disableReason = $getDisableReason->reason;
-		$disableDate = _d($getDisableReason->date);
-		$disableNote = $getDisableReason->note;
-	}
-	?>
-	<div class="col-md-offset-2 col-md-8">
-		<section class="panel pg-fw">
-		    <div class="panel-body">
-		        <h5 class="chart-title mb-xs text-danger"><i class="fas fa-lock"></i> <?php echo translate('student') . " " . translate('deactivated') ?></h5>
-		        <div class="mt-lg">
-		        	<h4 class="mt-lg"><i class="far fa-check-circle"></i> <?php echo translate('active') . " " . translate('deactivate_reason') ?></h4>
-		        	<ul class="stu-disabled">
-		        		<li>
-		        			<div class="main-r">
-			        			<div class="r-1"><?php echo translate('deactivate_reason')?> :</div>
-			        			<div><?php echo $disableReason; ?></div>
-		        			</div>
-		        		</li>
-		        		<li>
-		        			<div class="main-r">
-			        			<div class="r-1"><?php echo translate('date')?> :</div>
-			        			<div><?php echo $disableDate; ?></div>
-		        			</div>
-		        		</li>
-		        		<li>
-		        			<div class="main-r">
-			        			<div class="r-1"><?php echo translate('note')?> :</div>
-			        			<div><?php echo $disableNote; ?></div>
-		        			</div>
-		        		</li>
-		        	</ul>
-		        	<h4 class="mt-lg"><i class="fas fa-list"></i> <?php echo translate('deactivated') . " " . translate('history') ?></h4>
-					<div class="table-responsive mb-md mt-md">
-						<table class="table table-bordered table-hover table-condensed mb-none">
-							<thead>
-								<tr>
-									<th width="50">#</th>
-									<th><?=translate('deactivate_reason')?></th>
-									<th><?=translate('date')?></th>
-									<th width="360"><?=translate('note')?></th>
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-								$count = 1;
-								$this->db->order_by('id', 'asc');
-								$this->db->where(array('student_id' => $student['id']));
-								$historys = $this->db->get('disable_reason_details')->result();
-									if (count($historys)) {
-										foreach($historys as $history):
-											?>
-									<tr>
-										<td><?php echo $count++;?></td>
-										<td><?php echo get_type_name_by_id('disable_reason', $history->reason_id); ?></td>
-										<td><?php echo _d($history->date); ?></td>
-										<td><?php echo $history->note; ?></td>
-									</tr>
-								<?php
-									endforeach;
-								} else {
-									echo '<tr><td colspan="4"><h5 class="text-danger text-center">' . translate('no_information_available') . '</td></tr>';
-								}
-								?>
-							</tbody>
-						</table>
-					</div>
-		        </div>
-		    </div>
-		</section>
-	</div>
-<?php } ?>
+	
 	<div class="col-md-12">
 		<div class="panel-group" id="accordion">
             <!-- student profile information user Interface -->
@@ -118,8 +41,8 @@ if (empty($student['previous_details'])) {
 				<div class="panel-heading">
 					<h4 class="panel-title">
                         <div class="auth-pan">
-                            <button class="btn btn-default btn-circle" <?php echo $student['active'] == 0 ? 'disabled' : '' ?> id="authentication_btn">
-                                <?php if ($student['active'] == 1) { ?><i class="fas fa-unlock-alt"></i> <?=translate('authentication')?> <?php } else { ?><i class="fas fa-lock"></i> <?=translate('deactivated')?> <?php } ?>
+                            <button class="btn btn-default btn-circle" id="authentication_btn">
+                                <i class="fas fa-unlock-alt"></i> <?=translate('authentication')?>
                             </button>
                         </div> 
 						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#profile">
@@ -149,6 +72,14 @@ if (empty($student['previous_details'])) {
 										data-plugin-selectTwo data-width='100%' data-minimum-results-for-search='Infinity' ");
 									?>
 									<span class="error"><?=form_error('year_id')?></span>
+								</div>
+							</div>
+							
+							<div class="col-md-3 mb-sm">
+								<div class="form-group">
+									<label class="control-label"><?=translate('stu_id')?> <span class="required">*</span></label>
+									<input type="text" class="form-control" name="stu_id" value="<?=set_value('stu_id', $student['stu_id'])?>" />
+									<span class="error"><?=form_error('stu_id')?></span>
 								</div>
 							</div>
 
@@ -271,7 +202,7 @@ if (empty($student['previous_details'])) {
 						</div>
 
 						<div class="row">
-							<div class="col-md-6 mb-sm">
+							<div class="col-md-3 mb-sm">
 								<div class="form-group">
 									<label class="control-label"><?=translate('blood_group')?></label>
 									<?php
@@ -281,7 +212,7 @@ if (empty($student['previous_details'])) {
 									?>
 								</div>
 							</div>
-							<div class="col-md-6 mb-sm">
+							<div class="col-md-3 mb-sm">
 								<div class="form-group">
 									<label class="control-label"><?=translate('birthday')?></label>
 									<div class="input-group">
@@ -289,6 +220,14 @@ if (empty($student['previous_details'])) {
 										<input type="text" class="form-control" name="birthday" value="<?=set_value('birthday', $student['birthday'])?>" data-plugin-datepicker
 										data-plugin-options='{ "startView": 2 }' />
 									</div>
+								</div>
+							</div>
+							<div class="col-md-6 mb-sm">
+								<div class="form-group">
+								<label for="birthdate">Birthdate In Words</label>
+								<!-- <input class="form-control" id="birthdate" name="birthdate" placeholder=""> -->
+								<!-- <div id="form_error"><?php echo $form_error['birthdate']; ?></div> -->
+								<p id="birthday123" class="form-control"></p>
 								</div>
 							</div>
 						</div>
@@ -345,6 +284,55 @@ if (empty($student['previous_details'])) {
 								<div class="form-group">
 									<label class="control-label"><?=translate('state')?></label>
 									<input type="text" class="form-control" name="state" value="<?=set_value('state', $student['state'])?>" />
+								</div>
+							</div>
+						</div>
+						
+						<div class="row">
+							<div class="col-md-4 mb-sm">
+								<div class="form-group">
+									<!--<div class="input-group">-->
+										<!--<span class="input-group-addon"><i class="fas fa-phone-volume"></i></span>-->
+										<label class="control-label"><?=translate('student_gr_no')?></label>
+										<input type="text" class="form-control" name="student_gr_no" value="<?=set_value('student_gr_no', $student['student_gr_no'])?>" />
+									<!--</div>-->
+									<span class="error"><?=form_error('student_gr_no')?></span>
+								</div>
+							</div>
+							<div class="col-md-4 mb-sm">
+								<div class="form-group">
+									<label class="control-label"><?=translate('student_adhar_dias')?></label>
+									<!--<div class="input-group">-->
+										<!--<span class="input-group-addon"><i class="far fa-envelope-open"></i></span>-->
+										<input type="text" class="form-control" name="student_adhar_dias" id="student_adhar_dias" value="<?=set_value('student_adhar_dias', $student['student_adhar_dias'])?>" />
+									<!--</div>-->
+									<span class="error"><?=form_error('student_adhar_dias')?></span>
+								</div>
+							</div>
+							<div class="col-md-4 mb-sm">
+								<div class="form-group">
+									<label class="control-label"><?=translate('student_adhar_card')?></label>
+									<input type="text" class="form-control" name="student_adhar_card" value="<?=set_value('student_adhar_card', $student['student_adhar_card'])?>" />
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-6 mb-sm">
+								<div class="form-group">
+									<label class="control-label"><?=translate('Student_birth_place')?></label>
+									<input type="text" name="Student_birth_place" class="form-control" aria-required="true" value="<?=set_value('Student_birth_place', $student['Student_birth_place'])?>"/>
+								</div>
+							</div>
+							<div class="col-md-6 mb-sm">
+								<div class="form-group">
+									<label class="control-label"><?=translate('RTE_student')?></label>
+									<div class="row ml-2" style="display: flex;align-items: baseline;justify-content: center;">
+										<!-- <input type="radio" name="RTE_student" class="form-control" value="<?php //set_value('RTE_student', $student['RTE_student'])?>"/>
+										<input type="radio" name="RTE_student" class="form-control" value="<?php //set_value('RTE_student', $student['RTE_student'])?>"/> -->
+										<input type="radio" style="margin: 0px 20px;" name="RTE_student" value="Yes" <?php if(set_value('RTE_student', $student['RTE_student']) == 'Yes') echo 'checked'; ?>>Yes
+										<input type="radio" style="margin: 0px 20px;"  name="RTE_student" value="No" <?php if(set_value('RTE_student', $student['RTE_student']) == 'No') echo 'checked'; ?>>No
+									</div>
 								</div>
 							</div>
 						</div>
@@ -416,7 +404,6 @@ if (empty($student['previous_details'])) {
 							</div>
 						</div>
 
-					<?php if (moduleIsEnabled('transport')) { ?>
 						<!-- transport details -->
 						<div class="headers-line">
 							<i class="fas fa-bus-alt"></i> <?=translate('transport_details')?>
@@ -444,8 +431,7 @@ if (empty($student['previous_details'])) {
 								</div>
 							</div>
 						</div>
-					<?php } ?>
-					<?php if (moduleIsEnabled('hostel')) { ?>
+
 						<!-- hostel details -->
 						<div class="headers-line">
 							<i class="fas fa-hotel"></i> <?=translate('hostel_details')?>
@@ -473,7 +459,6 @@ if (empty($student['previous_details'])) {
 								</div>
 							</div>
 						</div>
-					<?php } ?>
 
 						<!-- previous school details -->
 						<div class="headers-line">
@@ -526,6 +511,11 @@ if (empty($student['previous_details'])) {
 				<div id="fees" class="accordion-body collapse">
 					<div class="panel-body">
 						<div class="table-responsive mt-md mb-md">
+						    <div style="float: right;" class="mb-md">
+								<a href="<?php echo base_url('fees/invoice/').$student['id'];?>">
+									<button type="button" class="btn btn-info" >collect-fee</button>
+								</a>
+							</div>
 							<table class="table table-bordered table-condensed table-hover mb-none tbr-top">
 								<thead>
 									<tr class="text-dark">
@@ -1076,31 +1066,6 @@ if (empty($student['previous_details'])) {
                     </label>
                 </div>
             </div>
-
-			<div id="disableReason" style="display: none;">		
-				<div class="form-group">
-					<label class="control-label"><?=translate('date')?> <span class="required">*</span></label>
-					<input type="text" class="form-control" name="date" value="<?=set_value('date', date('Y-m-d'))?>" data-plugin-datepicker data-plugin-options='{ "todayHighlight" : true }' />
-					<span class="error"></span>
-				</div>
-	            <div class="form-group">
-		            <label for="password" class="control-label"><?=translate('disable_reason')?> <span class="required">*</span></label>
-					<?php
-					$resultReason = $this->db->where('branch_id', $branchID)->get('disable_reason')->result();
-					$arrayReason = array('' => translate('select'));
-					foreach ($resultReason as $key => $value) {
-						$arrayReason[$value->id] = $value->name;
-					}
-					echo form_dropdown("reason_id", $arrayReason, set_value('reason_id'), "class='form-control'
-					data-plugin-selectTwo data-width='100%' id='reasonID' data-minimum-results-for-search='Infinity' ");
-					?>
-		            <span class="error"></span>
-	            </div>
-				<div class="form-group mb-lg">
-					<label class="control-label"><?=translate('note')?></label>
-					<textarea name="note" rows="2" class="form-control" aria-required="true"><?=set_value('note')?></textarea>
-				</div>
-			</div>
         </div>
         <footer class="panel-footer">
             <div class="text-right">
@@ -1216,4 +1181,73 @@ if (empty($student['previous_details'])) {
 
 <script type="text/javascript">
 	var authenStatus = "<?=$student['active']?>";
+</script>
+
+<script>
+// Function to convert a number into words
+function numberToWords(number) {
+	var words = [
+    'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
+    'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'
+  ];
+
+  var tensWords = [
+    '', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'
+  ];
+
+  if (number < 20) {
+    return words[number];
+  }
+
+  if (number < 100) {
+    var digit = number % 10;
+    return tensWords[Math.floor(number / 10)] + (digit !== 0 ? '-' + words[digit] : '');
+  }
+
+  if (number < 1000) {
+    var hundreds = Math.floor(number / 100);
+    var remainder = number % 100;
+    return words[hundreds] + ' hundred ' + numberToWords(remainder);
+  }
+
+  if (number < 10000) {
+    var thousands = Math.floor(number / 1000);
+    var remainingDigits = number % 1000;
+    return words[thousands] + ' thousand ' + numberToWords(remainingDigits);
+  }
+
+  // Handle four-digit numbers
+  if (number < 100000) {
+    var thousands = Math.floor(number / 1000);
+    var remainingDigits = number % 1000;
+    return numberToWords(thousands) + ' thousand ' + numberToWords(remainingDigits);
+  }
+}
+
+
+// Array 
+var monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+// Get the birthdate value from the input field
+var birthdateInput = document.querySelector('input[name="birthday"]');
+var birthdateValue = birthdateInput.value;
+
+// Split the birthdate into its components
+var parts = birthdateValue.split('-');
+var year = parts[0];
+var month = parseInt(parts[1], 10);
+var day = parseInt(parts[2], 10);
+
+// Convert the day, month, and year into words
+var dayInWords = numberToWords(day);
+var monthInWords = monthNames[month - 1]; // Subtract 1 to account for 0-based indexing
+var yearInWords = numberToWords(year);
+
+console.log(dayInWords, monthInWords, yearInWords);
+
+document.getElementById("birthday123").innerHTML = dayInWords +" " + monthInWords + " " + yearInWords;
+
 </script>

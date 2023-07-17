@@ -90,13 +90,6 @@ if (empty($elements)) {
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-md-3 control-label">Title Text Color <span class="required">*</span></label>
-								<div class="col-md-4">
-									<input type="text" class="complex-colorpicker form-control" name="title_text_color" value="<?php echo $wellcome['color1'] == "" ? '#000' : $wellcome['color1']; ?>" />
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
 								<label class="col-md-3 control-label">Show Website</label>
 								<div class="col-md-4">
 								<div class="material-switch mt-xs">
@@ -105,6 +98,7 @@ if (empty($elements)) {
 								</div>
 								</div>
 							</div>
+
 							<footer class="panel-footer mt-lg">
 								<div class="row">
 									<div class="col-md-2 col-md-offset-3">
@@ -147,21 +141,6 @@ if (empty($elements)) {
 									<span class="error"></span>
 								</div>
 							</div>
-							<div class="form-group">
-								<label class="col-md-3 control-label">Title Text Color <span class="required">*</span></label>
-								<div class="col-md-4">
-									<input type="text" class="complex-colorpicker form-control" name="title_text_color" value="<?php echo $teachers['color1'] == "" ? '#fff' : $teachers['color1']; ?>" />
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-md-3 control-label">Description Text Color <span class="required">*</span></label>
-								<div class="col-md-4">
-									<input type="text" class="complex-colorpicker form-control" name="description_text_color" value="<?php echo $teachers['color2'] == "" ? '#fff' : $teachers['color2']; ?>" />
-									<span class="error"></span>
-								</div>
-							</div>
-
 							<div class="form-group">
 								<label class="col-md-3 control-label">Show Website</label>
 								<div class="col-md-4">
@@ -235,20 +214,6 @@ if (empty($elements)) {
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-md-3 control-label">Title Text Color <span class="required">*</span></label>
-								<div class="col-md-4">
-									<input type="text" class="complex-colorpicker form-control" name="title_text_color" value="<?php echo $services['color1'] == "" ? '#000' : $services['color1']; ?>" />
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-md-3 control-label">Background Color <span class="required">*</span></label>
-								<div class="col-md-4">
-									<input type="text" class="complex-colorpicker form-control" name="background_color" value="<?php echo $services['color2'] == "" ? '#fff' : $services['color2']; ?>" />
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
 								<label class="col-md-3 control-label">Show Website</label>
 								<div class="col-md-4">
 								<div class="material-switch mt-xs">
@@ -269,7 +234,10 @@ if (empty($elements)) {
 						<?php echo form_close(); ?>
 					</div>
 					<div class="tab-pane" id="statistics">
-						<?php echo form_open_multipart('frontend/section/home_statistics' . get_request_url(), array('class' => 'form-horizontal frm-submit-data')); ?>
+						<?php
+						
+						echo form_open_multipart('frontend/section/home_statistics' . get_request_url(), array('class' => 'form-horizontal frm-submit-data'));
+						?>
 							<div class="form-group">
 								<label class="col-md-3 control-label"><?php echo translate('title'); ?> <span class="required">*</span></label>
 								<div class="col-md-7">
@@ -289,20 +257,6 @@ if (empty($elements)) {
 								<div class="col-md-4">
 									<input type="hidden" name="old_photo" value="<?php echo $sta_ele['image']; ?>">
 									<input type="file" name="photo" class="dropify" data-height="150" data-default-file="<?php echo base_url('uploads/frontend/home_page/' . $sta_ele['image']); ?>" />
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-md-3 control-label">Title Text Color <span class="required">*</span></label>
-								<div class="col-md-4">
-									<input type="text" class="complex-colorpicker form-control" name="title_text_color" value="<?php echo $statistics['color1'] == "" ? '#fff' : $statistics['color1']; ?>" />
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-md-3 control-label">Description Text Color <span class="required">*</span></label>
-								<div class="col-md-4">
-									<input type="text" class="complex-colorpicker form-control" name="description_text_color" value="<?php echo $statistics['color2'] == "" ? '#fff' : $statistics['color2']; ?>" />
 									<span class="error"></span>
 								</div>
 							</div>
@@ -400,23 +354,6 @@ if (empty($elements)) {
 									<span class="error"></span>
 								</div>
 							</div>
-
-							<div class="form-group">
-								<label class="col-md-3 control-label">Background Color <span class="required">*</span></label>
-								<div class="col-md-4">
-									<input type="text" class="complex-colorpicker form-control" name="background_color" value="<?php echo $cta['color1'] == "" ? '#464646' : $cta['color1']; ?>" />
-									<span class="error"></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-md-3 control-label">Text Color <span class="required">*</span></label>
-								<div class="col-md-4">
-									<input type="text" class="complex-colorpicker form-control" name="text_color" value="<?php echo $cta['color2'] == "" ? '#fff' : $cta['color2']; ?>" />
-									<span class="error"></span>
-								</div>
-							</div>
-
-
 							<div class="form-group">
 								<label class="col-md-3 control-label">Show Website</label>
 								<div class="col-md-4">
@@ -475,15 +412,3 @@ if (empty($elements)) {
 	</div>
 </div>
 <?php endif; ?>
-
-<script type="text/javascript">
-    $(".complex-colorpicker").asColorPicker({
-		readonly: false,
-		lang: 'en',
-		mode: 'complex',
-		color: {
-			reduceAlpha: true,
-			zeroAlphaAsTransparent: false
-		},
-    });
-</script>

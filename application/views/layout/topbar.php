@@ -80,7 +80,7 @@
 		$webURL = "";
 		if (is_superadmin_loggedin()) {
 			$showwebURL = true;
-			$webURL = base_url();
+			$webURL = base_url('home');
 		} else {
 			$cmsRow = $this->db->select('cms_active,url_alias')
 			->where('branch_id', get_loggedin_branch_id())
@@ -88,7 +88,7 @@
 			if (isset($cmsRow['cms_active']) && $cmsRow['cms_active'] == 1) {
 				$showwebURL = true;
 			}
-			$webURL = base_url((isset($cmsRow['url_alias']) ? $cmsRow['url_alias'] : '') );
+			$webURL = base_url('home/index/' . (isset($cmsRow['url_alias']) ? $cmsRow['url_alias'] : '') );
 		}
 		if ($showwebURL) {
 		?>

@@ -45,10 +45,8 @@ $getConfig = $this->userrole_model->get('live_class_config', array('branch_id' =
 	}
 ?>
 		<a href="<?=$joinURL?>" class="joinbtn btn btn-default mt-md mb-md"><i class="fas fa-video"></i> <?=translate('join_live_class')?></a>
-<?php } elseif($row['live_class_method'] == 2) { ?>
+<?php } else { ?>
 		<a href="<?=base_url('userrole/livejoin?meeting_id=' . $row['meeting_id'] . "&live_id=" . $row['id'])?>" class="joinbtn btn btn-default mt-md mb-md"><i class="fas fa-video"></i> <?=translate('join_live_class')?></a>
-<?php } elseif($row['live_class_method'] == 3) { ?>
-		<a href="<?=json_decode($row['bbb'])->join_url?>" class="joinbtn btn btn-default mt-md mb-md"><i class="fas fa-video"></i> <?=translate('join_live_class')?></a>
 <?php } ?>
 	</div>
 </div>

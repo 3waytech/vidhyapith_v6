@@ -99,22 +99,6 @@ class Employee extends Admin_Controller
             access_denied();
         }
         if ($_POST) {
-            $userRole = $this->input->post('user_role');
-            //Saas addon script
-            if ($userRole == 3) {
-                // check saas teacher add limit
-                if (!checkSaasLimit('teacher')) {
-                    set_alert('error', translate('update_your_package'));
-                    redirect(site_url('dashboard'));
-                }
-            } else {
-                // check saas staff add limit
-                if (!checkSaasLimit('staff')) {
-                    set_alert('error', translate('update_your_package'));
-                    redirect(site_url('dashboard'));
-                }
-            }
-
             $this->employee_validation();
             if (!isset($_POST['chkskipped'])) {
                 $this->bank_validation();
@@ -473,14 +457,10 @@ class Employee extends Admin_Controller
     /* file downloader */
     public function documents_download()
     {
-        $encrypt_name = urldecode($this->input->get('file'));
-        if(preg_match('/^[^.][-a-z0-9_.]+[a-z]$/i', $encrypt_name)) {
-            $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get('staff_documents')->row()->file_name;
-            if (!empty($file_name)) {
-                $this->load->helper('download');
-                force_download($file_name, file_get_contents('uploads/attachments/documents/' . $encrypt_name));
-            }
-        }
+        $encrypt_name = $this->input->get('file');
+        $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get('staff_documents')->row()->file_name;
+        $this->load->helper('download');
+        force_download($file_name, file_get_contents('uploads/attachments/documents/' . $encrypt_name));
     }
 
     /* department form validation rules */

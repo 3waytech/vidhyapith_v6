@@ -19,36 +19,6 @@ class Application_model extends CI_Model
         }
     }
 
-    public function getSectionsPaymentMethod()
-    {
-        $branchID = 9999;
-        $this->db->where('branch_id', $branchID);
-        $this->db->select('paypal_status,stripe_status,payumoney_status,paystack_status,razorpay_status,sslcommerz_status,jazzcash_status,midtrans_status,flutterwave_status')->from('payment_config');
-        $status = $this->db->get()->row_array();
-
-        $payvia_list = array('' => translate('select_payment_method'));
-        if ($status['paypal_status'] == 1)
-            $payvia_list['paypal'] = 'Paypal';
-        if ($status['stripe_status'] == 1)
-            $payvia_list['stripe'] = 'Stripe';
-        if ($status['payumoney_status'] == 1)
-            $payvia_list['payumoney'] = 'PayUmoney';
-        if ($status['paystack_status'] == 1)
-            $payvia_list['paystack'] = 'Paystack';
-        if ($status['razorpay_status'] == 1)
-            $payvia_list['razorpay'] = 'Razorpay';
-        if ($status['sslcommerz_status'] == 1)
-            $payvia_list['sslcommerz'] = 'SSLcommerz';
-        if ($status['jazzcash_status'] == 1)
-            $payvia_list['jazzcash'] = 'Jazzcash';
-        if ($status['midtrans_status'] == 1)
-            $payvia_list['midtrans'] = 'Midtrans';
-        if ($status['flutterwave_status'] == 1)
-            $payvia_list['flutterwave'] = 'Flutter Wave';
-
-        return $payvia_list;
-    }
-
     public function getSQLMode()
     {
         $sql = $this->db->query('SELECT @@sql_mode as mode')->row();
@@ -105,20 +75,20 @@ class Application_model extends CI_Model
     public function getUserNameByRoleID($roleID, $userID = '')
     {
         if ($roleID == 6) {
-            $sql = "SELECT `name`,`email`,`mobileno`,`photo`,`branch_id` FROM `parent` WHERE `id` = " . $this->db->escape($userID);
+            $sql = "SELECT `name`,`email`,`photo`,`branch_id` FROM `parent` WHERE `id` = " . $this->db->escape($userID);
             return $this->db->query($sql)->row_array();
         } elseif ($roleID == 7) {
-            $sql = "SELECT `student`.`id`, `mobileno`, CONCAT_WS(' ',`student`.`first_name`, `student`.`last_name`) as `name`, `student`.`email`, `student`.`photo`, `enroll`.`branch_id` FROM `student` INNER JOIN `enroll` ON `enroll`.`student_id` = `student`.`id` AND `enroll`.`session_id` = " . $this->db->escape(get_session_id()) . " WHERE `student`.`id` = " . $this->db->escape($userID);
+            $sql = "SELECT `student`.`id`, CONCAT_WS(' ',`student`.`first_name`, `student`.`last_name`) as `name`, `student`.`email`, `student`.`photo`, `enroll`.`branch_id` FROM `student` INNER JOIN `enroll` ON `enroll`.`student_id` = `student`.`id` WHERE `student`.`id` = " . $this->db->escape($userID);
             return $this->db->query($sql)->row_array();
         } else {
-            $sql = "SELECT `name`,`mobileno`,`email`,`photo`,`branch_id` FROM `staff` WHERE `id` = " . $this->db->escape($userID);
+            $sql = "SELECT `name`,`email`,`photo`,`branch_id` FROM `staff` WHERE `id` = " . $this->db->escape($userID);
             return $this->db->query($sql)->row_array();
         }
     }
 
     public function getStudentListByClassSection($classID = '', $sectionID = '', $branchID = '', $deactivate = false, $rollOrder = false)
     {
-        $sql = "SELECT `e`.*, `s`.`photo`, CONCAT_WS(' ',`s`.`first_name`, `s`.`last_name`) as `fullname`, `s`.`register_no`, `s`.`parent_id`, `s`.`email`, `s`.`mobileno`, `s`.`blood_group`, `s`.`birthday`, `s`.`admission_date`, `l`.`active`, `l`.`username` as `stu_username`, `c`.`name` as `class_name`, `se`.`name` as `section_name`, `sc`.`name` as `category` FROM `enroll` as `e` INNER JOIN `student` as `s` ON `e`.`student_id` = `s`.`id` INNER JOIN `login_credential` as `l` ON `l`.`user_id` = `s`.`id` and `l`.`role` = 7 LEFT JOIN `class` as `c` ON `e`.`class_id` = `c`.`id` LEFT JOIN `section` as `se` ON `e`.`section_id`=`se`.`id` LEFT JOIN `student_category` as `sc` ON `sc`.`id` = `s`.`category_id` WHERE `e`.`class_id` = " . $this->db->escape($classID) . " AND `e`.`branch_id` = " . $this->db->escape($branchID) . " AND `e`.`session_id` = " . $this->db->escape(get_session_id());
+        $sql = "SELECT `e`.*, `s`.`photo`, CONCAT_WS(' ',`s`.`first_name`, `s`.`last_name`) as `fullname`, `s`.`stu_id`, `s`.`register_no`, `s`.`parent_id`, `s`.`email`, `s`.`mobileno`, `s`.`blood_group`, `s`.`birthday`, `s`.`admission_date`, `l`.`active`, `c`.`name` as `class_name`, `se`.`name` as `section_name`, `sc`.`name` as `category` FROM `enroll` as `e` INNER JOIN `student` as `s` ON `e`.`student_id` = `s`.`id` INNER JOIN `login_credential` as `l` ON `l`.`user_id` = `s`.`id` and `l`.`role` = 7 LEFT JOIN `class` as `c` ON `e`.`class_id` = `c`.`id` LEFT JOIN `section` as `se` ON `e`.`section_id`=`se`.`id` LEFT JOIN `student_category` as `sc` ON `sc`.`id` = `s`.`category_id` WHERE `e`.`class_id` = " . $this->db->escape($classID) . " AND `e`.`branch_id` = " . $this->db->escape($branchID) . " AND `e`.`session_id` = " . $this->db->escape(get_session_id());
         if ($sectionID != 'all') {
             $sql .= " AND `e`.`section_id` = " . $this->db->escape($sectionID);
         }
@@ -137,12 +107,11 @@ class Application_model extends CI_Model
     {
         $this->db->select('s.*,e.class_id,e.section_id,e.id as enrollid,e.roll,e.branch_id,e.session_id,c.name as class_name,se.name as section_name,sc.name as category_name');
         $this->db->from('enroll as e');
-        $this->db->join('student as s', 'e.student_id = s.id', 'inner');
+        $this->db->join('student as s', 'e.student_id = s.id', 'left');
         $this->db->join('class as c', 'e.class_id = c.id', 'left');
         $this->db->join('section as se', 'e.section_id = se.id', 'left');
         $this->db->join('student_category as sc', 's.category_id=sc.id', 'left');
         $this->db->where('s.id', $id);
-        $this->db->where('e.session_id', get_session_id());
         $query = $this->db->get();
         return $query->row_array();
     }
@@ -289,38 +258,5 @@ class Application_model extends CI_Model
             $config[$value] = "";
         }
         return $config;
-    }
-
-    //sidebar offline payments total pending count
-    public function getOfflinePaymentsTotal()
-    {
-        if (get_permission('offline_payments', 'is_view')) {
-            $this->db->select('count(op.id) as total');
-            $this->db->from('offline_fees_payments as op');
-            $this->db->join('enroll', 'enroll.id = op.student_enroll_id', 'left');
-            if (!is_superadmin_loggedin()) {
-                $this->db->where('enroll.branch_id', get_loggedin_branch_id());
-            }
-            $this->db->where('op.status', 1);
-            $result = $this->db->get()->row()->total;
-            if ($result == 0) {
-                return '';
-            } else {
-                return ' <span class="float-right badge badge-primary">' . $result . '</span>';
-            }
-        }
-    }
-
-    public function getWeekends($school_id = '')
-    {
-        if (!empty($school_id)) {
-            $r = $this->db->select('weekends')->where('id', $school_id)->get('branch')->row();
-            if (!empty($r)) {
-                return $r->weekends;
-            } else {
-                return "";
-            }
-        } 
-        return "";
     }
 }

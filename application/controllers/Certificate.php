@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -20,9 +20,6 @@ class Certificate extends Admin_Controller
         $this->load->model('certificate_model');
         $this->load->library('ciqrcode', array('cacheable' => false));
         $this->load->model('employee_model');
-        if (!moduleIsEnabled('certificate')) {
-            access_denied();
-        }
     }
 
     /* live class form validation rules */

@@ -49,7 +49,6 @@
 							<tr>
 								<th><?=translate('branch')?></th>
 								<th><?php echo translate('name'); ?></th>
-								<th><?php echo translate('group') . " " . translate('id'); ?></th>
 								<th><?php echo translate('action'); ?></th>
 							</tr>
 						</thead>
@@ -65,7 +64,6 @@
 							<tr>
 								<td><?php echo get_type_name_by_id('branch', $row->branch_id);?></td>
 								<td><?php echo $row->name; ?></td>
-								<td><?php echo $row->id; ?></td>
 								<td class="action">
 								<?php if (get_permission('question_group', 'is_edit')): ?>
 									<!-- update link -->

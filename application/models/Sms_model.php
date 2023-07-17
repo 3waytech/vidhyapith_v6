@@ -16,7 +16,6 @@ class Sms_model extends CI_Model
         $this->load->library("textlocal");
         $this->load->library("smscountry");
         $this->load->library("bulksmsbd");
-        $this->load->library("custom_sms");
     }
 
     // common function for sending sms
@@ -81,12 +80,12 @@ class Sms_model extends CI_Model
             $text = str_replace('{fee_type}', $stuData['type_name'], $text);
             if ($remData['student'] == 1) {
                 if (!empty($stuData['child_mobileno'])) {
-                    $this->_send($sms_api, $stuData['child_mobileno'], $text, $remData['dlt_template_id']);
+                    $this->_send($sms_api, $stuData['child_mobileno'], $text);
                 }
             }
             if ($remData['guardian'] == 1) {
                 if (!empty($stuData['guardian_mobileno'])) {
-                    $this->_send($sms_api, $stuData['guardian_mobileno'], $text, $remData['dlt_template_id']);
+                    $this->_send($sms_api, $stuData['guardian_mobileno'], $text);
                 }
             }
         }
@@ -256,8 +255,6 @@ class Sms_model extends CI_Model
             $res = $this->smscountry->send($receiver, $text);
         } elseif ($sms_api == 7) {
             $res = $this->bulksmsbd->send($receiver, $text);
-        } elseif ($sms_api == 8) {
-            $res = $this->custom_sms->send($receiver, $text, $dlt_template_id);
         }
     }
 }

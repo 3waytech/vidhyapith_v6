@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom SSchool Management System
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -27,9 +27,6 @@ class Accounting extends Admin_Controller
                 'vendor/daterangepicker/daterangepicker.js',
             ),
         );
-        if (!moduleIsEnabled('office_accounting')) {
-            access_denied();
-        }
     }
 
     /* account form validation rules */

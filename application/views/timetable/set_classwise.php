@@ -273,14 +273,14 @@
 				row += '<select id="subject_id_' + value + '" name="timetable[' + value + '][subject]" class="form-control selectTwo" data-width="100%">';
 				row += '<option value=""><?php echo translate('select'); ?></option>';
 <?php foreach ($subjectAssign as $assign): ?>
-				row += '<option value="<?php echo $assign->subject_id ?>"><?php echo html_escape(get_type_name_by_id('subject', $assign->subject_id)) ?></option>';
+				row += '<option value="<?php echo $assign->subject_id ?>"><?php echo get_type_name_by_id('subject', $assign->subject_id) ?></option>';
 <?php endforeach; ?>
 				row += '</select>';
 				row += '<span class="error"></span></div></td>';
 				row += '<td width="20%"><div class="form-group">';
 				row += '<select  id="teacher_id_' + value + '" name="timetable[' + value + '][teacher]" class="form-control selectTwo" data-width="100%">';
 <?php foreach ($arrayTeacher as $key => $value): ?>
-				row += '<option value="<?php echo $key ?>"><?php echo html_escape($value) ?></option>';
+				row += '<option value="<?php echo $key ?>"><?php echo $value ?></option>';
 <?php endforeach; ?>
 				row += '</select>';
 				row += '<span class="error"></span></div></td>';

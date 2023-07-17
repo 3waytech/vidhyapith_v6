@@ -1,38 +1,22 @@
-<?php 
-$curl = curl_init();
-curl_setopt_array($curl, array(
-	CURLOPT_URL => "https://api.ravepay.co/flwv3-pug/getpaidx/api/v2/hosted/pay",
-	CURLOPT_RETURNTRANSFER => true,
-	CURLOPT_SSL_VERIFYHOST => false,
-	CURLOPT_SSL_VERIFYPEER => false,
-	CURLOPT_CUSTOMREQUEST => "POST",
-	CURLOPT_POSTFIELDS => json_encode([
-		'amount'=> $amount,
-		'customer_email'=> $customer_email,
-		'currency'=>$currency,
-		'txref'=>$txref,
-		'PBFPubKey'=>$pubKey,
-		'redirect_url'=>$redirect_url,
-	]),
-	CURLOPT_HTTPHEADER => [
-		"content-type: application/json",
-		"cache-control: no-cache"
-	],
-));
-
-$response = curl_exec($curl);
-$err = curl_error($curl);
-
-if($err){
-	// there was an error contacting the rave API
-	die('Curl returned error: ' . $err);
-}
-
-$transaction = json_decode($response);
-if(!$transaction->data && !$transaction->data->link){
-	print_r('API returned error: ' . $transaction->message);
-}
-
-// redirect to page so User can pay
-header('Location: ' . $transaction->data->link);
-?>
+Please wait, connecting with FlutterWave....
+<html>
+<head>
+    <script>
+        function submitPayuForm() {
+            var payuForm = document.forms.payuForm;
+            payuForm.submit();
+        }
+    </script>
+</head>
+<body onload="submitPayuForm()">
+    <form action="https://checkout.flutterwave.com/v3/hosted/pay" method="post" name="payuForm">
+		<input type="hidden" name="public_key" value="<?php echo $pubKey; ?>" />
+		<input type="hidden" name="customer[email]" value="<?php echo $customer_email; ?>" />
+		<input type="hidden" name="customer[name]" value="<?php echo $student_name; ?>" />
+		<input type="hidden" name="tx_ref" value="<?php echo $txref; ?>" />
+		<input type="hidden" name="amount" value="<?php echo $amount; ?>" />
+		<input type="hidden" name="currency" value="<?php echo $currency; ?>" />
+		<input type="hidden" name="redirect_url" value="<?php echo $redirect_url; ?>" />
+    </form>
+</body>
+</html>

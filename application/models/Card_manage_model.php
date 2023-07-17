@@ -197,7 +197,7 @@ class Card_manage_model extends MY_Model
             $field = str_replace($arr, '', $tag);
             if ($roleID == 1) {
                 if ($field == 'student_photo') {
-                    $photo = '<img class="' . ($photo_style == 1 ? '' : 'rounded') . '" src="' . get_image_url('student', $userDetails['photo']) . '" style="width: auto; max-height:' . $photo_size . '">';
+                    $photo = '<img class="' . ($photo_style == 1 ? '' : 'rounded') . '" src="' . get_image_url('student', $userDetails['photo']) . '" width="' . $photo_size . '">';
                     $body = str_replace($tag, $photo, $body);
                 } else if ($field == 'logo') {
                     if (!empty($templete['logo'])) {
@@ -212,15 +212,10 @@ class Card_manage_model extends MY_Model
                 } else if ($field == 'qr_code') {
                     if (!empty($templete['qr_code'])) {
                         $qr_code = $templete['qr_code'];
-                        if ($qr_code == 'attendance') {
-                            $qrData = str_replace('=', '', base64_encode('s-' . $userDetails['attendance']));
-                        } else {
-                            $qrData = ucfirst($qr_code) . " - " . $userDetails[$qr_code];
-                        }
-                        $params['savename'] = 'uploads/qr_code/stu_' . substr(hash('sha256', mt_rand() . microtime()), 0, 20) . '.png';
+                        $params['savename'] = 'uploads/qr_code/stu_' . $userDetails['id'] . '.png';
                         $params['level'] = 'M';
-                        $params['size'] = 3;
-                        $params['data'] = $qrData;
+                        $params['size'] = 2;
+                        $params['data'] = ucfirst($qr_code) . " - " . $userDetails[$qr_code];
                         $qrCode = $this->ciqrcode->generate($params);
                         $photo = '<img src="' . base_url($qrCode) . '">';
                         $body = str_replace($tag, $photo, $body);
@@ -238,7 +233,7 @@ class Card_manage_model extends MY_Model
 
             if ($roleID == 2) {
                 if ($field == 'staff_photo') {
-                    $photo = '<img class="' . ($photo_style == 1 ? '' : 'rounded') . '" src="' . get_image_url('staff', $userDetails['photo']) . '" style="width: auto; max-height:' . $photo_size . '">';
+                    $photo = '<img class="' . ($photo_style == 1 ? '' : 'rounded') . '" src="' . get_image_url('staff', $userDetails['photo']) . '" width="' . $photo_size . '">';
                     $body = str_replace($tag, $photo, $body);
                 } else if ($field == 'logo') {
                     if (!empty($templete['logo'])) {
@@ -257,15 +252,10 @@ class Card_manage_model extends MY_Model
                 } else if ($field == 'qr_code') {
                     if (!empty($templete['qr_code'])) {
                         $qr_code = $templete['qr_code'];
-                        if ($qr_code == 'attendance') {
-                            $qrData = str_replace('=', '', base64_encode('e-' . $userDetails['id']));
-                        } else {
-                            $qrData = ucfirst($qr_code) . " - " . $userDetails[$qr_code];
-                        }
-                        $params['savename'] = 'uploads/qr_code/sta_' . substr(hash('sha256', mt_rand() . microtime()), 0, 20) . '.png';
+                        $params['savename'] = 'uploads/qr_code/sta_' . $userDetails['id'] . '.png';
                         $params['level'] = 'M';
-                        $params['size'] = 3;
-                        $params['data'] = $qrData;
+                        $params['size'] = 2;
+                        $params['data'] = ucfirst($qr_code) . " - " . $userDetails[$qr_code];
                         $qrCode = $this->ciqrcode->generate($params);
                         $photo = '<img src="' . base_url($qrCode) . '">';
                         $body = str_replace($tag, $photo, $body);
@@ -332,9 +322,9 @@ class Card_manage_model extends MY_Model
 
     public function getStudent($id)
     {
-        $this->db->select('s.*,CONCAT_WS(" ",s.first_name, s.last_name) as name,e.roll,e.id as attendance,e.class_id,e.section_id,e.branch_id,e.session_id,c.name as class,se.name as section,sc.name as category,p.father_name,p.mother_name,br.name as institute_name,br.email as institute_email,br.address as institute_address,br.mobileno as institute_mobile_no');
+        $this->db->select('s.*,CONCAT_WS(" ",s.first_name, s.last_name) as name,e.roll,e.class_id,e.section_id,e.branch_id,e.session_id,c.name as class,se.name as section,sc.name as category,p.father_name,p.mother_name,br.name as institute_name,br.email as institute_email,br.address as institute_address,br.mobileno as institute_mobile_no');
         $this->db->from('enroll as e');
-        $this->db->join('student as s', 'e.student_id = s.id and e.session_id = ' . $this->db->escape(get_session_id()), 'left');
+        $this->db->join('student as s', 'e.student_id = s.id', 'left');
         $this->db->join('class as c', 'e.class_id = c.id', 'left');
         $this->db->join('section as se', 'e.section_id = se.id', 'left');
         $this->db->join('student_category as sc', 's.category_id=sc.id', 'left');

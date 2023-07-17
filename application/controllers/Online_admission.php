@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 5.8
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -90,20 +90,7 @@ class Online_admission extends Admin_Controller
         if (!get_permission('online_admission', 'is_add')) {
             access_denied();
         }
-
-        // check saas student add limit
-        if($this->app_lib->isExistingAddon('saas')) {
-            if (!checkSaasLimit('student')) {
-                set_alert('error', translate('update_your_package'));
-                redirect(site_url('dashboard'));
-            }
-        }
-
         $stuDetails = $this->online_admission_model->get('online_admission', array('id' => $student_id, 'status !=' => 2), true, true);
-        if (empty($stuDetails['id'])) {
-            access_denied();
-        }
-
         $branchID = $stuDetails['branch_id'];
         $getBranch = $this->db->where('id', $branchID)->get('branch')->row_array();
         $guardian = false;
@@ -331,7 +318,7 @@ class Online_admission extends Admin_Controller
         $this->data['getBranch'] = $getBranch;
         $this->data['sub_page'] = 'online_admission/approved';
         $this->data['main_menu'] = 'admission';
-        $this->data['register_id'] = $this->online_admission_model->regSerNumber($branchID);
+        $this->data['register_id'] = $this->online_admission_model->regSerNumber();
         $this->data['title'] = translate('online_admission');
         $this->data['headerelements'] = array(
             'css' => array(

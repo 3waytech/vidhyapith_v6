@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -48,9 +48,6 @@ class Live_class extends Admin_Controller
                 $this->zoom_validation();
                 if ($method == 2) {
                     $this->form_validation->set_rules('meeting_id', translate('meeting_id'), 'trim|required');
-                }
-                if ($method == 3) {
-                    $this->form_validation->set_rules('gmeet_url', "Gmeet URL", 'trim|required');
                 }
                 if ($this->form_validation->run() !== false) {
 					// save all route information in the database file
@@ -125,8 +122,6 @@ class Live_class extends Admin_Controller
 
                     } elseif ($method == 2) {
                         $this->live_class_model->bbb_class_save($post);
-                    } elseif ($method == 3) {
-                        $this->live_class_model->gmeet_save($post);
                     }
 
                     //send live class sms notification

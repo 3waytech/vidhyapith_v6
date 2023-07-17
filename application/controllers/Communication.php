@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -42,11 +42,7 @@ class Communication extends Admin_Controller
         } elseif ($action == 'trash') {
             $this->data['inside_subview'] = 'message_trash';
         } elseif ($action == 'read') {
-            $id = urldecode($this->input->get('id'));
-            if (preg_match('/^[^.][-a-z0-9_.]+[a-z]$/i', $id) || is_numeric($id) == false) {
-                redirect(base_url('dashboard'));
-                exit;
-            }
+            $id = $this->input->get('id');
             $response = $this->communication_model->mark_messages_read($id);
             $this->data['message_id'] = $id;
             $this->data['inside_subview'] = 'message_read';
@@ -133,46 +129,38 @@ class Communication extends Admin_Controller
         }
     }
 
+
     // file downloader
     public function download()
     {
-        $encrypt_name = urldecode($this->input->get('file'));
-        $type = urldecode($this->input->get('type'));
-        if (!preg_match('/^[^.][-a-z0-9_.]+[a-z]$/i', $type)) {
-            redirect(base_url('dashboard'));
-            exit;
-        }
+        $encrypt_name = $this->input->get('file');
+        $type = $this->input->get('type');
         if ($type == 'reply') {
             $table = 'message_reply';
         } else {
             $table = 'message';
         }
-        if(preg_match('/^[^.][-a-z0-9_.]+[a-z]$/i', $encrypt_name)) {
-            $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get($table)->row()->file_name;
-            if (!empty($file_name)) {
-                $this->load->helper('download');
-                force_download($file_name, file_get_contents('uploads/attachments/' . $encrypt_name));
-            }
-        }
+        $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get($table)->row()->file_name;
+        $this->load->helper('download');
+        force_download($file_name, file_get_contents('uploads/attachments/' . $encrypt_name));
     }
 
-    // upload file form validation
     public function handle_upload()
     {
         if (isset($_FILES["attachment_file"]) && !empty($_FILES['attachment_file']['name'])) {
-            $allowedExts = array_map('trim', array_map('strtolower', explode(',', $this->data['global_config']['file_extension'])));
-            $allowedSizeKB = $this->data['global_config']['file_size'];
-            $allowedSize = floatval(1024 * $allowedSizeKB);
+            $file_type = $_FILES["attachment_file"]['type'];
             $file_size = $_FILES["attachment_file"]["size"];
             $file_name = $_FILES["attachment_file"]["name"];
+            $allowedExts = array('pdf', 'csv', 'doc', 'xls', 'docx', 'xlsx', 'jpg', 'jpeg', 'png', 'gif', 'bmp');
+            $upload_size = 2097152;
             $extension = pathinfo($file_name, PATHINFO_EXTENSION);
-            if ($files = filesize($_FILES["attachment_file"]['tmp_name'])) {
+            if ($files = filesize($_FILES['attachment_file']['tmp_name'])) {
                 if (!in_array(strtolower($extension), $allowedExts)) {
                     $this->form_validation->set_message('handle_upload', translate('this_file_type_is_not_allowed'));
                     return false;
                 }
-                if ($file_size > $allowedSize) {
-                    $this->form_validation->set_message('handle_upload', translate('file_size_shoud_be_less_than') . " $allowedSizeKB KB.");
+                if ($file_size > $upload_size) {
+                    $this->form_validation->set_message('handle_upload', translate('file_size_shoud_be_less_than') . " " . ($upload_size / 1024) . " KB");
                     return false;
                 }
             } else {
@@ -290,7 +278,7 @@ class Communication extends Admin_Controller
         $class_id = $this->input->post('class_id');
         $branch_id = $this->application_model->get_branch_id();
         if (!empty($class_id)) {
-            $this->db->select('e.student_id,s.register_no,CONCAT(s.first_name, " ", s.last_name) as fullname');
+            $this->db->select('e.student_id,e.roll,CONCAT(s.first_name, " ", s.last_name) as fullname');
             $this->db->from('enroll as e');
             $this->db->join('student as s', 's.id = e.student_id', 'inner');
             $this->db->join('login_credential as l', 'l.user_id = e.student_id and l.role = 7', 'left');
@@ -305,7 +293,7 @@ class Communication extends Admin_Controller
                     if ($row['student_id'] == get_loggedin_user_id()) {
                         continue;
                     }
-                    $html .= '<option value="' . $row['student_id'] . '">' . $row['fullname'] . ' (Register No : ' . $row['register_no'] . ')</option>';
+                    $html .= '<option value="' . $row['student_id'] . '">' . $row['fullname'] . ' ( Roll : ' . $row['roll'] . ')</option>';
                 }
             } else {
                 $html .= '<option value="">' . translate('no_information_available') . '</option>';

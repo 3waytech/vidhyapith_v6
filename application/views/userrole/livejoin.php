@@ -1,4 +1,4 @@
-<?php $zoom_version = '2.13.0'; ?>
+<?php $zoom_version = '2.6.0'; ?>
 <!DOCTYPE html>
     <head>
         <title>School Live Class</title>

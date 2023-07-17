@@ -26,36 +26,8 @@ class App_lib
         return $result['id'];
     }
 
-    function isExistingAddon($prefix ='')
-    {
-        if ($prefix != "") {
-            $row = $this->CI->db->select('id')->where('prefix', $prefix)->get('addon')->row();
-            if (empty($row)) {
-                return false;
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function studentLastRegID($branch_id ='')
-    {
-        $this->CI->db->select('register_no');
-        $this->CI->db->from('student');
-        $this->CI->db->join('enroll', 'enroll.student_id = student.id', 'inner');
-        $this->CI->db->where('branch_id', $branch_id);
-        $this->CI->db->order_by('student.id', 'desc');
-        $this->CI->db->limit(1);
-        $r = $this->CI->db->get()->row();
-        return $r;
-    }
-
     function get_bill_no($table)
     {
-        if (!is_superadmin_loggedin()) {
-            $this->CI->db->where("branch_id", get_loggedin_branch_id());
-        }
         $result = $this->CI->db->select("max(bill_no) as id")->get($table)->row_array();
         $id = $result["id"];
         if (!empty($id)) {
@@ -498,5 +470,20 @@ class App_lib
         } else {
             return false;
         }
+    }
+    public function getcategory($branch_id = '')
+    {
+        if (empty($branch_id)) {
+            $array = array('' => translate('select_category_first'));
+        } else {
+            $this->CI->db->where('branch_id', $branch_id);
+            $result = $this->CI->db->get('student_category')->result_array();
+        }
+        $array = array('' => translate('select'));
+        foreach ($result as $row) {
+            $array[$row['id']] = $row['name'];
+        }
+        
+        return $array;
     }
 }

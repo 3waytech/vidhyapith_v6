@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -42,6 +42,7 @@ class Student extends Admin_Controller
         $this->form_validation->set_rules('first_name', translate('first_name'), 'trim|required');
         $this->form_validation->set_rules('class_id', translate('class'), 'trim|required');
         $this->form_validation->set_rules('section_id', translate('section'), 'trim|required');
+        $this->form_validation->set_rules('stu_id', translate('student_id'), 'trim');
         $this->form_validation->set_rules('register_no', translate('register_no'), 'trim|required|callback_unique_registerid');
         // checking profile photo format
         $this->form_validation->set_rules('user_photo', translate('profile_picture'), 'callback_photoHandleUpload[user_photo]');
@@ -103,11 +104,26 @@ class Student extends Admin_Controller
         if (isset($validArr['state'])) {
             $this->form_validation->set_rules('state', translate('state'), 'trim|required');
         }
+        if (isset($validArr['student_gr_no'])) {
+            $this->form_validation->set_rules('student_gr_no', translate('student_gr_no'), 'trim|required');
+        }
+        if (isset($validArr['student_adhar_dias'])) {
+            $this->form_validation->set_rules('student_adhar_dias', translate('student_adhar_dias'), 'trim|required');
+        }
+        if (isset($validArr['student_adhar_card'])) {
+            $this->form_validation->set_rules('student_adhar_card', translate('student_adhar_card'), 'trim|required|exact_length[12]|numeric');
+        }
+        if (isset($validArr['Student_birth_place'])) {
+            $this->form_validation->set_rules('Student_birth_place', translate('Student_birth_place'), 'trim|required');
+        }
+        if (isset($validArr['RTE_student'])) {
+            $this->form_validation->set_rules('RTE_student', translate('RTE_student'), 'trim|required');
+        }
         if (isset($validArr['student_email'])) {
             $this->form_validation->set_rules('email', translate('email'), 'trim|required|valid_email');
         }
         if (isset($validArr['student_mobile_no'])) {
-            $this->form_validation->set_rules('mobileno', translate('mobile_no'), 'trim|required|numeric');
+            $this->form_validation->set_rules('mobileno', translate('mobile_no'), 'trim|required||exact_length[10]|numeric');
         }
         if (isset($validArr['previous_school_details'])) {
             $this->form_validation->set_rules('school_name', translate('school_name'), 'trim|required');
@@ -142,12 +158,6 @@ class Student extends Admin_Controller
             access_denied();
         }
 
-        // check saas student add limit
-        if (!checkSaasLimit('student')) {
-            set_alert('error', translate('update_your_package'));
-            redirect(site_url('dashboard'));
-        }
-
         $getBranch = $this->getBranchDetails();
         $branchID = $this->application_model->get_branch_id();
         $this->data['getBranch'] = $getBranch;
@@ -155,6 +165,7 @@ class Student extends Admin_Controller
         $this->data['sub_page'] = 'student/add';
         $this->data['main_menu'] = 'admission';
         $this->data['register_id'] = $this->student_model->regSerNumber();
+        // $this->data['stu_id'] = $this->student_model->regStuNumber();
         $this->data['title'] = translate('create_admission');
         $this->data['headerelements'] = array(
             'css' => array(
@@ -172,11 +183,6 @@ class Student extends Admin_Controller
         if ($_POST) {
             // check access permission
             if (!get_permission('student', 'is_add')) {
-                ajax_access_denied();
-            }
-
-            // check saas student add limit
-            if (!checkSaasLimit('student')) {
                 ajax_access_denied();
             }
 
@@ -220,7 +226,7 @@ class Student extends Admin_Controller
                     $this->form_validation->set_rules('grd_email', translate('email'), 'trim|required');
                 }
                 if (isset($validArr['guardian_mobile_no'])) {
-                    $this->form_validation->set_rules('grd_mobileno', translate('mobile_no'), 'trim|required|numeric');
+                    $this->form_validation->set_rules('mobile_no', translate('mobile_no'), 'trim|required||exact_length[10]|numeric');
                 }
                 if (isset($validArr['guardian_address'])) {
                     $this->form_validation->set_rules('grd_address', translate('address'), 'trim|required');
@@ -239,6 +245,7 @@ class Student extends Admin_Controller
 
                 if ($getBranch['grd_generate'] == 0) {
                     $this->form_validation->set_rules('grd_username', translate('username'), 'trim|required|callback_get_valid_guardian_username');
+                    $this->form_validation->set_rules('mobile_no', translate('mobile_no'), 'trim|required');
                     $this->form_validation->set_rules('grd_password', translate('password'), 'trim|required');
                     $this->form_validation->set_rules('grd_retype_password', translate('retype_password'), 'trim|required|matches[grd_password]');
                 }
@@ -284,7 +291,7 @@ class Student extends Admin_Controller
         }
     }
 
-    /* csv file to import student information and stored in the database here */
+    /* csv file to import student information  and stored in the database here */
     public function csv_import()
     {
         // check access permission
@@ -311,7 +318,7 @@ class Student extends Admin_Controller
                 $sectionID = $this->input->post('section_id');
                 $csv_array = $this->csvimport->get_array($_FILES["userfile"]["tmp_name"]);
                 if ($csv_array) {
-                    $columnHeaders = array('FirstName','LastName','BloodGroup','Gender','Birthday','MotherTongue','Religion','Caste','Phone','City','State','PresentAddress','PermanentAddress','CategoryID','Roll','RegisterNo','AdmissionDate','StudentEmail','StudentUsername','StudentPassword','GuardianName','GuardianRelation','FatherName','MotherName','GuardianOccupation','GuardianMobileNo','GuardianAddress','GuardianEmail','GuardianUsername','GuardianPassword');
+                    $columnHeaders = array('FirstName','LastName','BloodGroup','Gender','Birthday','MotherTongue','Religion','Caste','Phone','City','student_gr_no','student_adhar_dias','student_adhar_card','Student_birth_place','RTE_student','State','PresentAddress','PermanentAddress','CategoryID','Roll','stu_id','RegisterNo','AdmissionDate','StudentEmail','StudentUsername','StudentPassword','GuardianName','GuardianRelation','FatherName','MotherName','GuardianOccupation','GuardianMobileNo','GuardianAddress','GuardianEmail','GuardianUsername','GuardianPassword');
                     $csvData = array();
                     foreach ($csv_array as $row) {
                         if ($i == 0) {
@@ -726,14 +733,10 @@ class Student extends Admin_Controller
     // file downloader
     public function documents_download()
     {
-        $encrypt_name = urldecode($this->input->get('file'));
-        if(preg_match('/^[^.][-a-z0-9_.]+[a-z]$/i', $encrypt_name)) {
-            $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get('student_documents')->row()->file_name;
-            if (!empty($file_name)) {
-                $this->load->helper('download');
-                force_download($file_name, file_get_contents('./uploads/attachments/documents/' . $encrypt_name));
-            }
-        }
+        $encrypt_name = $this->input->get('file');
+        $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get('student_documents')->row()->file_name;
+        $this->load->helper('download');
+        force_download($file_name, file_get_contents('./uploads/attachments/documents/' . $encrypt_name));
     }
 
     /* sample csv downloader */
@@ -771,6 +774,19 @@ class Student extends Admin_Controller
                 $array['message'] = "Student Username Already Exists.";
                 return $array;
             }
+        }
+        if ($stu_id !== '') {
+            $this->db->where('stu_id', $stu_id);
+            $query = $this->db->get_where('student');
+            if ($query->num_rows() > 0) {
+                $array['status'] = false;
+                $array['message'] = "Student Id Already Exists.";
+                return $array;
+            }
+        } else {
+            $array['status'] = false;
+            $array['message'] = "Student Is Required.";
+            return $array; 
         }
         if ($registerno !== '') {
             $this->db->where('register_no', $registerno);
@@ -891,8 +907,7 @@ class Student extends Admin_Controller
             if (!isset($_POST['authentication'])) {
                 $this->form_validation->set_rules('password', translate('password'), 'trim|required|min_length[4]');
             } else {
-                $this->form_validation->set_rules('date', translate('date'), 'trim|required');
-                $this->form_validation->set_rules('reason_id', translate('disable_reason'), 'trim|required');
+                $this->form_validation->set_rules('password', translate('password'), 'trim');
             }
             if ($this->form_validation->run() !== false) {
                 $studentID = $this->input->post('student_id');
@@ -905,15 +920,6 @@ class Student extends Admin_Controller
                     $this->db->where('role', 7);
                     $this->db->where('user_id', $studentID);
                     $this->db->update('login_credential', array('active' => 0));
-
-                    // insert disable reason history in DB
-                    $insertData = array(
-                        'student_id' => $studentID, 
-                        'reason_id' => $this->input->post('reason_id'), 
-                        'note' => $this->input->post('note'), 
-                        'date' => date("Y-m-d", strtotime($this->input->post('date'))), 
-                    );
-                    $this->db->insert('disable_reason_details', $insertData);
                 }
                 set_alert('success', translate('information_has_been_updated_successfully'));
                 $array  = array('status' => 'success');
@@ -938,6 +944,7 @@ class Student extends Admin_Controller
         $data['photo'] = get_image_url('student', $row->photo);
         $data['full_name'] = $row->first_name . " " . $row->last_name;
         $data['student_category'] = $row->cname;
+        $data['stu_id'] = $row->stu_id;
         $data['register_no'] = $row->register_no;
         $data['roll'] = $row->roll;
         $data['admission_date'] = empty($row->admission_date) ? "N/A" : _d($row->admission_date);
@@ -982,199 +989,266 @@ class Student extends Admin_Controller
         }
         echo json_encode(array('status' => $status, 'message' => $message));
     }
-
-
-    /* student login credential list by class and section */
-    public function login_credential_reports()
+     /* student admission information are prepared and stored in the database from enquiry to */
+    public function student_add_enquiry($id = "")
     {
         // check access permission
-        if (!get_permission('student', 'is_view')) {
+        if (!get_permission('student', 'is_add')) {
             access_denied();
         }
-        $branchID = $this->application_model->get_branch_id();
-        if (isset($_POST['search'])) {
-            $classID = $this->input->post('class_id');
-            $sectionID = $this->input->post('section_id');
-            $this->data['students'] = $this->application_model->getStudentListByClassSection($classID, $sectionID, $branchID, false, true);
-        }
-        $this->data['branch_id'] = $branchID;
-        $this->data['title'] = translate('login_credential');
-        $this->data['main_menu'] = 'student_repots';
-        $this->data['sub_page'] = 'student/login_credential_reports';
-        $this->load->view('layout/index', $this->data);
-    }
 
-    public function password_reset($type)
-    {
-        if ($_POST) {
-            $this->form_validation->set_rules('new_password', 'New Password', 'trim|required|min_length[4]');
-            $this->form_validation->set_rules('confirm_password', 'Confirm Password', 'trim|required|min_length[4]|matches[new_password]');
-            if ($this->form_validation->run() == true) {
-                $new_password = $this->input->post('new_password');
-                if (!empty($type)) {
-                    if ($type == 'student') {
-                        $student_id = $this->input->post('student_id');
-                        if (!is_superadmin_loggedin()) {
-                            $chkID = $this->db->select('id')->where(['student_id' => $student_id, 'branch_id' => get_loggedin_branch_id()])->get('enroll')->row();
-                            if (empty($chkID)) {
-                                exit;
-                            }
-                        }
-                        $this->db->where('user_id', $student_id);
-                        $this->db->where('role', 7);
-                    }
-                    if ($type == 'parent') {
-                        $parent_id = $this->input->post('parent_id');
-                        if (!is_superadmin_loggedin()) {
-                            $chkID = $this->db->select('id')->where(['id' => $parent_id, 'branch_id' => get_loggedin_branch_id()])->get('parent')->row();
-                            if (empty($chkID)) {
-                                exit;
-                            }
-                        }
-                        $this->db->where('user_id', $parent_id);
-                        $this->db->where('role', 6);
-                    }
-                    $this->db->update('login_credential', array('password' => $this->app_lib->pass_hashed($new_password)));
-                }
-                set_alert('success', translate('information_has_been_updated_successfully'));
-                $array = array('status' => 'success');
-            } else {
-                $error = $this->form_validation->error_array();
-                $array = array('status' => 'fail', 'error' => $error);
-            }
-            echo json_encode($array);
-        }
-    }
-
-    /* student admission list by date */
-    public function admission_reports()
-    {
-        // check access permission
-        if (!get_permission('student', 'is_view')) {
-            access_denied();
-        }
+        $this->load->model('reception_model');
+        $getBranch = $this->getBranchDetails();
         $branchID = $this->application_model->get_branch_id();
-        if (isset($_POST['search'])) {
-            $classID = $this->input->post('class_id');
-            $sectionID = $this->input->post('section_id');
-            $daterange = explode(' - ', $this->input->post('daterange'));
-            $start = date("Y-m-d", strtotime($daterange[0]));
-            $end = date("Y-m-d", strtotime($daterange[1]));
-            $this->data['start'] = $start;
-            $this->data['end'] = $end;
-            $this->data['students'] = $this->student_model->getStudentList($classID, $sectionID, $branchID, false, $start, $end)->result_array();
-        }
+        $this->data['row'] = $this->app_lib->getTable('enquiry', array('t.id' => $id), true);
+        $this->data['getBranch'] = $getBranch;
         $this->data['branch_id'] = $branchID;
-        $this->data['title'] = translate('admission_reports');
-        $this->data['main_menu'] = 'student_repots';
-        $this->data['sub_page'] = 'student/admission_reports';
+        $this->data['sub_page'] = 'student/student_add_enquiry';
+        $this->data['main_menu'] = 'admission';
+        $this->data['register_id'] = $this->student_model->regSerNumber();
+        $this->data['title'] = translate('create_admission_enquery');
         $this->data['headerelements'] = array(
             'css' => array(
-                'vendor/daterangepicker/daterangepicker.css',
+                'vendor/dropify/css/dropify.min.css',
             ),
             'js' => array(
-                'vendor/moment/moment.js',
-                'vendor/daterangepicker/daterangepicker.js',
+                'js/student.js',
+                'vendor/dropify/js/dropify.min.js',
             ),
-        ); 
+        );
         $this->load->view('layout/index', $this->data);
     }
-
-    public function classsection_reports()
+    
+    /* profile preview and information are updating here */
+    public function studentlc($student_id = '', $reason = "", $lcNumber = "", $lcDate = "", $schoolleavereason = "", $total_days = "", $present_days = "")
     {
-        // check access permission
-        if (!get_permission('student', 'is_view')) {
-            access_denied();
-        }
-        $branchID = $this->application_model->get_branch_id();
-        $this->data['branch_id'] = $branchID;
-        $this->data['title'] = translate('class_&_section');
-        $this->data['main_menu'] = 'student_repots';
-        $this->data['sub_page'] = 'student/classsection_reports';
-        $this->load->view('layout/index', $this->data);
+        $id = $student_id;
+        $reason = isset($_POST['reason']) ? $_POST['reason'] : '';
+        $lcNumber = isset($_POST['lcNumber']) ? $_POST['lcNumber'] : '';
+        $lcDate = isset($_POST['lcDate']) ? $_POST['lcDate'] : '';
+        $schoolleavereason = isset($_POST['schoolleavereason']) ? $_POST['schoolleavereason'] : '';
+        $present_days = isset($_POST['present_days']) ? $_POST['present_days'] : '';
+        $total_days = isset($_POST['total_days']) ? $_POST['total_days'] : '';
+        // Get all students from the "student" table
+        $getStudent = $this->student_model->getSingleStudent($id);
+        // $getStudent = json_decode($getStudent);
+        $parent_id = $getStudent['parent_id'];
+        $parent_id_list = $this->student_model->getSingleParent($parent_id);
+        // Store the details in an array
+       
+        $data = array(
+            'student_id' => $getStudent['id'],
+            'register_no' => $getStudent['register_no'],
+            'admission_date' => $getStudent['admission_date'],
+            'first_name' => $getStudent['first_name'],
+            'last_name' => $getStudent['last_name'],
+            'gender' => $getStudent['gender'],
+            'birthday' => $getStudent['birthday'],
+            'religion' => $getStudent['religion'],
+            'caste' => $getStudent['caste'],
+            'blood_group' => $getStudent['blood_group'],
+            'mother_tongue' => $getStudent['mother_tongue'],
+            'current_address' => $getStudent['current_address'],
+            'permanent_address' => $getStudent['permanent_address'],
+            'city' => $getStudent['city'],
+            'state' => $getStudent['state'],
+            'mobileno' => $getStudent['mobileno'],
+            'category_id' => $getStudent['category_id'],
+            'email' => $getStudent['email'],
+            'parent_id' => $getStudent['parent_id'],
+            'route_id' => $getStudent['route_id'],
+            'vehicle_id' => $getStudent['vehicle_id'],
+            'hostel_id' => $getStudent['hostel_id'],
+            'room_id' => $getStudent['room_id'],
+            'previous_details' => $getStudent['previous_details'],
+            'photo' => $getStudent['photo'],
+            'class_id' => $getStudent['class_id'],
+            'section_id' => $getStudent['section_id'],
+            'session_id' => get_session_id(),
+            'branch_id' => $this->application_model->get_branch_id(),
+            'parent_name' => $parent_id_list['name'],
+            'relation' => $parent_id_list['relation'],
+            'father_name' => $parent_id_list['father_name'],
+            'occupation' => $parent_id_list['occupation'],
+            'income' => $parent_id_list['income'],
+            'education' => $parent_id_list['education'],
+            'email_parent' => $parent_id_list['email'],
+            'mobileno_parent' => $parent_id_list['mobileno'],
+            'reason'=>$reason,
+            'lcdate' => $lcDate,
+            'lcnumber' => $lcNumber,
+            'leavereason' => $schoolleavereason,
+            'totalday' => $total_days,
+            'presentday' => $present_days
+        );
+
+        // Insert the data into the student_lc_show table
+        $this->db->insert('student_lc', $data);
+        if ($this->db->affected_rows() == 1) {
+            // Data inserted successfully
+        } else {
+            echo "already updated";
+            $this->db->where('student_id', $id);
+            $this->db->update('student_lc', $data);
+            // $array  = array('status' => 'success');
+        
+        }      
     }
-
-
-    // add new student deactivate reason
-    public function disable_reason()
+    
+    public function past_student()
     {
-        if (isset($_POST['disable_reason'])) {
-            if (!get_permission('disable_reason', 'is_add')) {
-                access_denied();
-            }
-            if (is_superadmin_loggedin()) {
-                $this->form_validation->set_rules('branch_id', translate('branch'), 'required');
-            }
-            $this->form_validation->set_rules('name', translate('reason'), 'trim|required');
-            if ($this->form_validation->run() !== false) {
-                $arrayData = array(
-                    'name' => $this->input->post('name'),
-                    'branch_id' => $this->application_model->get_branch_id(),
-                );
-                $this->db->insert('disable_reason', $arrayData);
-                set_alert('success', translate('information_has_been_saved_successfully'));
-                redirect(base_url('student/disable_reason'));
-            }
-        }
-        $this->data['title'] = translate('deactivate_reason');
-        $this->data['categorylist'] = $this->app_lib->getTable('disable_reason');
-        $this->data['sub_page'] = 'student/disable_reason';
+        // echo "-----------------------------------------------",json_encode($this->student_model->past_student());
+        $this->data['title'] = translate('past_student');
+        $this->data['past_students'] = $this->student_model->past_student();
+        $this->data['sub_page'] = 'student/past_student';
         $this->data['main_menu'] = 'student';
         $this->load->view('layout/index', $this->data);
     }
-
-    // update existing student deactivate reason
-    public function disable_reason_edit()
+    
+    /* unique valid student ID verification is done here */
+    public function unique_studentid($stu_id)
     {
-        if (!get_permission('disable_reason', 'is_edit')) {
-            ajax_access_denied();
+        $branchID = $this->application_model->get_branch_id();
+        if ($this->uri->segment(3)) {
+            $this->db->where_not_in('id', $this->uri->segment(3));
         }
-        if (is_superadmin_loggedin()) {
-            $this->form_validation->set_rules('branch_id', translate('branch'), 'required');
-        }
-        $this->form_validation->set_rules('name', translate('reason'), 'trim|required');
-        if ($this->form_validation->run() !== false) {
-            $category_id = $this->input->post('reason_id');
-            $arrayData = array(
-                'name' => $this->input->post('name'),
-                'branch_id' => $this->application_model->get_branch_id(),
-            );
-            $this->db->where('id', $category_id);
-            $this->db->update('disable_reason', $arrayData);
-            set_alert('success', translate('information_has_been_updated_successfully'));
-            $array  = array('status' => 'success');
+        $this->db->where('stu_id', $stu_id);
+        $query = $this->db->get('student')->num_rows();
+        if ($query == 0) {
+            return true;
         } else {
-            $error = $this->form_validation->error_array();
-            $array = array('status' => 'fail','error' => $error);
-        }
-        echo json_encode($array);
-    }
-
-    // delete student deactivate reason from database
-    public function disable_reason_delete($id)
-    {
-        if (get_permission('disable_reason', 'is_delete')) {
-            if (!is_superadmin_loggedin()) {
-                $this->db->where('branch_id', get_loggedin_branch_id());
-            }
-            $this->db->where('id', $id);
-            $this->db->delete('disable_reason');
+            $this->form_validation->set_message("unique_studentid", translate('already_taken'));
+            return false;
         }
     }
-
-    // student disable reason details send by ajax
-    public function disableReasonDetails()
+    public function student_search()
     {
-        if (get_permission('disable_reason', 'is_edit')) {
-            $id = $this->input->post('id');
-            $this->db->where('id', $id);
-            if (!is_superadmin_loggedin()) {
-                $this->db->where('branch_id', get_loggedin_branch_id());
-            }
-            $query = $this->db->get('disable_reason');
-            $result = $query->row_array();
-            echo json_encode($result);
+        
+         // check access permission
+         if (!get_permission('student', 'is_view')) {
+            access_denied();
         }
+
+        $branchID = $this->application_model->get_branch_id();
+        if (isset($_POST['search'])) {
+            
+            $this->data['students'] = $this->student_model->getStudentSearchCustom($branchID, false, true);
+            // $this->data['students'] = $this->application_model->getStudentListByClassSection($classID, $sectionID, $branchID, false, true);
+        }
+        $this->data['branch_id'] = $branchID;
+        $this->data['title'] = translate('student_list');
+        $this->data['main_menu'] = 'student';
+        $this->data['sub_page'] = 'student/student_search';
+        $this->data['headerelements'] = array(
+            'js' => array(
+                'js/student.js'
+            ),
+        );
+        $this->load->view('layout/index', $this->data);
+    }
+    public function multi_student_update()
+    {
+        // check access permission
+        if (!get_permission('multiple_import', 'is_add')) {
+            access_denied();
+        }
+
+        $branchID = $this->application_model->get_branch_id();
+        if (isset($_POST['save'])) {
+            $err_msg = "";
+            $i = 0;
+            $this->load->library('csvimport');
+            // form validation rules
+            if (is_superadmin_loggedin() == true) {
+                $this->form_validation->set_rules('branch_id', 'Branch', 'trim|required');
+            }
+            // $this->form_validation->set_rules('class_id', 'Class', 'trim|required');
+            // $this->form_validation->set_rules('section_id', 'Section', 'trim|required');
+            $this->form_validation->set_rules('selectedField', 'selected Field', 'trim|required');
+            if (isset($_FILES["userfile"]) && empty($_FILES['userfile']['name'])) {
+                $this->form_validation->set_rules('userfile', 'CSV File', 'required');
+            }
+            if ($this->form_validation->run() == true) {
+                // $classID = $this->input->post('class_id');
+                // $sectionID = $this->input->post('section_id');
+                $selectedField = $this->input->post('selectedField');
+                $csv_array = $this->csvimport->get_array($_FILES["userfile"]["tmp_name"]);
+                if ($csv_array) {
+                    $columnHeaders = array('RegisterNo',$selectedField);
+                    
+                    $csvData = array();
+                    foreach ($csv_array as $row) {
+                        if ($i == 0) {
+                            $csvData = array_keys($row);
+                        }
+
+                        $row[$selectedField] = $row['InsertData'];
+                    unset($row['InsertData']);
+                    // echo "------------row ---------------",json_encode($row);
+
+                        // echo "-----------------csvData---------------------",json_encode($csvData);
+                        // $csv_chk = array_diff($columnHeaders, $csvData);
+                        // echo "-----------------columnHeaders---------------------",json_encode($columnHeaders);
+                        
+                        // if (count($csv_chk) <= 0) {
+                            // echo "-------------------------row-------------",json_encode($row);
+                            // $schoolSettings = $this->student_model->get('branch', array('id' => $branchID), true, false, 'unique_roll');
+                            // $unique_roll = $schoolSettings['unique_roll'];
+
+                            // $r = $this->csvCheckExistsData($branchID);
+                            // if ($r['status'] == false) {
+                            //     $err_msg .= $row['FirstName'] . ' ' . $row['LastName'] . " - Imported Failed : " . $r['message'] . "<br>";
+                            // } else {
+                                // echo "-----------",json_encode($selectedField);
+                                $this->student_model->csvImportEdit($row, $selectedField);
+                                $i++;
+                            // }
+                            // echo "---------------------- thank you";
+                        // } else {
+                        //     set_alert('error', translate('invalid_csv_file'));
+                        //     // redirect(base_url("student/csv_import"));
+                        // }
+                    }
+                    if ($err_msg != null) {
+                        $this->session->set_flashdata('csvimport', $err_msg);
+                    }
+                    if ($i > 0) {
+                        set_alert('success', $i . ' Students Have Been Successfully Added');
+                    }
+                    // redirect(base_url("student/multi_student_update"));
+                } else {
+                    set_alert('error', translate('invalid_csv_file'));
+                    // redirect(base_url("student/multi_student_update"));
+                }
+            }else{
+                $errors = $this->form_validation->error_array();
+    
+                // You can loop through the error messages and handle them accordingly
+                foreach ($errors as $field => $error) {
+                    echo "Error in $field field: $error<br>";
+                }
+            }
+        }
+        $this->data['title'] = translate('multi_student_update');
+        $this->data['branch_id'] = $branchID;
+        $this->data['sub_page'] = 'student/multi_student_update';
+        $this->data['main_menu'] = 'student';
+        $this->data['headerelements'] = array(
+            'css' => array(
+                'vendor/dropify/css/dropify.min.css',
+            ),
+            'js' => array(
+                'vendor/dropify/js/dropify.min.js',
+            ),
+        );
+        $this->load->view('layout/index', $this->data);
+    }
+    /* sample csv downloader */
+    public function csv_Sampledownloadersingledata()
+    {
+        $this->load->helper('download');
+        $data = file_get_contents('uploads/multi_student_details.csv');
+        force_download("multi_student_details.csv", $data);
     }
 
 }

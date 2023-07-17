@@ -24,13 +24,9 @@ class Setting extends Admin_Controller
         $this->data['headerelements'] = array(
             'css' => array(
                 'vendor/dropify/css/dropify.min.css',
-                'vendor/jquery-asColorPicker-master/css/asColorPicker.css',
             ),
             'js' => array(
                 'vendor/dropify/js/dropify.min.js',
-                'vendor/jquery-asColorPicker-master/libs/jquery-asColor.js',
-                'vendor/jquery-asColorPicker-master/libs/jquery-asGradient.js',
-                'vendor/jquery-asColorPicker-master/dist/jquery-asColorPicker.min.js',
             ),
         );
         $this->data['branch_id'] = $branchID;
@@ -59,34 +55,13 @@ class Setting extends Admin_Controller
             $this->form_validation->set_rules('fax', 'Fax', 'trim|required');
             $this->form_validation->set_rules('footer_about_text', 'Footer About Text', 'trim|required');
             $this->form_validation->set_rules('copyright_text', 'Copyright Text', 'trim|required');
-            // theme options
-            $this->form_validation->set_rules('primary_color', 'Primary Color', 'trim|required');
-            $this->form_validation->set_rules('menu_color', 'Menu Color', 'trim|required');
-            $this->form_validation->set_rules('btn_hover', 'Button Hover Color', 'trim|required');
-            $this->form_validation->set_rules('text_color', 'Text Color', 'trim|required');
-            $this->form_validation->set_rules('secondary_text_color', 'Text Secondary Color', 'trim|required');
-            $this->form_validation->set_rules('footer_bg_color', 'Footer Background Color ', 'trim|required');
-            $this->form_validation->set_rules('footer_text_color', 'Footer Text Color', 'trim|required');
-            $this->form_validation->set_rules('copyright_bg_color', 'Copyright BG Color', 'trim|required');
-            $this->form_validation->set_rules('copyright_text_color', 'Copyright Text Color', 'trim|required');
-            $this->form_validation->set_rules('border_radius', 'Border Radius', 'trim|required');
             if ($this->form_validation->run() == true) {
                 $cms_setting = array(
                     'branch_id' => $branchID,
                     'application_title' => $this->input->post('application_title'),
                     'url_alias' =>  strtolower(preg_replace('/[^A-Za-z0-9]/', '_', $this->input->post('url_alias'))),
                     'cms_active' => $this->input->post('cms_frontend_status'),
-                    'primary_color' => $this->input->post('primary_color'),
-                    'menu_color' => $this->input->post('menu_color'),
-                    'hover_color' => $this->input->post('btn_hover'),
-                    'text_color' => $this->input->post('text_color'),
-                    'text_secondary_color' => $this->input->post('secondary_text_color'),
-                    'footer_background_color' => $this->input->post('footer_bg_color'),
-                    'footer_text_color' => $this->input->post('footer_text_color'),
-                    'copyright_bg_color' => $this->input->post('copyright_bg_color'),
-                    'copyright_text_color' => $this->input->post('copyright_text_color'),
-                    'border_radius' => $this->input->post('border_radius'),
-
+                    'theme' => $this->input->post('theme_color'),
                     'online_admission' => $this->input->post('online_admission'),
                     'captcha_status' => $this->input->post('captcha_status'),
                     'recaptcha_site_key' => $this->input->post('recaptcha_site_key'),
@@ -99,7 +74,6 @@ class Setting extends Admin_Controller
                     'footer_about_text' => $this->input->post('footer_about_text'),
                     'copyright_text' => $this->input->post('copyright_text'),
                     'working_hours' => $this->input->post('working_hours'),
-                    'google_analytics' => $this->input->post('google_analytics', false),
                     'facebook_url' => $this->input->post('facebook_url'),
                     'twitter_url' => $this->input->post('twitter_url'),
                     'youtube_url' => $this->input->post('youtube_url'),

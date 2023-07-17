@@ -21,7 +21,12 @@
 		<link rel="stylesheet" href="<?php echo base_url('assets/vendor/bootstrap-datepicker/css/bootstrap-datepicker.standalone.css'); ?>">
 		<link rel="stylesheet" href="<?php echo base_url('assets/vendor/bootstrap-fileupload/bootstrap-fileupload.min.css'); ?>">
 		<link rel="stylesheet" href="<?php echo base_url('assets/frontend/plugins/magnific-popup/magnific-popup.css'); ?>">
-		<link rel="stylesheet" href="<?php echo base_url('assets/frontend/css/style.css'); ?>">
+
+	<?php if ($cms_setting['theme'] == 'red') { ?>
+		<link rel="stylesheet" href="<?php echo base_url('assets/frontend/css/style_red.css'); ?>">
+	<?php } else { ?>
+		<link rel="stylesheet" href="<?php echo base_url('assets/frontend/css/style_blue.css'); ?>">
+	<?php } ?>
 		<script src="<?php echo base_url('assets/vendor/jquery/jquery.min.js'); ?>"></script>
 		<!-- If user have enabled CSRF proctection this function will take care of the ajax requests and append custom header for CSRF -->
 		<script type="text/javascript">
@@ -32,18 +37,6 @@
 					data: csrfData
 				});
 			});
-		</script>
-		<!-- Google Analytics --> 
-		<?php echo $cms_setting['google_analytics']; ?>
-		
-		<!-- Theme Color Options -->
-		<script type="text/javascript">
-			document.documentElement.style.setProperty('--thm-primary', '<?php echo $cms_setting["primary_color"] ?>');
-			document.documentElement.style.setProperty('--thm-hover', '<?php echo $cms_setting["hover_color"] ?>');
-			document.documentElement.style.setProperty('--thm-text', '<?php echo $cms_setting["text_color"] ?>');
-			document.documentElement.style.setProperty('--thm-secondary-text', '<?php echo $cms_setting["text_secondary_color"] ?>');
-			document.documentElement.style.setProperty('--thm-footer-text', '<?php echo $cms_setting["footer_text_color"] ?>');
-			document.documentElement.style.setProperty('--thm-radius', '<?php echo $cms_setting["border_radius"] ?>');
 		</script>
 	</head>
 	<body>

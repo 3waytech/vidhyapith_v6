@@ -606,5 +606,146 @@ class Exam extends Admin_Controller
         }
         echo $html;
     }
+    
+    
+    /* exam mark import csv information are prepared and stored in the database here */
+    public function multi_mark()
+    {
+        if (!get_permission('multi_mark', 'is_add')) {
+            access_denied();
+        }
+
+        $branchID = $this->application_model->get_branch_id();
+        $classID = $this->input->post('class_id');
+        $sectionID = $this->input->post('section_id');
+        $subjectID = $this->input->post('subject_id');
+        $examID = $this->input->post('exam_id');
+
+        $this->data['branch_id'] = $branchID;
+        $this->data['class_id'] = $classID;
+        $this->data['section_id'] = $sectionID;
+        $this->data['subject_id'] = $subjectID;
+        $this->data['exam_id'] = $examID;
+        $this->data['sub_page'] = 'exam/multi_mark';
+        $this->data['main_menu'] = 'mark';
+        $this->data['title'] = translate('mark_entries');
+        $this->load->view('layout/index', $this->data);
+    }
+    /* Exam mark save in csv import */
+    
+    public function mark_save_csv_import()
+    {
+        if (isset($_POST['save'])) {
+            if (!get_permission('exam_mark', 'is_add')) {
+                ajax_access_denied();
+            }
+           
+            $err_msg = "";
+            $i = 0;
+            $this->load->library('csvimport');
+            if (isset($_FILES["userfile"]) && empty($_FILES['userfile']['name'])) {
+                $this->form_validation->set_rules('userfile', 'CSV File', 'required');
+            }
+            $csvFile = $this->csvimport->get_array($_FILES["userfile"]["tmp_name"]);
+            $marks = array();
+            $header = true;
+            
+            
+            $branchID = $this->application_model->get_branch_id();
+            $classID = $this->input->post('class_id');
+            $sectionID = $this->input->post('section_id');
+            $subjectID = $this->input->post('subject_id');
+            $examID = $this->input->post('exam_id');
+            $type_id = $this->input->post('type_id');
+
+            // set column headers
+            $columnHeaders = array('student_id', 'mark');
+            foreach ($csvFile as $row) {
+                // create array of student ID and mark
+                $marks[] = array(
+                    'student_id' => $row['student_id'],
+                    'assessment' => array('type_id' => $type_id, 'mark' => $row['mark'])
+                );
+            }
+            
+            foreach ($marks as $key => $value) {
+                $assMark = array();
+                foreach ($value['assessment'] as $i => $row) {
+                    $assMark[$i] = $row;
+                }
+                $arrayMarks = array(
+                    'student_id' => $value['student_id'],
+                    'exam_id' => $examID,
+                    'class_id' => $classID,
+                    'section_id' => $sectionID,
+                    'subject_id' => $subjectID,
+                    'branch_id' => $branchID,
+                    'session_id' => get_session_id(),
+                );
+
+                $inputMark = (in_array('', $assMark) ? null : json_encode($assMark));
+        
+                $json = json_decode($inputMark, true);
+                $output = array($json['type_id'] => $json['mark']);
+                $output_json = json_encode($output);
+                // $absent = (in_array('', $assMark) ? '' : 'on');
+                $absent = (in_array('', $assMark) ? 'on' : '');
+
+              
+                $query = $this->db->get_where('mark', $arrayMarks);
+                $result = $query->result_array();
+                $getOldMark = json_decode($result[0]['mark']);
+                
+
+
+
+              
+                $allKeysOfEmployee = array_keys((array)$output);
+                // echo $output[$allKeysOfEmployee[0]];
+                // $getOldMark->test = "test";
+                $temp_var = $allKeysOfEmployee[0];
+                if (empty($getOldMark)) {
+                    $getOldMark = array($json['type_id'] => $json['mark']);
+                }else{
+                    $getOldMark->$temp_var = $output[$allKeysOfEmployee[0]];
+                }
+                // $getOldMark->$temp_var = $output[$allKeysOfEmployee[0]];
+                
+
+                $tmp_store = json_encode($getOldMark);
+                if ($query->num_rows() > 0) {
+                    if (in_array('', $assMark)) {
+                        $this->db->where('id', $query->row()->id);
+                        $this->db->delete('mark');
+                    } else {
+                        // echo "------------------",json_encode($getOldMark);
+                        $this->db->where('id', $query->row()->id);
+                        $this->db->update('mark', array('mark' => $tmp_store, 'absent' => $absent));
+                    }
+                } else {
+                    if (!in_array('', $assMark)) {
+                        $arrayMarks['mark'] = $tmp_store;
+                        $arrayMarks['absent'] = $absent;
+                        $this->db->insert('mark', $arrayMarks);
+                        // send exam results sms
+                        $this->sms_model->send_sms($arrayMarks, 5);
+                    }
+                }
+            }
+            $message = translate('information_has_been_saved_successfully');
+            $array = array('status' => 'success', 'message' => $message);
+            echo json_encode($array);
+            redirect(base_url("exam/multi_mark"));
+        }
+        
+    }
+
+    /* sample csv downloader */
+    public function csv_Sampledownloader()
+    {
+        $this->load->helper('download');
+        $data = file_get_contents('uploads/multi_mark_sample.csv');
+        force_download("multi_mark_sample.csv", $data);
+    }
 
 }

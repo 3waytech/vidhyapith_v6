@@ -16,7 +16,7 @@ class Student_model extends MY_Model
     {
         $hostelID = empty($data['hostel_id']) ? 0 : $data['hostel_id'];
         $roomID = empty($data['room_id']) ? 0 : $data['room_id'];
-
+        
         $previous_details = array(
             'school_name' => $this->input->post('school_name'),
             'qualification' => $this->input->post('qualification'),
@@ -29,6 +29,7 @@ class Student_model extends MY_Model
         }
 
         $inser_data1 = array(
+            'stu_id' => $this->input->post('stu_id'),
             'register_no' => $this->input->post('register_no'),
             'admission_date' => (isset($data['admission_date']) ? date("Y-m-d", strtotime($data['admission_date'])) : ""),
             'first_name' => $this->input->post('first_name'),
@@ -42,13 +43,18 @@ class Student_model extends MY_Model
             'current_address' => $this->input->post('current_address'),
             'permanent_address' => $this->input->post('permanent_address'),
             'city' => $this->input->post('city'),
+            'student_gr_no' => $this->input->post('student_gr_no'),
+            'student_adhar_dias' => $this->input->post('student_adhar_dias'),
+            'student_adhar_card' => $this->input->post('student_adhar_card'),
+            'Student_birth_place' => $this->input->post('Student_birth_place'),
+            'RTE_student' => $this->input->post('RTE_student'),
             'state' => $this->input->post('state'),
             'mobileno' => $this->input->post('mobileno'),
             'category_id' => (isset($data['category_id']) ? $data['category_id'] : 0),
             'email' => $this->input->post('email'),
             'parent_id' => $this->input->post('parent_id'),
-            'route_id' => (empty($this->input->post('route_id')) ? 0 : $this->input->post('route_id')),
-            'vehicle_id' => (empty($this->input->post('vehicle_id')) ? 0 : $this->input->post('vehicle_id')),
+            'route_id' => $this->input->post('route_id'),
+            'vehicle_id' => $this->input->post('vehicle_id'),
             'hostel_id' => $hostelID,
             'room_id' => $roomID,
             'previous_details' => $previous_details,
@@ -69,7 +75,7 @@ class Student_model extends MY_Model
                         'income' => $this->input->post('grd_income'),
                         'education' => $this->input->post('grd_education'),
                         'email' => $this->input->post('grd_email'),
-                        'mobileno' => $this->input->post('grd_mobileno'),
+                        'mobileno' => $this->input->post('mobile_no'),
                         'address' => $this->input->post('grd_address'),
                         'city' => $this->input->post('grd_city'),
                         'state' => $this->input->post('grd_state'),
@@ -82,20 +88,23 @@ class Student_model extends MY_Model
                     // save guardian login credential information in the database
                     if ($getBranch['grd_generate'] == 1) {
                         $grd_username = $getBranch['grd_username_prefix'] . $parentID;
+                        $mobile_no = $getBranch['mobile_no'];
                         $grd_password = $getBranch['grd_default_password'];
                     } else {
                         $grd_username = $data['grd_username'];
+                        $mobile_no = $data['mobile_no'];
                         $grd_password = $data['grd_password'];
                     }
                     $parent_credential = array(
                         'username' => $grd_username,
+                        'mobile_no' => $mobile_no,
                         'role' => 6,
                         'user_id' => $parentID,
                         'password' => $this->app_lib->pass_hashed($grd_password),
                     );
                     $this->db->insert('login_credential', $parent_credential);
                 } else {
-                    $parentID = 0;
+                   $parentID = 0; 
                 }
             } else {
                 $parentID = $data['parent_id'];
@@ -161,16 +170,16 @@ class Student_model extends MY_Model
         // getting existing father data
         if ($row['GuardianUsername'] !== '') {
             $getParent = $this->db->select('parent.id')
-                ->from('login_credential')->join('parent', 'parent.id = login_credential.user_id', 'left')
-                ->where(array('parent.branch_id' => $branchID, 'login_credential.username' => $row['GuardianUsername']))
-                ->get()->row_array();
+            ->from('login_credential')->join('parent', 'parent.id = login_credential.user_id', 'left')
+            ->where(array('parent.branch_id' => $branchID, 'login_credential.username' => $row['GuardianUsername']))
+            ->get()->row_array();
         }
 
         // getting branch settings
         $getSettings = $this->db->select('*')
-            ->where('id', $branchID)
-            ->from('branch')
-            ->get()->row_array();
+        ->where('id', $branchID)
+        ->from('branch')
+        ->get()->row_array();
 
         if (isset($getParent) && count($getParent)) {
             $parentID = $getParent['id'];
@@ -194,13 +203,16 @@ class Student_model extends MY_Model
             // save guardian login credential information in the database
             if ($getSettings['grd_generate'] == 1) {
                 $grd_username = $getSettings['grd_username_prefix'] . $parentID;
+                $grd_mobileno = $row['GuardianMobileNo'];
                 $grd_password = $getSettings['grd_default_password'];
             } else {
                 $grd_username = $row['GuardianUsername'];
+                $grd_mobileno = $row['GuardianMobileNo'];
                 $grd_password = $row['GuardianPassword'];
             }
             $parent_credential = array(
                 'username' => $grd_username,
+                'mobile_no' => $grd_mobileno,
                 'role' => 6,
                 'user_id' => $parentID,
                 'password' => $this->app_lib->pass_hashed($grd_password),
@@ -220,11 +232,17 @@ class Student_model extends MY_Model
             'caste' => $row['Caste'],
             'mobileno' => $row['Phone'],
             'city' => $row['City'],
+            'student_gr_no' => $row['student_gr_no'],
+            'student_adhar_dias' => $row['student_adhar_dias'],
+            'student_adhar_card' => $row['student_adhar_card'],
+            'Student_birth_place' => $row['Student_birth_place'],
+            'RTE_student' => $row['RTE_student'],
             'state' => $row['State'],
             'current_address' => $row['PresentAddress'],
             'permanent_address' => $row['PermanentAddress'],
             'category_id' => $row['CategoryID'],
             'admission_date' => date("Y-m-d", strtotime($row['AdmissionDate'])),
+            'stu_id' => $row['stu_id'],
             'register_no' => $row['RegisterNo'],
             'photo' => 'defualt.png',
             'email' => $row['StudentEmail'],
@@ -237,15 +255,18 @@ class Student_model extends MY_Model
         // save student login credential information in the database
         if ($getSettings['stu_generate'] == 1) {
             $stu_username = $getSettings['stu_username_prefix'] . $studentID;
+            $stu_mobileno = $row['Phone'];
             $stu_password = $getSettings['stu_default_password'];
         } else {
             $stu_username = $row['StudentUsername'];
+            $stu_mobileno = $row['Phone'];
             $stu_password = $row['StudentPassword'];
         }
 
         //save student login credential
         $inser_data2 = array(
             'username' => $stu_username,
+            'mobile_no' => $stu_mobileno,
             'role' => 7,
             'user_id' => $studentID,
             'password' => $this->app_lib->pass_hashed($stu_password),
@@ -283,25 +304,19 @@ class Student_model extends MY_Model
         }
     }
 
-    public function getStudentList($classID = '', $sectionID = '', $branchID = '', $deactivate = false, $start = '', $end = '')
+    public function getStudentList($classID = '', $sectionID = '', $branchID = '', $deactivate = false)
     {
-        $this->db->select('e.*,s.photo, CONCAT_WS(" ", s.first_name, s.last_name) as fullname,s.register_no,s.gender,s.admission_date,s.parent_id,s.email,s.blood_group,s.birthday,l.active,c.name as class_name,se.name as section_name');
+        $this->db->select('e.*,s.photo, CONCAT_WS(" ", s.first_name, s.last_name) as fullname,s.register_no,s.parent_id,s.email,s.blood_group,s.birthday,l.active,c.name as class_name,se.name as section_name');
         $this->db->from('enroll as e');
         $this->db->join('student as s', 'e.student_id = s.id', 'inner');
         $this->db->join('login_credential as l', 'l.user_id = s.id and l.role = 7', 'inner');
         $this->db->join('class as c', 'e.class_id = c.id', 'left');
         $this->db->join('section as se', 'e.section_id=se.id', 'left');
-        if (!empty($classID)) {
-            $this->db->where('e.class_id', $classID);
-        }
-        if (!empty($start) && !empty($end)) {
-            $this->db->where('s.admission_date >=', $start);
-            $this->db->where('s.admission_date <=', $end);
-        }
+        $this->db->where('e.class_id', $classID);
         $this->db->where('e.branch_id', $branchID);
         $this->db->where('e.session_id', get_session_id());
         $this->db->order_by('s.id', 'ASC');
-        if ($sectionID != 'all' && !empty($sectionID)) {
+        if ($sectionID != 'all') {
             $this->db->where('e.section_id', $sectionID);
         }
         if ($deactivate == true) {
@@ -326,6 +341,7 @@ class Student_model extends MY_Model
         $this->db->like('s.first_name', $search_text);
         $this->db->or_like('s.last_name', $search_text);
         $this->db->or_like('s.register_no', $search_text);
+        $this->db->or_like('s.stu_id', $search_text);
         $this->db->or_like('s.email', $search_text);
         $this->db->or_like('e.roll', $search_text);
         $this->db->or_like('s.blood_group', $search_text);
@@ -356,7 +372,48 @@ class Student_model extends MY_Model
         return $query->row_array();
     }
 
-    public function regSerNumber($school_id = '')
+    public function regSerNumber()
+    {
+        $prefix = '';
+        $config = $this->db->select('institution_code,reg_prefix')->where(array('id' => 1))->get('global_settings')->row();
+        if ($config->reg_prefix == 'on') {
+            $prefix = $config->institution_code;
+        }
+        $result = $this->db->select("max(id) as id")->get('student')->row_array();
+        $id = $result["id"];
+        if (!empty($id)) {
+            $maxNum = str_pad($id + 1, 5, '0', STR_PAD_LEFT);
+        } else {
+            $maxNum = '00001';
+        }
+
+        return ($prefix . $maxNum);
+    }
+    
+    
+    public function getSingleParent($parent_id = '')
+    {
+        // echo "-----------",$parent_id;
+        $this->db->select('*');
+        $this->db->from('parent');
+      
+        $this->db->where('id', $parent_id);
+        
+        $query = $this->db->get();
+        
+        return $query->row_array();
+    }
+    public function past_student()
+    {
+        $this->db->select('*');
+        $this->db->from('student_lc');
+        $this->db->where('session_id', get_session_id());
+        $this->db->where('branch_id', get_loggedin_branch_id());
+        $query = $this->db->get();
+        // echo $this->db->last_query(); // check for errors
+        return $query->result_array(); // print the result as an array
+    }
+    public function regStuNumber($school_id = '')
     {
         $registerNoPrefix = '';
         if (!empty($school_id)) {
@@ -392,16 +449,125 @@ class Student_model extends MY_Model
             return ($prefix . $maxNum);
         }
     }
-
-    public function getDisableReason($student_id='')
+    public function getStudentSearchCustom($branchID = '', $deactivate = false, $rollOrder = false)
     {
-        $this->db->select("rd.*,disable_reason.name as reason");
-        $this->db->from('disable_reason_details as rd');
-        $this->db->join('disable_reason', 'disable_reason.id = rd.reason_id', 'left');
-        $this->db->where('student_id', $student_id);
-        $this->db->order_by('rd.id', 'DESC');
-        $this->db->limit(1);
-        $row = $this->db->get()->row();
-        return $row;
+
+        $classID = $this->input->post('class_id');
+        $sectionID = $this->input->post('section_id');
+        $category_id = $this->input->post('category_id');
+        $register_no = $this->input->post('register_no');
+        $first_name = $this->input->post('first_name');
+        $last_name = $this->input->post('last_name');
+        $gender = $this->input->post('gender');
+        $phone_no = $this->input->post('phone_no');
+        $birthday = $this->input->post('birthday');
+        $guardian_name = $this->input->post('guardian_name');
+
+            
+        $this->db->select('e.*, s.photo, CONCAT_WS(" ",s.first_name, s.last_name) as fullname, s.stu_id, s.register_no, s.parent_id, s.email, s.mobileno, s.blood_group, s.birthday, s.admission_date, l.active, l.username as stu_username, c.name as class_name, se.name as section_name, sc.name as category');
+        $this->db->from('enroll as e');
+        $this->db->join('student as s', 'e.student_id = s.id', 'INNER');
+        $this->db->join('login_credential as l', 'l.user_id = s.id AND l.role = 7', 'INNER');
+        $this->db->join('class as c', 'e.class_id = c.id', 'LEFT');
+        $this->db->join('section as se', 'e.section_id = se.id', 'LEFT');
+        $this->db->join('student_category as sc', 'sc.id = s.category_id', 'LEFT');
+        $this->db->join('parent as sp', 'sp.id = s.parent_id', 'left');
+
+        // $this->db->where('e.class_id', $classID);
+        $this->db->where('e.branch_id', $branchID);
+        $this->db->where('e.session_id', get_session_id()); // Replace with the appropriate session ID
+
+        if ($classID != '') {
+            $this->db->where('e.class_id', $classID);
+        }
+        if ($gender != '') {
+            $this->db->where('s.gender', $gender);
+        }
+        if ($category_id != '') {
+            $this->db->where('s.category_id', $category_id);
+        }
+        if ($register_no != '') {
+            $this->db->where('s.register_no', $register_no);
+        }
+        if ($first_name != '') {
+            // $this->db->where('s.first_name', $first_name);
+            $this->db->like('s.first_name', $first_name);
+        }
+        if ($last_name != '') {
+            // $this->db->where('s.last_name', $last_name);
+            $this->db->like('s.last_name', $last_name);
+        }
+        if ($phone_no != '') {
+            // $this->db->where('s.phone_no', $phone_no);
+            $this->db->like('s.mobileno', $phone_no);
+        }
+        if ($birthday != '') {
+            $this->db->where('s.birthday', $birthday);
+        }
+        if ($guardian_name != '') {
+            $this->db->like('sp.name', $guardian_name);
+            // $this->db->where('sp.guardian_name', $guardian_name);
+        }
+        if ($sectionID != '') {
+            $this->db->where('e.section_id', $sectionID);
+        }
+
+        if ($deactivate) {
+            $this->db->where('l.active', 0);
+        }
+
+        if ($rollOrder) {
+            $this->db->order_by('s.register_no', 'ASC');
+        } else {
+            $this->db->order_by('s.id', 'ASC');
+        }
+
+        $query = $this->db->get();
+        return $query->result_array();
+    }
+
+    public function csvImportEdit($row = array(), $selectedField = '')
+    {
+        
+        if (!empty($selectedField) && $selectedField === 'GuardianName' || $selectedField === 'GuardianRelation' || $selectedField === 'FatherName' || $selectedField === 'MotherName' || $selectedField === 'GuardianOccupation' || $selectedField === 'GuardianMobileNo' || $selectedField === 'GuardianAddress' || $selectedField === 'GuardianEmail') {
+            
+            if ($selectedField === 'GuardianName') {
+                $selectedField === 'name';
+            }
+            if ($selectedField === 'GuardianRelation') {
+                $selectedField === 'relation';
+            }
+            if ($selectedField === 'FatherName') {
+                $selectedField === 'father_name';
+            }
+            if ($selectedField === 'MotherName') {
+                $selectedField === 'mother_name';
+            }
+            if ($selectedField === 'GuardianOccupation') {
+                $selectedField === 'occupation';
+            }
+            if ($selectedField === 'GuardianMobileNo') {
+                $selectedField === 'mobileno';
+            }
+            if ($selectedField === 'GuardianAddress') {
+                $selectedField === 'address';
+            }
+            if ($selectedField === 'GuardianEmail') {
+                $selectedField === 'email';
+            }
+            $this->db->select("parent_id");
+            $this->db->from('student');
+            $this->db->where('register_no',$row['RegisterNo']);
+            $this->db->limit(1);
+            $parentrow = $this->db->get()->row();
+            if ($parentrow->parent_id !== null) {
+                $this->db->where('id', $parentrow->parent_id);
+                $this->db->update('parent', array($selectedField => $row[$selectedField]));
+            }
+        }else {
+            // Update only the selected field in the student table
+            $this->db->where('register_no', $row['RegisterNo']);
+            $this->db->update('student', array($selectedField => $row[$selectedField]));
+        }
     }
 }

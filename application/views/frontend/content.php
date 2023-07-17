@@ -38,7 +38,7 @@
 <?php endif; ?>
 							<td><?php echo $row['page_title']; ?></td>
 							<td><?php echo $row['menu_title']; ?></td>
-							<td><a href="<?php echo base_url($row['url_alias'] . '/page/'. $row['alias']); ?>" target="_blank"><?php echo base_url($row['url_alias'] . '/page/'. $row['alias']); ?></a></td>
+							<td><a href="<?php echo base_url('home/page/'.$row['alias']); ?>" target="_blank"><?php echo base_url('home/page/'.$row['alias'] . "/" . $row['url_alias']); ?></a></td>
 							<td class="min-w-xs">
 							<?php if (get_permission('manage_page', 'is_edit')) { ?>
 								<a href="<?php echo base_url('frontend/content/edit/' . $row['id']); ?>" class="btn btn-default btn-circle icon" data-toggle="tooltip"

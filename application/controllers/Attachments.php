@@ -3,7 +3,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
  * @package : Ramom school management system
- * @version : 6.0
+ * @version : 5.0
  * @developed by : RamomCoder
  * @support : ramomcoder@yahoo.com
  * @author url : http://codecanyon.net/user/RamomCoder
@@ -19,9 +19,6 @@ class Attachments extends Admin_Controller
         parent::__construct();
         $this->load->helpers('download');
         $this->load->model('attachments_model');
-        if (!moduleIsEnabled('attachments_book')) {
-            access_denied();
-        }
     }
 
     public function index()
@@ -235,13 +232,10 @@ class Attachments extends Admin_Controller
     // file downloader
     public function download()
     {
-        $encrypt_name = urldecode($this->input->get('file'));
-        if(preg_match('/^[^.][-a-z0-9_.]+[a-z]$/i', $encrypt_name)) {
-            $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get('attachments')->row()->file_name;
-            if (!empty($file_name)) {
-                force_download($file_name, file_get_contents('uploads/attachments/' . $encrypt_name));
-            }
-        }
+        $encrypt_name = $this->input->get('file');
+        $file_name = $this->db->select('file_name')->where('enc_name', $encrypt_name)->get('attachments')->row()->file_name;
+        $this->load->helper('download');
+        force_download($file_name, file_get_contents('uploads/attachments/' . $encrypt_name));
     }
 
     public function playVideo()
@@ -266,6 +260,7 @@ class Attachments extends Admin_Controller
             $allowedExts = array_map('trim', array_map('strtolower', explode(',', $this->data['global_config']['file_extension'])));
             $allowedSizeKB = $this->data['global_config']['file_size'];
             $allowedSize = floatval(1024 * $allowedSizeKB);
+            
             $file_size = $_FILES["attachment_file"]["size"];
             $file_name = $_FILES["attachment_file"]["name"];
             $extension = pathinfo($file_name, PATHINFO_EXTENSION);

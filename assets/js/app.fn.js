@@ -17,7 +17,6 @@
                     btn.button('loading');
                 },
                 success: function (data) {
-                    console.log(data.error);
                     $('.error').html("");
                     if (data.status == "fail") {
                         $.each(data.error, function (index, value) {
@@ -56,7 +55,6 @@
                     btn.button('loading');
                 },
                 success: function (data) {
-                    console.log(data.error);
                     $('.error').html("");
                     if (data.status == "fail") {
                         $.each(data.error, function (index, value) {
@@ -105,7 +103,6 @@
                     btn.button('loading');
                 },
                 success: function (data) {
-                    console.log(data.error);
                     $('.error').html("");
                     if (data.status == "fail") {
                         $.each(data.error, function (index, value) {
@@ -121,55 +118,6 @@
                             location.reload(true);
                         }
                     }
-                },
-                error: function () {
-                    btn.button('reset');
-                }
-            });
-        });
-    });
-
-    $("form.frm-submit-data-msg").each(function(i, el)
-    {
-        var $this = $(el);
-        $this.on('submit', function(e){
-            e.preventDefault();
-            var btn = $this.find('[type="submit"]');
-            $.ajax({
-                url: $(this).attr('action'),
-                type: "POST",
-                data: new FormData(this),
-                dataType: "json",
-                contentType: false,
-                processData: false,
-                cache: false,
-                beforeSend: function () {
-                    btn.button('loading');
-                },
-                success: function (data) {
-                    console.log(data.error);
-                    $('.error').html("");
-                    if (data.status == "fail") {
-                        $.each(data.error, function (index, value) {
-                            $this.find("[name='" + index + "']").parents('.form-group').find('.error').html(value);
-                        });
-                        btn.button('reset');
-                    } else if (data.status == "access_denied") {
-                        window.location.href = base_url + "dashboard";
-                    } else {
-                        swal({
-                            toast: true,
-                            position: 'top-end',
-                            type: 'success',
-                            title: data.message,
-                            confirmButtonClass: 'btn btn-default',
-                            buttonsStyling: false,
-                            timer: 8000
-                        });
-                    }
-                },
-                complete: function (data) {
-                    btn.button('reset'); 
                 },
                 error: function () {
                     btn.button('reset');
@@ -208,10 +156,7 @@
         var password = $(this).parents('.form-group').find("[name='password']");
         if (this.checked) {
             password.val('').prop('disabled', true);
-            
-            $('#disableReason').show('slow');
         } else {
-            $('#disableReason').hide('slow');
             password.prop('disabled', false);
         }
     });
@@ -311,20 +256,18 @@ function initDatatable(selector,url, params={}, pageLength=20, aoColumnDefs=[{"o
 
 }
 
+
 // swal alert message
-function alertMsg(msg, type='success', title='' ,footer='*Note : You can undo this action at any time') {
-    if (title === '') {
-        title = (type == 'success' ? 'Successfully' : 'Error');
-    }
+function alertMsg(msg, type='success') {
     swal({
         type: type,
-        title: title,
+        title: "Successfully",
         text: msg,
         showCloseButton: true,
         focusConfirm: false,
         buttonsStyling: false,
         confirmButtonClass: 'btn btn-default swal2-btn-default',
-        footer: footer
+        footer: '*Note : You can undo this action at any time'
     });
 }
 
@@ -384,22 +327,6 @@ function getLeaveCategory(id) {
     });
 }
 
-// get patient disable reason details
-function getDisable_reason(id) {
-    $.ajax({
-        url: base_url + 'student/disableReasonDetails',
-        type: 'POST',
-        data: {'id': id},
-        dataType: "json",
-        success: function (data) {
-            $('#ereason_id').val(data.id);
-            $('#ecategory_name').val(data.name);
-            $('#ebranch_id').val(data.branch_id).trigger('change');
-            mfp_modal('#modal');
-        }
-    });
-}
-
 // get advance salary details
 function getAdvanceSalaryDetails(id) {
     $.ajax({
@@ -432,14 +359,8 @@ function getClassByBranch(branch_id) {
         url: base_url + 'ajax/getClassByBranch',
         type: 'POST',
         data:{ branch_id: branch_id },
-        beforeSend: function () {
-            $('#select2-class_id-container').parent().addClass('select2loading');
-        },
         success: function (data){
             $('#class_id').html(data);
-        },
-        complete: function () {
-            $('#select2-class_id-container').parent().removeClass('select2loading');
         }
     });
     $('#section_id').html('');
@@ -492,14 +413,8 @@ function getSectionByClass(class_id, all=0, multi=0) {
                 all : all,
                 multi : multi
             },
-            beforeSend: function () {
-                $('#select2-section_id-container').parent().addClass('select2loading');
-            },
             success: function (response) {
                 $('#section_id').html(response);
-            },
-            complete: function () {
-                $('#select2-section_id-container').parent().removeClass('select2loading');
             }
         });
     }
@@ -693,7 +608,38 @@ function editStaffBank(id) {
     });
 }
 
-// print function
+// // print function
+// function fn_printElem(elem, html = false)
+// {
+//     if (html == false) {
+//         var oContent = document.getElementById(elem).innerHTML;
+//     } else {
+//       var oContent = elem; 
+//     }
+//     var frame1 = document.createElement('iframe');
+//     frame1.name = "frame1";
+//     frame1.style.position = "absolute";
+//     frame1.style.top = "-1000000px";
+//     document.body.appendChild(frame1);
+//     var frameDoc = frame1.contentWindow ? frame1.contentWindow : frame1.contentDocument.document ? frame1.contentDocument.document : frame1.contentDocument;
+//     frameDoc.document.open();
+//     //create a new HTML document.
+//     frameDoc.document.write('<html><head><title></title>');
+//     frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/vendor/bootstrap/css/bootstrap.min.css">');
+//     frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/custom-style.css">');
+//     frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/ramom.css">');
+//     frameDoc.document.write('</head><body>');
+//     frameDoc.document.write(oContent);
+//     frameDoc.document.write('</body></html>');
+//     frameDoc.document.close();
+//     setTimeout(function () {
+//         window.frames["frame1"].focus();
+//         window.frames["frame1"].print();
+//         frame1.remove();
+//     }, 500);
+//     return true;
+// }
+
 function fn_printElem(elem, html = false)
 {
     if (html == false) {
@@ -713,6 +659,7 @@ function fn_printElem(elem, html = false)
     frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/vendor/bootstrap/css/bootstrap.min.css">');
     frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/custom-style.css">');
     frameDoc.document.write('<link rel="stylesheet" href="' + base_url + 'assets/css/ramom.css">');
+    frameDoc.document.write('<style>@media print { @page { margin: 0; size: auto; } body { margin: 0; } }</style>');
     frameDoc.document.write('</head><body>');
     frameDoc.document.write(oContent);
     frameDoc.document.write('</body></html>');

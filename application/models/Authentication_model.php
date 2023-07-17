@@ -4,7 +4,7 @@
 
 class Authentication_model extends MY_Model
 {
-
+    
     // checking login credential
     public function login_credential($username, $password)
     {
@@ -50,12 +50,12 @@ class Authentication_model extends MY_Model
                 // send email for forgot password
                 $this->load->model('email_model');
                 $arrayData = array(
-                    'role' => $login_credential->role,
-                    'branch_id' => $getUser['branch_id'],
-                    'username' => $login_credential->username,
-                    'name' => $getUser['name'],
-                    'reset_url' => base_url('authentication/pwreset?key=' . $key),
-                    'email' => $getUser['email'],
+                    'role' => $login_credential->role, 
+                    'branch_id' => $getUser['branch_id'], 
+                    'username' => $login_credential->username, 
+                    'name' => $getUser['name'], 
+                    'reset_url' => base_url('authentication/pwreset?key=' . $key), 
+                    'email' => $getUser['email'], 
                 );
                 $this->email_model->sentForgotPassword($arrayData);
                 return true;
@@ -66,19 +66,11 @@ class Authentication_model extends MY_Model
 
     public function urlaliasToBranch($url_alias)
     {
-        $saasExisting = $this->app_lib->isExistingAddon('saas');
-        if ($saasExisting && $this->db->table_exists("custom_domain")) {
-            $getDomain = $this->getCurrentDomain();
-            if(!empty($getDomain)) {
-                return $getDomain->school_id;
-            }
-        }
-
         $get = $this->db->select('branch_id')
-            ->where('url_alias', $url_alias)
-            ->get('front_cms_setting')
-            ->row_array();
-        if (empty($url_alias) || empty($get)) {
+        ->where('url_alias', $url_alias)
+        ->get('front_cms_setting')
+        ->row_array();
+        if (empty($url_alias)) {
             return null;
         } else {
             return $get['branch_id'];
@@ -95,12 +87,4 @@ class Authentication_model extends MY_Model
         }
     }
 
-    public function getCurrentDomain()
-    {
-        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        $url = rtrim($url, '/');
-        $domain =  parse_url($url, PHP_URL_HOST);
-        $getDomain = $this->db->select('school_id')->get_where('custom_domain', array('status' => 1, 'url' => $domain))->row();
-        return $getDomain;
-    }
 }

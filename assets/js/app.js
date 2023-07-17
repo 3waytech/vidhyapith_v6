@@ -304,11 +304,8 @@ $.extend(theme.PluginDatePicker.defaults, {
 			if($(this).is(':checked'))
 			{
 				$("#typeDiv").hide("slow");
-				$("#auditionDiv").hide("slow");
-				$("#selected_user").hide("slow");
 			} else {
 				$("#typeDiv").show("slow");
-				$("#auditionDiv").show("slow");
 			}
 		});
 
@@ -345,21 +342,16 @@ $.extend(theme.PluginDatePicker.defaults, {
 		});
 
 		$("#live_class_method").on( "change", function() {
-			if (this.value == 1)
+			if (this.value == 2)
 			{
-				$("#bbb_config").hide("slow");
-				$("#gmeet").hide("slow");
-				$("#zoom_config").show("slow");
-			} else if(this.value == 2) {
 				$("#zoom_config").hide("slow");
-				$("#gmeet").hide("slow");
 				$("#bbb_config").show("slow");
-			} else if(this.value == 3) {
-				$("#zoom_config").hide("slow");
+			} else {
 				$("#bbb_config").hide("slow");
-				$("#gmeet").show("slow");
+				$("#zoom_config").show("slow");
 			}
 		});
+
 
 		// message delete script
 		$(document).on('click', '#msgAction', function() {

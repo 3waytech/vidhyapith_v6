@@ -72,10 +72,16 @@ endif;
 							<span class="error"></span>
 						</div>
 					</div>
-					
 					<div class="col-md-<?php echo $div ?> mb-sm">
 						<div class="form-group">
-							<label class="control-label"><?=translate('register_no')?> <span class="required">*</span></label>
+							<label class="control-label"><?=translate('stu_id')?> </label>
+							<input type="text" class="form-control" name="stu_id" value="<?=set_value('stu_id', $stu_id)?>" />
+							<span class="error"></span>
+						</div>
+					</div>
+					<div class="col-md-<?php echo $div ?> mb-sm">
+						<div class="form-group">
+							<label class="control-label"><?=translate('general_register_no')?> <span class="required">*</span></label>
 							<input type="text" class="form-control" name="register_no" value="<?=set_value('register_no', $register_id)?>" />
 							<span class="error"></span>
 						</div>
@@ -172,12 +178,12 @@ endif;
 					<?php if ($last_name['status']) { ?>
 					<div class="col-md-<?php echo $div ?> mb-sm">
 						<div class="form-group">
-							<label class="control-label"> <?=translate('last_name')?><?php echo $last_name['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
+							<label class="control-label"> <?=translate('surname')?><?php echo $last_name['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fas fa-user-graduate"></i></span>
 								<input type="text" class="form-control" name="last_name" value="<?=set_value('last_name')?>" />
+								<span class="error"></span>
 							</div>
-							<span class="error"></span>
 						</div>
 						<span class="error"><?=form_error('last_name')?></span>
 					</div>
@@ -319,6 +325,98 @@ endif;
 					</div>
 					<?php } ?>
 				</div>
+				
+				<div class="row">
+                	<?php
+                	$student_gr_no = $this->student_fields_model->getStatus('student_gr_no', $branch_id);
+                	$student_adhar_dias = $this->student_fields_model->getStatus('student_adhar_dias', $branch_id);
+                	$student_adhar_card = $this->student_fields_model->getStatus('student_adhar_card', $branch_id);
+                	$Student_birth_place = $this->student_fields_model->getStatus('Student_birth_place', $branch_id);
+                	$RTE_student = $this->student_fields_model->getStatus('RTE_student', $branch_id);
+                
+                	$v = floatval($student_gr_no['status']) + floatval($student_adhar_dias['status']) + floatval($student_adhar_card['status']) + floatval($Student_birth_place['status']) + floatval($RTE_student['status']);
+                
+                	$div = ($v == 0) ? 12 : floatval(12 / $v);
+                	if ($student_gr_no['status']) {
+                		?>
+                		<div class="col-md-4 mb-sm">
+                			<div class="form-group">
+                				<label class="control-label">
+                					<?= translate('student_gr_no') ?>
+                					<?php echo $student_gr_no['required'] == 1 ? ' <span class="required">*</span>' : ''; ?>
+                				</label>
+                				<!-- <div class="input-group"> -->
+                				<!-- <span class="input-group-addon"><i class="fas fa-phone-volume"></i></span> -->
+                				<input type="text" class="form-control" name="student_gr_no" value="<?= set_value('student_gr_no') ?>" />
+                				<!-- </div> -->
+                				<span class="error"></span>
+                			</div>
+                		</div>
+                	<?php }
+                	if ($student_adhar_dias['status']) { ?>
+                		<div class="col-md-4 mb-sm">
+                			<div class="form-group">
+                				<label class="control-label">
+                					<?= translate('student_adhar_dias') ?>
+                					<?php echo $student_adhar_dias['required'] == 1 ? ' <span class="required">*</span>' : ''; ?>
+                				</label>
+                				<div class="input-group">
+                					<span class="input-group-addon"><i class="fa-solid fa-id-card"></i></span>
+                					<input type="text" class="form-control" name="student_adhar_dias" id="student_adhar_dias"
+                						value="<?= set_value('student_adhar_dias') ?>" />
+                				</div>
+                				<span class="error"></span>
+                			</div>
+                		</div>
+                	<?php }
+                	if ($student_adhar_card['status']) { ?>
+                		<div class="col-md-4 mb-sm">
+                			<div class="form-group">
+                				<label class="control-label">
+                					<?= translate('student_adhar_card') ?>
+                					<?php echo $student_adhar_card['required'] == 1 ? ' <span class="required">*</span>' : ''; ?>
+                				</label>
+                				<div class="input-group">
+                					<span class="input-group-addon"><i class="fa-solid fa-id-card"></i></span>
+                					<input type="text" class="form-control" name="student_adhar_card"
+                						value="<?= set_value('student_adhar_card') ?>" />
+                				</div>
+            					<span class="error"></span>
+                			</div>
+                		</div>
+                	<?php } ?>
+                </div>
+                <div class="row">
+                	<?php if ($Student_birth_place['status']) { ?>
+                		<div class="col-md-6 mb-sm">
+                			<div class="form-group">
+                				<label class="control-label">
+                					<?= translate('Student_birth_place') ?>
+                					<?php echo $Student_birth_place['required'] == 1 ? ' <span class="required">*</span>' : ''; ?>
+                				</label>
+                				<input type="text" class="form-control" name="Student_birth_place"
+                					value="<?= set_value('Student_birth_place') ?>" />
+                				<span class="error"></span>
+                			</div>
+                		</div>
+                	<?php }
+                	if ($RTE_student['status']) { ?>
+                		<div class="col-md-6 mb-sm">
+                			<div class="form-group">
+                				<label class="control-label">
+                					<?= translate('RTE_student') ?>
+                					<?php echo $RTE_student['required'] == 1 ? ' <span class="required">*</span>' : ''; ?>
+                				</label>
+                				<div class="row" style="display: flex;align-items: baseline;justify-content: left;">
+                					<input type="radio" style="margin: 0px 20px;" name="RTE_student" value="Yes" />Yes
+                					<input type="radio" style="margin: 0px 20px;" name="RTE_student" value="No" />No
+                					<span class="error"></span>
+                				</div>
+                			</div>
+                		</div>
+                	<?php } ?>
+                </div>
+				
 
 				<div class="row">
 					<?php 
@@ -456,7 +554,7 @@ endif;
 						if ($guardian_name['status']) { ?>
 						<div class="col-md-<?php echo $div ?> mb-sm">
 							<div class="form-group">
-								<label class="control-label"><?=translate('name')?><?php echo $guardian_name['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
+								<label class="control-label"><?=translate('student_father_name')?><?php echo $guardian_name['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
 								<input class="form-control" name="grd_name" type="text" value="<?=set_value('grd_name')?>">
 								<span class="error"></span>
 							</div>
@@ -478,7 +576,7 @@ endif;
 						if ($father_name['status']) { ?>
 						<div class="col-md-<?php echo $div ?> mb-sm">
 							<div class="form-group">
-								<label class="control-label"><?=translate('father_name')?><?php echo $father_name['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
+								<label class="control-label"><?=translate('student_grandfather_name')?><?php echo $father_name['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
 								<input type="text" class="form-control" name="father_name" value="<?=set_value('father_name')?>" />
 								<span class="error"></span>
 							</div>
@@ -486,7 +584,7 @@ endif;
 						<?php } if ($mother_name['status']) { ?>
 						<div class="col-md-<?php echo $div ?> mb-sm">
 							<div class="form-group">
-								<label class="control-label"><?=translate('mother_name')?><?php echo $mother_name['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
+								<label class="control-label"><?=translate('student_mother_name')?><?php echo $mother_name['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
 								<input type="text" class="form-control" name="mother_name" value="<?=set_value('mother_name')?>" />
 								<span class="error"></span>
 							</div>
@@ -546,16 +644,16 @@ endif;
 							</div>
 						</div>
 						<?php } if ($guardian_mobile_no['status']) { ?>
-						<div class="col-md-<?php echo $div ?> mb-sm">
+						<!-- <div class="col-md-<?php echo $div ?> mb-sm">
 							<div class="form-group">
-								<label class="control-label"><?=translate('mobile_no')?><?php echo $guardian_mobile_no['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
+								<label class="control-label"><?= translate('mobile_no') ?><?php echo $guardian_mobile_no['required'] == 1 ? ' <span class="required">*</span>' : ''; ?></label>
 								<div class="input-group">
-									<span class="input-group-addon"><i class="fas fa-phone-volume"></i></span>
-									<input class="form-control" name="grd_mobileno" type="text" value="<?=set_value('grd_mobileno')?>">
-								</div>
+									<span class="input-group-addon"><i class="fas fa-phone-volume"></i></span> -->
+										<input class="hidden" name="mobile_no" type="text" value="<?= set_value('mobile_no') ?>">
+										<!-- </div>
 								<span class="error"></span>
 							</div>
-						</div>
+						</div> -->
 						<?php } if ($guardian_email['status']) { ?>
 						<div class="col-md-<?php echo $div ?> mb-sm">
 							<div class="form-group">
@@ -593,7 +691,8 @@ endif;
 						</div>
 						<?php } ?>
 					</div>
-
+	<!-- guardian login -->
+<h3>Parent Login</h3>
 					<div class="<?=$getBranch['grd_generate'] == 1 || $getBranch['grd_generate'] == "" ? 'hidden-div' : ''?>" id="grdLogin">
 						<div class="row mb-lg">
 							<div class="col-md-6 mb-sm">
@@ -606,7 +705,17 @@ endif;
 									<span class="error"><?=form_error('grd_username')?></span>
 								</div>
 							</div>
-							<div class="col-md-3 mb-sm">
+							<div class="col-md-6 mb-sm">
+								<div class="form-group">
+									<label class="control-label"><?= translate('mobile_no') ?> <span class="required">*</span></label>
+									<div class="input-group">
+										<span class="input-group-addon"><i class="far fa-user"></i></span>
+										<input type="text" class="form-control" name="mobile_no" value="<?= set_value('mobile_no') ?>" autocomplete="off" />
+									</div>
+									<span class="error"><?php echo form_error('mobile_no'); ?></span>
+								</div>
+							</div>
+							<div class="col-md-6 mb-sm">
 								<div class="form-group">
 									<label class="control-label"><?=translate('password')?> <span class="required">*</span></label>
 									<div class="input-group">
@@ -616,7 +725,7 @@ endif;
 									<span class="error"><?=form_error('grd_password')?></span>
 								</div>
 							</div>
-							<div class="col-md-3 mb-sm">
+							<div class="col-md-6 mb-sm">
 								<div class="form-group">
 									<label class="control-label"><?=translate('retype_password')?> <span class="required">*</span></label>
 									<div class="input-group">
@@ -631,7 +740,6 @@ endif;
 				</div>
 				<?php } ?>
 				
-				<?php if (moduleIsEnabled('transport')) { ?>
 				<!-- transport details -->
 				<div class="headers-line  mt-md">
 					<i class="fas fa-bus-alt"></i> <?=translate('transport_details')?>
@@ -659,8 +767,7 @@ endif;
 						</div>
 					</div>
 				</div>
-				<?php } ?>
-				<?php if (moduleIsEnabled('hostel')) { ?>
+				
 				<!-- hostel details -->
 				<div class="headers-line">
 					<i class="fas fa-hotel"></i> <?=translate('hostel_details')?>
@@ -688,7 +795,6 @@ endif;
 						</div>
 					</div>
 				</div>
-				<?php } ?>
 				<!-- previous school details -->
 				<?php
 				$previous_school_details = $this->student_fields_model->getStatus('previous_school_details', $branch_id);
